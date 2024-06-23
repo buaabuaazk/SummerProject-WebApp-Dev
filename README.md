@@ -1,14 +1,16 @@
-# vue-project
+# WorkNow前端
+这是北航软件学院2024夏WorkNow前端仓库，开发人员如下：
+- 蒋康
+- 罗军忠
+- 郑凯
+- 吴文韬
+- 盛昱豪
 
-This template should help get you started developing with Vue 3 in Vite.
+## 项目遵守规范
+参考[前端开发规范](./前端开发规范.md)
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## git合作流
+参考[git合作流](./git%20合作流.md)
 
 ## Project Setup
 

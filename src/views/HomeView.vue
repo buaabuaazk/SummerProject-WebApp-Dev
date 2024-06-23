@@ -1,9 +1,10 @@
-<script setup>
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
-
+<!--
+ * @Date: 2024-06-18 22:18:30
+ * @Author: Q9K
+ * @Description: 进入网站的首页，需要展示企业的信息
+-->
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <div></div>
 </template>
+
+<script setup></script>
