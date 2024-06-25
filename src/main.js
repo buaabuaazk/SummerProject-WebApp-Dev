@@ -17,6 +17,7 @@ import router from './router'
 import './assets/index.css'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import stores from './stores'
+import Antd from 'ant-design-vue'
 import _ from 'loadsh'
 import axios from '@/utils/request'
 
@@ -33,4 +34,5 @@ app.config.globalProperties.$axios = axios
 app.config.globalProperties.$stores = stores
 app.config.globalProperties._ = _
 
+app.use(Antd)
 app.mount('#app')
