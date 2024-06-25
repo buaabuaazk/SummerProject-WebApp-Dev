@@ -9,6 +9,7 @@ import axios from 'axios'
 import './assets/tailwind.css'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import stores from './stores'
+import Antd from 'ant-design-vue'
 
 if (import.meta.env.MODE === 'development') {
   axios.defaults.baseURL = ''
@@ -25,4 +26,5 @@ app.use(pinia)
 app.use(router)
 app.config.globalProperties.$axios = axios
 app.config.globalProperties.$stores = stores
+app.use(Antd)
 app.mount('#app')
