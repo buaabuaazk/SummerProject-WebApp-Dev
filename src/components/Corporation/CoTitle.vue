@@ -1,6 +1,6 @@
 <template>
   <div class="h-[12rem] bg-[#37566B] pb-4 pt-8 shadow">
-    <div class="mx-auto grid h-full max-w-7xl grid-rows-3 gap-1 px-2 sm:px-4 lg:px-8">
+    <div class="mx-20 grid h-full grid-rows-3 gap-1">
       <div
         class="row-span-2 grid grid-cols-[6rem_repeat(11,minmax(0,1fr))] rounded-lg bg-blue-500 shadow"
       >
@@ -26,17 +26,6 @@
       </div>
       <div class="rounded-lg bg-red-500 shadow"></div>
     </div>
-  </div>
-  <div
-    class="m-2 grid h-10 grid-cols-[repeat(3,auto)_repeat(9,minmax(0,1fr))] gap-1 rounded-lg bg-slate-50 shadow-lg"
-  >
-    <div class="min-w-20 rounded-lg border-y-2 bg-blue-100"></div>
-    <div class="min-w-20 rounded-lg border-y-2 bg-blue-100"></div>
-    <div class="min-w-20 rounded-lg border-y-2 bg-blue-100"></div>
-  </div>
-  <div class="m-2 grid h-[40rem] grid-cols-12 gap-2 rounded-xl bg-white p-2 shadow-xl">
-    <div class="col-span-8 grid h-[30rem] rounded-lg shadow-lg"></div>
-    <div class="col-span-4 grid h-[10rem] rounded-lg shadow-lg"></div>
   </div>
 </template>
 
