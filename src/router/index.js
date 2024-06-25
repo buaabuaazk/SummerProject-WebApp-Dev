@@ -15,7 +15,7 @@ const router = createRouter({
       name: 'PersonalInfo',
       component: () => import('@/views/PersonalInfo.vue'),
       meta: {
-        requireAuth: true,
+        //requireAuth: true,
         title: '个人信息'
       }
     },
