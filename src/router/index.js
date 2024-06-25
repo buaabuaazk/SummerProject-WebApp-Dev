@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -26,7 +25,7 @@ const router = createRouter({
       component: () => import('@/views/ApplymentAction.vue'),
       meta: {
         requireAuth: true,
-        title: '应聘人员列表查看'//企业管理员发布一个岗位招聘信息后，有多个人前来投递简历，在此页面处理应聘请求
+        title: '应聘人员列表查看' //企业管理员发布一个岗位招聘信息后，有多个人前来投递简历，在此页面处理应聘请求
       }
     },
     {
@@ -71,25 +70,7 @@ const router = createRouter({
       component: () => import('@/views/CreatePost.vue'),
       meta: {
         requireAuth: true,
-        title: '动态发布'//表单页
-      }
-    },
-    {
-      path: '/JobInfo',
-      name: 'JobInfo',
-      component: () => import('@/views/JobInfo.vue'),
-      meta: {
-        requireAuth: true,
-        title: '岗位信息'//某一个岗位的详细信息
-      }
-    },
-    {
-      path: '/LoginAndRegister',
-      name: 'LoginAndRegister',
-      component: () => import('@/views/LoginAndRegister.vue'),
-      meta: {
-        requireAuth: false,
-        title: '登录注册'
+        title: '动态发布' //表单页
       }
     },
     {
@@ -107,7 +88,7 @@ const router = createRouter({
       component: () => import('@/views/OfferAction.vue'),
       meta: {
         requireAuth: true,
-        title: 'offer处理'//求职者收到多个offer时，可以在此页面接受或拒绝每个offer
+        title: 'offer处理' //求职者收到多个offer时，可以在此页面接受或拒绝每个offer
       }
     },
     {
@@ -125,7 +106,7 @@ const router = createRouter({
       component: () => import('@/views/Recruitment.vue'),
       meta: {
         requireAuth: true,
-        title: '招聘信息发布'//表单页
+        title: '招聘信息发布' //表单页
       }
     },
     {
@@ -135,6 +116,41 @@ const router = createRouter({
       meta: {
         requireAuth: true,
         title: '简历优化'
+      }
+    },
+    {
+      path: '/sos',
+      name: 'SOS',
+      component: () => import('@/views/LoginAndRegister.vue'),
+      children: [
+        {
+          path: 'login',
+          name: 'Login',
+          component: () => import('@/components/Login.vue')
+        },
+        {
+          path: 'register',
+          name: 'Register',
+          component: () => import('@/components/Register.vue')
+        }
+      ]
+    },
+    {
+      path: '/jobinfo/:id',
+      name: 'JobInfo',
+      component: () => import('@/views/JobInfo.vue'),
+      meta: {
+        requireAuth: false,
+        title: '职位详情'
+      }
+    },
+    //404页面，需要放在最后
+    {
+      path: '/:pathMatch(.*)*' /*其他页面*/,
+      name: 'notFound',
+      component: () => import('../views/404.vue'),
+      meta: {
+        requireAuth: false
       }
     }
   ]

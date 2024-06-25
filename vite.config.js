@@ -11,10 +11,10 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
-      resolvers:[NaiveUiResolver(),ElementPlusResolver()]
+      resolvers: [NaiveUiResolver(), ElementPlusResolver()]
     }),
     Components({
-      resolvers:[NaiveUiResolver(),ElementPlusResolver()]
+      resolvers: [NaiveUiResolver(), ElementPlusResolver()]
     })
   ],
   resolve: {
