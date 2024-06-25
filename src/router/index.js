@@ -24,7 +24,7 @@ const router = createRouter({
       name: 'ApplymentAction',
       component: () => import('@/views/ApplymentAction.vue'),
       meta: {
-        requireAuth: true,
+        requireAuth: false,
         title: '应聘人员列表查看' //企业管理员发布一个岗位招聘信息后，有多个人前来投递简历，在此页面处理应聘请求
       }
     },

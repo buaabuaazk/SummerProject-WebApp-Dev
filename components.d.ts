@@ -7,9 +7,20 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Button: typeof import('./src/components/ui/button/Button.vue')['default']
+    Card: typeof import('./src/components/ui/card/Card.vue')['default']
+    CardContent: typeof import('./src/components/ui/card/CardContent.vue')['default']
+    CardDescription: typeof import('./src/components/ui/card/CardDescription.vue')['default']
+    CardFooter: typeof import('./src/components/ui/card/CardFooter.vue')['default']
+    CardHeader: typeof import('./src/components/ui/card/CardHeader.vue')['default']
+    CardTitle: typeof import('./src/components/ui/card/CardTitle.vue')['default']
     Footer: typeof import('./src/components/Footer.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
+    Input: typeof import('./src/components/ui/input/Input.vue')['default']
+    Label: typeof import('./src/components/ui/label/Label.vue')['default']
+    Login: typeof import('./src/components/Login.vue')['default']
     MessageBar: typeof import('./src/components/MessageBar.vue')['default']
+    Register: typeof import('./src/components/Register.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
