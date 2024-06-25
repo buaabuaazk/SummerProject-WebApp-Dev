@@ -138,15 +138,7 @@ const router = createRouter({
         title: '简历优化'
       }
     },
-    {
-      path: '/Recruitment',
-      name: 'Recruitment',
-      component: () => import('@/views/Recruitment.vue'),
-      meta: {
-        requireAuth: false,
-        title: '个人信息'
-      }
-    }
+   i
   ]
 })
 
