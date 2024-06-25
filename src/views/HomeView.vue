@@ -51,10 +51,9 @@
             <RightOutlined style="margin-left: 0; padding: 0; font-size: 1rem;"></RightOutlined>
           </a-button>
       </div>
-      <div class="job-list">
-        <div v-if="data &&data.length > 1">
-        <a-card :title="data[1].name" style="width: 23rem; margin-right: 1.5rem;">
-          <template #extra><a href="#">150/天</a></template>
+      <div class="job-list" v-if="data &&data.length > 1">
+        <a-card v-for="item in data" :key="item.id" :title="item.name" style="width: 23rem; margin-right: 1.5rem;">
+          <template #extra><a href="#">{{ item.job_salary }}</a></template>
           <div>
             <div class="advantege" style="display: flex;">
                 <a-button type="text" style="margin-right: 1rem; background: #fafaf3;">免费午餐</a-button>
@@ -79,8 +78,6 @@
             </div>
           </div>
         </a-card>
-      </div>
-        <p v-else>加载中</p>
         <a-card title="市场营销实习生（大制造方向）-飞书" style="width: 23rem; margin-right: 1.5rem;">
           <template #extra><a href="#">150/天</a></template>
           <div>
@@ -295,10 +292,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import axios from '@/utils/request';
 import { onMounted } from 'vue';
 import {RightOutlined, EnvironmentOutlined, DashboardOutlined, IdcardOutlined} from '@ant-design/icons-vue'
-
 
 const value = ref('');
 const data = ref(null); //招聘数据
@@ -306,7 +302,7 @@ const error = ref();
 const cities = ref(['北京','上海','深圳','杭州','武汉','广州','成都','重庆','南京','天津','西安','苏州','长沙','青岛','大连'])
 const fetchData = async (city) => {
   try {
-    const response = await axios.get('http://100.92.39.61:8000/api/recruit/list_recruit', {
+    const response = await axios.get('/api/recruit/list_recruit', {
       params: {
         job_location:  city,
       }
