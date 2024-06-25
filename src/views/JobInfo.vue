@@ -4,19 +4,22 @@
  * @Description: 展示具体某一个岗位和企业的详细信息
 -->
 <template>
-  <Card>
-    <CardHeader>
-      <CardTitle>{{ jobInfo.jobTitle }}</CardTitle>
-      <CardDescription>{{ jobInfo.description }}</CardDescription>
-    </CardHeader>
-    <CardContent>
-      <div v-for="(requirement, index) in jobInfo.requirements" :key="index">
-        {{ requirement }}
-      </div>
-    </CardContent>
-    <CardFooter> Card Footer </CardFooter>
-  </Card>
-  <button @click="getVerificationCode(email)">test</button>
+  <div>
+    <Card class="mx-auto max-w-5xl">
+      <CardHeader>
+        <CardTitle>{{ jobInfo.jobTitle }}</CardTitle>
+        <CardDescription>{{ jobInfo.description }}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div v-for="(requirement, index) in jobInfo.requirements" :key="index">
+          {{ index + 1 + '. ' + requirement }}
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button class="mx-auto" @click="submitResume(props.id)">投递简历</Button>
+      </CardFooter>
+    </Card>
+  </div>
 </template>
 <script setup>
 import {
@@ -27,10 +30,10 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import Button from '@/components/ui/button/Button.vue'
 import { ref, reactive, onMounted } from 'vue'
 import qs from 'qs'
 import submitResume from '@/utils/submitResume'
-import getVerificationCode from '@/utils/getVerificationCode'
 
 const props = defineProps({
   id: {
@@ -54,12 +57,12 @@ let jobInfo = reactive({
   ],
   benefits: ['Health insurance', '401k', 'Free lunch']
 })
-const email = ref('20374319@buaa.edu.cn')
+
 onMounted(() => {
-  // getInfo()
+  getInfo()
 })
 const getInfo = async () => {
-  const res = await this.$axios.get('/api/jobinfo/', qs.stringify({ id: props.id }))
+  const res = await this.$axios.get('/api/jobinfo/', qs.stringify({ job_id: props.id }))
   const data = res.data
 
   console.log('🚀 ~ file: JobInfo.vue:65 ~ getInfo ~ data:', data)

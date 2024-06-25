@@ -9,12 +9,14 @@ import useTokenStore from '@/stores/useTokenStore'
 const tokenStore = useTokenStore()
 export default async function login(user_email, password) {
   console.log('🚀 ~ file: login.js:12 ~ login ~ user_email, password:', user_email, password)
-
   try {
     let res = await axios.post('/api/user/login', {
       username: user_email,
       password
     })
+
+    console.log('🚀 ~ file: login.js:18 ~ login ~ res:', res)
+
     const token = res.data.access
     tokenStore.setToken(`Bearer ${token}`)
   } catch (error) {
