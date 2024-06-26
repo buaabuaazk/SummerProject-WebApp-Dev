@@ -1,4 +1,3 @@
-import { el } from 'element-plus/es/locale'
 import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,6 +34,7 @@ const router = createRouter({
       component: () => import('@/views/CorporationInfo.vue'),
       meta: {
         requireAuth: true,
+        requireEnterprise: true,
         title: '企业公开信息展示'
       }
     },
@@ -145,6 +145,11 @@ const router = createRouter({
         title: '职位详情'
       }
     },
+    {
+      path: '/Corporation404',
+      name: 'noCorporation',
+      component: () => import('@/components/Corporation/CorNotIn.vue')
+    },
     //404页面，需要放在最后
     {
       path: '/:pathMatch(.*)*' /*其他页面*/,
@@ -160,6 +165,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth && !localStorage.getItem('token')) {
     next({ name: 'Login' })
+  } else if (to.meta.requireEnterprise && !localStorage.getItem('enterprise_id')) {
+    next({ name: 'noCorporation' })
   } else {
     next()
   }
