@@ -6,15 +6,15 @@
 
         <div class="flex items-center justifu-center py-5 md:py-0 gap-4">
           <CustomButton
-            @click="setOpenForm(true)"
+            @click="openModal"
             :title="info.name"
             containerStyles="py-1.5 px-3 md:px-5 focus:outline-none bg-blue-600  hover:bg-blue-700 text-white rounded text-sm md:text-base border border-blue-600"
           />
 
           <!-- <CustomButton
-                title='Upload Job'
-                containerStyles="text-blue-600 py-1.5 px-3 md:px-5 focus:outline-none  rounded text-sm md:text-base border border-blue-600"
-              /> -->
+            title="Upload Job"
+            containerStyles="text-blue-600 py-1.5 px-3 md:px-5 focus:outline-none  rounded text-sm md:text-base border border-blue-600"
+          /> -->
         </div>
       </div>
       <div>
@@ -50,17 +50,27 @@
       </div>
     </div>
 
-    <!-- <CompnayForm open="{openForm}" setOpen="{setOpenForm}" /> -->
+    <CreateCorporation :isOpen="isOpen" :closeModal="closeModal" :openModal="openModal" />
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import axios from 'axios'
 import CustomButton from '@/components/Corporation/CustomButton.vue'
 import JobCard from '@/components/Corporation/JobCard.vue'
+import CreateCorporation from '@/views/CreateCorporation.vue'
 
 import { EnvelopeIcon, MapPinIcon, PhoneIcon } from '@heroicons/vue/24/outline'
+
+let isOpen = ref(false)
+
+function closeModal() {
+  isOpen.value = false
+}
+function openModal() {
+  isOpen.value = true
+}
 
 const jobs = ref([
   {
