@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import axios from 'axios'
+import useTokenStore from '@/stores/useTokenStore'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -162,10 +165,38 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   if (to.meta.requireAuth && !localStorage.getItem('token')) {
     next({ name: 'Login' })
-  } else if (to.meta.requireEnterprise && !localStorage.getItem('enterprise_id')) {
+  } else if (to.meta.requireEnterprise) {
+    const tokenStore = useTokenStore()
+    console.log(tokenStore.getToken)
+    let user_id = await axios
+      .get('http://8.130.25.189:8000/api/user/detail', {
+        headers: {
+          Authorization: tokenStore.getToken
+        }
+      })
+      .then((res) => {
+        console.log(res)
+        return res.data.user_id
+        // localStorage.setItem('enterprise_id', res.data.enterprise_id)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+
+    console.log(user_id)
+
+    await axios
+      .get('http://8.130.25.189:8000/api/profile?user_id=' + user_id)
+      .then((res) => {
+        console.log(res)
+        // localStorage.setItem('enterprise_id', res.data.enterprise_id)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
     next({ name: 'noCorporation' })
   } else {
     next()
