@@ -56,8 +56,8 @@ const password = ref('')
 const goToRegister = () => {
   router.push('/sos/register')
 }
-const myLogin = () => {
-  const res = login(user_email.value, password.value)
+const myLogin = async () => {
+  const res = await login(user_email.value, password.value)
   if (res === true) {
     router.push('/')
   }

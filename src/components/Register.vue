@@ -153,8 +153,8 @@ const getVcode = (email) => {
 
 const modal = ref(null)
 const modelValue = ref(['Apple', 'Banana'])
-const myRegister = () => {
-  const res = register(data.value)
+const myRegister = async () => {
+  const res = await register(data.value)
   if (res === true) {
     const res = login(data.value.email, data.value.password)
     if (res === true) {
