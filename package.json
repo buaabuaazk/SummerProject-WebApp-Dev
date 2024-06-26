@@ -36,6 +36,7 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vue": "^3.4.21",
+    "vue-advanced-chat": "^2.1.0",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {

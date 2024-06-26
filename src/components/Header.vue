@@ -57,7 +57,7 @@
             >
           </div>
         </div>
-        <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
+        <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end" v-if="$route.path !== '/'">
           <div class="w-full max-w-lg lg:max-w-xs">
             <label for="search" class="sr-only">Search</label>
             <div class="relative">
