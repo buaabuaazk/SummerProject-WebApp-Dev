@@ -3,3 +3,10 @@
  * @Author: Q9K
  * @Description: 用户的登录和注册页面
 -->
+<template>
+  <div>
+    <Transition>
+      <router-view></router-view>
+    </Transition>
+  </div>
+</template>
