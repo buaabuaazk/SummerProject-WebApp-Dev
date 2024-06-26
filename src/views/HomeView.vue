@@ -4,6 +4,7 @@
  * @Description: 进入网站的首页，需要展示企业的信息
 -->
 <template>
+  <!-- 搜索栏 -->
   <div class="search-container">
     <div class="dropdown"></div>
     <div class="search-form">
@@ -17,6 +18,8 @@
       />
     </div>
   </div>
+
+  <!-- 热门城市筛选与广告 -->
   <div class="mid-bar">
     <div class="job-classify">
       <a-card title="热门城市" style="text-align: center">
@@ -69,6 +72,8 @@
       </div>
     </div>
   </div>
+
+  <!-- 岗位列表 -->
   <div class="job-list-container">
     <div class="job-nav">
       <a-button type="primary" @clock="changeType" style="margin-right: 0.5rem">热门岗位</a-button>
@@ -78,6 +83,7 @@
         <RightOutlined style="margin-left: 0; padding: 0; font-size: 1rem"></RightOutlined>
       </a-button>
     </div>
+    <!-- 具体岗位信息展示 -->
     <div class="job-list" v-if="data && data.length > 0">
       <a-card
         v-for="item in data"
@@ -128,6 +134,8 @@
     </div>
     <a-button @click="fetchNewData()" style="margin-left: 30rem;">查看更多</a-button>
   </div>
+
+  <!-- 聊天消息 -->
   <div v-if="false" class="chat">
     <MessageBar />
   </div>
@@ -148,8 +156,8 @@ import MessageBar from '@/components/MessageBar.vue'
 const inputCotent = ref('')   //搜索输入
 const data = ref(null) //招聘数据
 const error = ref()
-const type = ref(1)
-const page = ref(1)
+const type = ref(1)   //搜索岗位类型：1为游客，2为已登录用户
+const page = ref(1)   //分页查询
 const cities = ref([
   '北京',
   '上海',
@@ -167,7 +175,7 @@ const cities = ref([
   '青岛',
   '大连'
 ])
-const companyadv = ref([
+const companyadv = ref([  //公司广告
   {
     src: "https://sxsimg.xiaoyuanzhao.com/adservice/image/20240401154657DPh9tsZb6QUaNJ2TXv.jpg",
     name: "特斯拉",
@@ -201,21 +209,23 @@ const companyadv = ref([
     name: "京东",
   },
 ]);
+
+// 获取招聘岗位
 const fetchData = async (way) => {
   try {
-    const response = await axios.get('http://100.92.39.61:8000/api/recruit/list_recruit', {
+    const response = await axios.get('/api/recruit/list_recruit', {
       params: {
         type: way,
         page: page,
       }
     })
     data.value = response.data
-    console.log(data.value)
   } catch (err) {
     error.value = err.message
   }
 }
 
+// 更改搜索岗位类型
 const changeType = async () => {
   try {
     if(type.value === 1) {
@@ -230,19 +240,20 @@ const changeType = async () => {
   }
 }
 
+// 获取下一页数据
 const fetchNewData = async () => {
   try {
     page.value = page.value + 1;
-    console.log(page.value);
     fetchData(type.value, page.value);
   } catch (err) {
     error.value = err.message
   }
 }
 
+// 根据城市搜索岗位
 const searchJob = async (cityName) => {
   try {
-    const response = await axios.get('http://100.92.39.61:8000/api/recruit/search', {
+    const response = await axios.get('/api/recruit/search', {
       params: {
         query: cityName,
       }
@@ -253,9 +264,10 @@ const searchJob = async (cityName) => {
   }
 }
 
+// 高级搜索
 const onSearch = async () => {
   try {
-    const response = await axios.get('http://100.92.39.61:8000/api/recruit/search', {
+    const response = await axios.get('/api/recruit/highsearch', {
       params: {
         query: this.searchContent,
       }
