@@ -7,11 +7,7 @@
         <div
           class="mr-1 flex items-center justify-center overflow-hidden rounded-md bg-orange-300 shadow"
         >
-          <img
-            src="https://images.unsplash.com/photo-1718964313551-420f92249238?q=80&w=3084&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="123"
-            class="w-full object-cover"
-          />
+          <img :src="img_url" alt="123" class="w-full object-cover" />
         </div>
         <div class="col-span-8 mr-1 grid grid-rows-3 rounded-md bg-orange-300 shadow">
           <div class="row-span-2 grid grid-cols-[auto_repeat(11,minmax(0,1fr))] bg-pink-200">
@@ -40,4 +36,26 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { onMounted, ref } from 'vue'
+import axios from 'axios'
+
+const data = ref(null)
+let img_url = ref(null)
+
+const fetchData = async () => {
+  try {
+    const res = await axios.get('http://8.130.25.189:8000/api/enterprise/info?enterprise_id=1')
+    data.value = res.data
+    img_url.value = data.value.icon_url
+
+    console.log('获取成功', data.value.icon_url)
+  } catch (error) {
+    console.error('获取失败', error)
+  }
+}
+
+onMounted(() => {
+  fetchData()
+})
+</script>
