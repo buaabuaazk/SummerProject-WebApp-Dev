@@ -23,38 +23,14 @@
       <div class="flex h-16 justify-between">
         <div class="flex px-2 lg:px-0">
           <div class="flex flex-shrink-0 items-center">
-            <img
-              class="h-20 w-auto"
-              src="@/assets/logo.png"
-              alt="Your Company"
-            />
+            <img class="h-20 w-auto" src="@/assets/logo.png" alt="Your Company" />
           </div>
           <div class="hidden lg:ml-6 lg:flex lg:space-x-8">
             <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-            <a
-              id="link1"
-              href="/"
-              class="mouse-not-on"
-              >招聘信息</a
-            >
-            <a
-              id="link2"
-              href="/PostView"
-              class="mouse-not-on"
-              >社区动态</a
-            >
-            <a
-              id="link3"
-              href="/unknown"
-              class="mouse-not-on"
-              >我的关注</a
-            >
-            <a
-              id="link4"
-              href="/CorporationPost"
-              class="mouse-not-on"
-              >我的企业</a
-            >
+            <a id="link1" href="/" class="mouse-not-on">招聘信息</a>
+            <a id="link2" href="/PostView" class="mouse-not-on">社区动态</a>
+            <a id="link3" href="/unknown" class="mouse-not-on">我的关注</a>
+            <a id="link4" href="/CorporationInfo" class="mouse-not-on">我的企业</a>
           </div>
         </div>
         <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
@@ -103,11 +79,7 @@
               >
                 <span class="absolute -inset-1.5" />
                 <span class="sr-only">Open user menu</span>
-                <img
-                  class="h-8 w-8 rounded-full"
-                  src="@/assets/avatar2.png"
-                  alt=""
-                />
+                <img class="h-8 w-8 rounded-full" src="@/assets/avatar2.png" alt="" />
               </MenuButton>
             </div>
             <transition
@@ -128,7 +100,7 @@
                     >个人中心</a
                   >
                 </MenuItem>
-                
+
                 <MenuItem v-slot="{ active }">
                   <a
                     href="#"
@@ -136,7 +108,7 @@
                     >退出登录</a
                   >
                 </MenuItem>
-                
+
                 <MenuItem v-slot="{ active }">
                   <a
                     href="#"
@@ -182,11 +154,7 @@
       <div class="border-t border-gray-200 pb-3 pt-4">
         <div class="flex items-center px-4">
           <div class="flex-shrink-0">
-            <img
-              class="h-10 w-10 rounded-full"
-              src="@/assets/avatar1.png"
-              alt=""
-            />
+            <img class="h-10 w-10 rounded-full" src="@/assets/avatar1.png" alt="" />
           </div>
           <div class="ml-3">
             <div class="text-base font-medium text-gray-800">Tom Cook</div>
@@ -208,14 +176,14 @@
             class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
             >个人中心</DisclosureButton
           >
-          
+
           <DisclosureButton
             as="a"
             href="#"
             class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
             >退出登录</DisclosureButton
           >
-          
+
           <DisclosureButton
             as="a"
             href="#"
@@ -246,28 +214,28 @@ import { onMounted } from 'vue'
 
 onMounted(() => {
   // 获取当前URL的查询字符串
-  const path = window.location.pathname;
+  const path = window.location.pathname
   // 解析查询字符串为URLSearchParams对象
   //const urlParams = new URLSearchParams(queryString);
   // 获取指定的查询参数值
   //const styleParam = urlParams.get('style');
   // 获取链接元素
-  const link = document.getElementById('link2');
-  console.log("start")
+  const link = document.getElementById('link2')
+  console.log('start')
   console.log(path)
-  
-  const links = document.querySelectorAll('a'); // 选择所有的 <a> 标签
-  const specificLinks = Array.from(links).filter(link => {
-    return link.classList.contains('mouse-not-on'); // 只选择原先类名为 mouse-not-on 的 <a> 标签
-  });
+
+  const links = document.querySelectorAll('a') // 选择所有的 <a> 标签
+  const specificLinks = Array.from(links).filter((link) => {
+    return link.classList.contains('mouse-not-on') // 只选择原先类名为 mouse-not-on 的 <a> 标签
+  })
 
   specificLinks.forEach((link) => {
     if (link.getAttribute('href') === path) {
-      link.classList.remove('mouse-not-on'); // 移除原先的类名
-      link.classList.add('mouse-on'); // 添加新的类名
+      link.classList.remove('mouse-not-on') // 移除原先的类名
+      link.classList.add('mouse-on') // 添加新的类名
     }
-  });
-});
+  })
+})
 </script>
 
 <style scoped>
@@ -282,7 +250,7 @@ onMounted(() => {
 }
 
 .mouse-not-on:hover {
-  border-color: #B2B2B2; /* hover:border-gray-300 的边框颜色 */
+  border-color: #b2b2b2; /* hover:border-gray-300 的边框颜色 */
   color: #333333; /* hover:text-gray-700 的文本颜色 */
 }
 
@@ -291,7 +259,7 @@ onMounted(() => {
   align-items: center; /* 设置元素中的内容垂直居中 */
   border-bottom-width: 0.1rem; /* 设置下边框宽度为2px（border-b-2） */
   border-bottom-style: solid; /* 设置下边框样式为实线（border-b-2） */
-  border-bottom-color:rgb(27, 62, 236); /* 设置下边框颜色为靛蓝色500（border-indigo-500） */
+  border-bottom-color: rgb(27, 62, 236); /* 设置下边框颜色为靛蓝色500（border-indigo-500） */
   padding-left: 1px; /* 设置左内边距为1px（px-1） */
   padding-top: 1px; /* 设置顶部内边距为1px（pt-1） */
   font-size: 0.875rem; /* 设置字体大小为0.875rem（text-sm） */
