@@ -11,6 +11,14 @@ const router = createRouter({
       }
     },
     {
+      path: '/test',
+      name: 'test',
+      component: () => import('@/views/CorporationInfo.vue'),
+      meta: {
+        requireAuth: false
+      }
+    },
+    {
       path: '/personalInfo',
       name: 'PersonalInfo',
       component: () => import('@/views/PersonalInfo.vue'),
@@ -24,7 +32,11 @@ const router = createRouter({
       name: 'ApplymentAction',
       component: () => import('@/views/ApplymentAction.vue'),
       meta: {
+<<<<<<< HEAD
         requireAuth: false,
+=======
+        requireAuth: true,
+>>>>>>> wwt
         title: '应聘人员列表查看' //企业管理员发布一个岗位招聘信息后，有多个人前来投递简历，在此页面处理应聘请求
       }
     },
@@ -74,6 +86,27 @@ const router = createRouter({
       }
     },
     {
+<<<<<<< HEAD
+=======
+      path: '/JobInfo',
+      name: 'JobInfo',
+      component: () => import('@/views/JobInfo.vue'),
+      meta: {
+        requireAuth: true,
+        title: '岗位信息' //某一个岗位的详细信息
+      }
+    },
+    {
+      path: '/LoginAndRegister',
+      name: 'LoginAndRegister',
+      component: () => import('@/views/LoginAndRegister.vue'),
+      meta: {
+        requireAuth: false,
+        title: '登录注册'
+      }
+    },
+    {
+>>>>>>> wwt
       path: '/MessageCenter',
       name: 'MessageCenter',
       component: () => import('@/views/MessageCenter.vue'),
@@ -117,6 +150,7 @@ const router = createRouter({
         requireAuth: true,
         title: '简历优化'
       }
+<<<<<<< HEAD
     },
     {
       path: '/sos',
@@ -152,6 +186,8 @@ const router = createRouter({
       meta: {
         requireAuth: false
       }
+=======
+>>>>>>> wwt
     }
   ]
 })
