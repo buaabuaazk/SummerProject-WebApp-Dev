@@ -18,7 +18,8 @@ instance.interceptors.request.use(
 
     const popupError = () => {
       toast({
-        title: '服务器或网络异常'
+        title: '服务器或网络异常',
+        variant: 'destructive'
       })
     }
     console.log('test')
@@ -37,7 +38,8 @@ instance.interceptors.response.use(
     const popupError = () => {
       toast({
         title: '注册失败',
-        description: error.response.data.error
+        description: error.response.data.error,
+        variant: 'destructive'
       })
     }
     _.debounce(popupError, 1000)()

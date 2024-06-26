@@ -23,7 +23,9 @@ export default async function register({ name, email, password, password2, vcode
       password_2: password2,
       vcode
     })
+    return true
   } catch (error) {
     console.log('🚀 ~ file: register.js:12 ~ register ~ error:', error)
+    return false
   }
 }
