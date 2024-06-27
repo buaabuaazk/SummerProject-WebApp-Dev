@@ -19,7 +19,9 @@ export default async function login(user_email, password) {
 
     const token = res.data.access
     tokenStore.setToken(`Bearer ${token}`)
+    return true
   } catch (error) {
     console.log('🚀 ~ file: login.js:20 ~ login ~ error:', error)
+    return false
   }
 }

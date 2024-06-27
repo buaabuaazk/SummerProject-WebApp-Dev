@@ -30,7 +30,7 @@
             </div>
             <Input id="password" type="password" required v-model="password" />
           </div>
-          <Button type="submit" class="w-full" @click="login(user_email, password)"> Login </Button>
+          <Button type="submit" class="w-full" @click="myLogin()"> Login </Button>
         </div>
         <div class="mt-4 text-center text-sm">
           Don't have an account?
@@ -55,5 +55,11 @@ const user_email = ref('')
 const password = ref('')
 const goToRegister = () => {
   router.push('/sos/register')
+}
+const myLogin = async () => {
+  const res = await login(user_email.value, password.value)
+  if (res === true) {
+    router.push('/')
+  }
 }
 </script>

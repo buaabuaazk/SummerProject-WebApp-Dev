@@ -105,7 +105,7 @@
                 <span class="sr-only">Open user menu</span>
                 <img
                   class="h-8 w-8 rounded-full"
-                  src="@/assets/avatar2.png"
+                  src="@/assets/avatar1.png"
                   alt=""
                 />
               </MenuButton>
@@ -132,6 +132,7 @@
                 <MenuItem v-slot="{ active }">
                   <a
                     href="#"
+                    @click="logout"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
                     >退出登录</a
                   >
@@ -140,6 +141,7 @@
                 <MenuItem v-slot="{ active }">
                   <a
                     href="#"
+                    @click="cancelAccount"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
                     >注销账号</a
                   >
@@ -212,6 +214,7 @@
           <DisclosureButton
             as="a"
             href="#"
+            @click="logout"
             class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
             >退出登录</DisclosureButton
           >
@@ -219,6 +222,7 @@
           <DisclosureButton
             as="a"
             href="#"
+            @click="cancelAccount"
             class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
             >注销账号</DisclosureButton
           >
@@ -229,6 +233,7 @@
 </template>
 
 <script setup>
+import router from '@/router';
 import {
   Disclosure,
   DisclosureButton,
@@ -268,6 +273,14 @@ onMounted(() => {
     }
   });
 });
+function logout(){
+  //待实现，清空当前登录的token和userid等
+  router.push('/sos/login')
+}
+function cancelAccount(){
+  //待实现，请求后端删除账号数据，清空当前登录的token和userid等
+  router.push('/sos/login')
+}
 </script>
 
 <style scoped>
