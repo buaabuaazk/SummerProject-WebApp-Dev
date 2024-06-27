@@ -40,11 +40,12 @@ instance.interceptors.response.use(
     const popupError = () => {
       toast({
         title: '请求错误',
-        description: error.response.data.error,
+        description: error,
         variant: 'destructive'
       })
     }
     _.debounce(popupError, 1000)()
+    // popupError()
     return Promise.reject(error)
   }
 )

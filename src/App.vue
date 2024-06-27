@@ -3,10 +3,7 @@
     <Header class="sticky top-0 z-50"></Header>
     <RouterView class="flex-1 flex flex-col justify-center"></RouterView>
     <!-- <Footer></Footer> -->
-    <Toaster>
-      <AlertTitle>Heads up!</AlertTitle>
-      <AlertDescription> You can add components to your app using the cli. </AlertDescription>
-    </Toaster>
+    <Toaster> </Toaster>
   </div>
 </template>
 
