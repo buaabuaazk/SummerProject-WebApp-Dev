@@ -146,7 +146,8 @@ const router = createRouter({
       meta: {
         requireAuth: false,
         title: '职位详情'
-      }
+      },
+      props: true
     },
     {
       path: '/Corporation404',
