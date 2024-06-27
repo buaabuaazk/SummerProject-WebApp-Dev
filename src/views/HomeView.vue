@@ -220,7 +220,7 @@ const fetchData = async (way) => {
       data.value = response.data
     } else {
       data.value = data.value.concat(response.data)
-      console.log(data.value)
+      console.log(response.data.length)
     }
   } catch (err) {
     error.value = err.message
