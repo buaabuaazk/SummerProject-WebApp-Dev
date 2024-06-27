@@ -60,7 +60,7 @@
         </div>
       </a-carousel>
       <a-card class="advert-enterprise" style="border: #fafaf3;">
-        <a-card-grid class="company-adv w-[12.5%] flex flex-col justify-center" v-for="item in companyadv" :key="item.id">
+        <a-card-grid class="company-adv w-[12.5%] flex flex-col justify-center " v-for="item in companyadv" :key="item.id">
             <img :src="item.src" style="width: 3rem;" />
         </a-card-grid>
       </a-card>
@@ -83,11 +83,11 @@
         v-for="item in data"
         :key="item.id"
         :title="item.job_name"
-        @click="this.$router.push({name: 'JobInfo', params: {id:item.id}})"
+        @click="this.$router.push(`/jobInfo/${item.recruit_id}`)"
         style="width: 23rem; margin-right: 1.5rem"
       >
         <template #extra
-          ><a href="#">{{ item.job_salary }}</a></template
+          ><a href="#" style="color: red;">{{ item.job_salary }}</a></template
         >
         <div>
           <div class="advantege" style="display: flex">
@@ -95,7 +95,7 @@
               v-for="itemadv in item.job_advantage"
               :key="itemadv.id"
               type="text"
-              style="margin-right: 1rem; background: #fafaf3"
+              style="margin-right: 1rem; background: #f8f8f2"
               >{{ itemadv }}</a-button
             >
           </div>
@@ -118,7 +118,7 @@
           </div>
           <a-divider style="margin-bottom: 0" />
           <div class="enterprise-info" style="display: flex; margin-bottom: 0">
-            <img :src="item.enterprise_icon" style="width: 8rem; height: 6rem" />
+            <img :src="item.enterprise_icon" style="width: 8rem;object-fit: fill;" />
             <div style="margin-top: 1rem; margin-left: 2rem">
               <p>{{ item.enterprise_name }}</p>
               <p style="margin-top: 1rem">{{ item.enterprise_field }}</p>
@@ -213,13 +213,14 @@ const fetchData = async (way) => {
     const response = await axios.get('/api/recruit/list_recruit', {
       params: {
         type: way,
-        page: page
+        page: page.value
       }
     })
     if (page.value === 1) {
       data.value = response.data
     } else {
-      data.value = data.value.push(response.value)
+      data.value = data.value.concat(response.data)
+      console.log(data.value)
     }
   } catch (err) {
     error.value = err.message
@@ -245,7 +246,7 @@ const changeType = async () => {
 const fetchNewData = async () => {
   try {
     page.value = page.value + 1
-    fetchData(type.value, page.value)
+    await fetchData(type.value, page.value)
   } catch (err) {
     error.value = err.message
   }
@@ -280,7 +281,7 @@ const onSearch = async () => {
 }
 
 onMounted(() => {
-  fetchData(type, page.value)
+  fetchData(type.value, page.value)
 })
 </script>
 
