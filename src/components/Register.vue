@@ -219,14 +219,18 @@ const myRegister = async () => {
 
 const submitInterests = async () => {
   console.log('🚀 ~ file: Register.vue:246 ~ submitInterests ~ interest:', interest_ids)
-  let res = await axios.patch('/api/user/detail', {
-    tag_id: interest_ids
-  })
+  try{
 
-  console.log('🚀 ~ file: Register.vue:246 ~ submitInterests ~ res:', res.data)
-  if (res.data.code === 200) {
-    commonToast('success', 'Interests submitted successfully')
-    router.push('/')
+    let res = await axios.patch('/api/user/detail', {
+      tag_id: interest_ids
+    })
+    
+    console.log('🚀 ~ file: Register.vue:246 ~ submitInterests ~ res:', res.data)
+      commonToast('success', 'Interests submitted successfully')
+      router.push('/')
+  }catch(error){
+
+    console.log("🚀 ~ file: Register.vue:235 ~ submitInterests ~ error:", error)
   }
 }
 const gotoLogin = () => {
