@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-26 13:59:43
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-27 15:34:44
+ * @LastEditTime: 2024-06-27 15:58:26
  * @FilePath: /frontend1/src/views/Applyment2.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -136,7 +136,7 @@ onMounted(async ()=>{
    
     var config = {
     method: 'get',
-    url: 'http://8.130.25.189:8000/api/recruit/11/applicants/',
+    url: 'http://10.251.255.229/api/recruit/11/applicants/',
     headers: { 
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxOTQ5MzAwLCJpYXQiOjE3MTg5MjUzMDAsImp0aSI6IjM5NjAwMjI3ZGUzZDQ1YTY4MDYzZjFkYTg1ZGJjMGIwIiwidXNlcl9pZCI6MX0.Rm_tZnQ9zcg9qLwWtEAjdjIj0J6zo0SqFiWMdB5ntdQ', 
         },
