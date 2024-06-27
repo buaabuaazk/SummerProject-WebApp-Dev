@@ -15,7 +15,7 @@ export default async function login(user_email, password) {
       password
     })
 
-    console.log('🚀 ~ file: login.js:18 ~ login ~ res:', res)
+    console.log('🚀 ~ file: login.js:18 ~ login ~ res:', res.data)
 
     const token = res.data.access
     tokenStore.setToken(`Bearer ${token}`)
