@@ -258,13 +258,27 @@ const submit = () => {
   console.log('传过去的新数据是'+profile.value.degree)
   const formData = new FormData();
   //formData.append('user_id', 3);
-  formData.append('username',profile.value.username)
-  formData.append('degree',profile.value.degree)
-  formData.append('email',profile.value.email)
-  formData.append('first_name',profile.value.first_name)
-  formData.append('last_name',profile.value.last_name)
-  formData.append('blog',profile.value.blog)
-  formData.append('repo',profile.value.repo)
+  if (profile.value.username) {
+    formData.append('username',profile.value.username)
+  }
+  if (profile.value.degree) {
+    formData.append('degree',profile.value.degree)
+  }
+  if (profile.value.email) {
+    formData.append('email',profile.value.email)
+  }
+  if (profile.value.first_name) {
+    formData.append('first_name',profile.value.first_name)
+  }
+  if (profile.value.last_name) {
+    formData.append('last_name',profile.value.last_name)
+  }
+  if (profile.value.blog) {
+    formData.append('blog',profile.value.blog)
+  }
+  if (profile.value.repo) {
+    formData.append('repo',profile.value.repo)
+  }
   axios.patch('/api/user/detail', formData,{
       headers: {
         Authorization: tokenStore.getToken

@@ -108,7 +108,7 @@
 
                 <MenuItem v-slot="{ active }">
                   <a
-                    href="#"
+                    href="/sos/login"
                     @click="logout"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
                     >退出登录</a
@@ -191,7 +191,7 @@
 
           <DisclosureButton
             as="a"
-            href="#"
+            href="/sos/login"
             @click="logout"
             class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
             >退出登录</DisclosureButton
@@ -260,12 +260,13 @@ function ifLogin(){
   }
 }
 function logout(){
+  router.push('/sos/login')
   //待实现，清空当前登录的token和userid等
   console.log(tokenStore.getToken)
   localStorage.setItem('token',null)
   console.log(tokenStore.getToken)
   router.push('/sos/login')
-  router.push('/sos/login')
+  
 }
 function getAvatar(){
   console.log('11111ew'+tokenStore.getToken)
