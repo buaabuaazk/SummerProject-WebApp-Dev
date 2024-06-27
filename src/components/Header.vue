@@ -98,31 +98,54 @@
               <MenuItems
                 class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               >
-                <MenuItem v-slot="{ active }">
-                  <a
-                    href="/PersonalInfo"
-                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >个人中心</a
-                  >
-                </MenuItem>
+                <template v-if="isLogined()">
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="/PersonalInfo"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >个人中心</a
+                    >
+                  </MenuItem>
 
-                <MenuItem v-slot="{ active }">
-                  <a
-                    href="/sos/login"
-                    @click="logout"
-                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >退出登录</a
-                  >
-                </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="/sos/login"
+                      @click="logout"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >退出登录</a
+                    >
+                  </MenuItem>
 
-                <MenuItem v-slot="{ active }">
-                  <a
-                    href="#"
-                    @click="cancelAccount"
-                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >注销账号</a
-                  >
-                </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="#"
+                      @click="cancelAccount"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >注销账号</a
+                    >
+                  </MenuItem>
+                </template>
+                <template v-else>
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="/sos/login"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >登录</a
+                    >
+                  </MenuItem>
+                </template>
               </MenuItems>
             </transition>
           </Menu>
@@ -223,11 +246,18 @@ import {
 } from '@headlessui/vue'
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import avatar1 from '@/assets/avatar1.png';
+import avatar1 from '@/assets/avatar1.png'
 // 在这里使用 onMounted 钩子函数代替 mounted()
 import { onMounted } from 'vue'
 import useTokenStore from '@/stores/useTokenStore'
 const tokenStore = useTokenStore()
+const isLogined = () => {
+  if (tokenStore.getToken) {
+    return true
+  } else {
+    return false
+  }
+}
 onMounted(() => {
   // 获取当前URL的查询字符串
   const path = window.location.pathname
@@ -252,32 +282,30 @@ onMounted(() => {
     }
   })
 })
-function ifLogin(){
+function ifLogin() {
   console.log('call iflogin')
   console.log(tokenStore.getToken)
-  if(tokenStore.getToken==null||tokenStore.getToken==''){
+  if (tokenStore.getToken == null || tokenStore.getToken == '') {
     router.push('./sos/login')
     console.log('a1aa')
     logout()
     router.push('./sos/login')
   }
 }
-function logout(){
+function logout() {
   router.push('/sos/login')
   //待实现，清空当前登录的token和userid等
   console.log(tokenStore.getToken)
-  localStorage.setItem('token',null)
+  localStorage.setItem('token', null)
   console.log(tokenStore.getToken)
   router.push('/sos/login')
-  
 }
-function getAvatar(){
-  console.log('11111ew'+tokenStore.getToken)
-  if(tokenStore.getToken == null || tokenStore.getToken == ''){
+function getAvatar() {
+  console.log('11111ew' + tokenStore.getToken)
+  if (tokenStore.getToken == null || tokenStore.getToken == '') {
     //console.log('a1aa')
     return null
-  }
-  else{
+  } else {
     console.log(tokenStore.getToken)
     return avatar1
   }
