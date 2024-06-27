@@ -177,6 +177,10 @@ import CreateCorporation from '@/views/CreateCorporation.vue'
 import { EnvelopeIcon, MapPinIcon, PhoneIcon } from '@heroicons/vue/24/outline'
 import { PaperClipIcon } from '@heroicons/vue/20/solid'
 
+const props = defineProps({
+  enterprise: String
+})
+
 let test = defineModel()
 
 let isOpen = ref(false)
@@ -434,8 +438,9 @@ const info = ref({
 })
 
 onMounted(async () => {
+  const enterprise = localStorage.getItem('enterprise')
   await axios
-    .get('http://8.130.25.189:8000/api/enterprise/info?enterprise_id=1')
+    .get('http://8.130.25.189:8000/api/enterprise/info?enterprise_id=' + enterprise)
     .then((res) => {
       info.value.name = res.data.name
       info.value.icon_url = res.data.icon_url

@@ -86,6 +86,8 @@
                                   autocomplete="username"
                                   class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                   placeholder="janesmith"
+                                  v-model="formData.enterprise_name"
+                                  required
                                 />
                               </div>
                             </div>
@@ -103,6 +105,8 @@
                                 name="about"
                                 rows="3"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                v-model="formData.enterprise_description"
+                                required
                               />
                             </div>
                             <p class="mt-3 text-sm leading-6 text-gray-600">
@@ -429,6 +433,7 @@
                       <button
                         type="submit"
                         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        @click="submit"
                       >
                         Save
                       </button>
@@ -447,6 +452,14 @@
 <script setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { computed, ref } from 'vue'
+import useTokenStore from '@/stores/useTokenStore'
+
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const tokenStore = useTokenStore()
+
+const router = useRouter()
 
 let isOpen = ref(false)
 
@@ -455,5 +468,46 @@ function closeModal() {
 }
 function openModal() {
   isOpen.value = true
+}
+
+let formData = ref({
+  enterprise_name: '',
+  enterprise_logo: '',
+  enterprise_description: '',
+  enterprise_interested_id: [],
+  enterprise_recruit_list: [],
+  enterprise_field: ''
+})
+
+const submit = async () => {
+  await axios
+    .post('http://8.130.25.189:8000/api/enterprise/register', formData.value)
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+
+  let user_id = await axios
+    .get('http://8.130.25.189:8000/api/user/detail', {
+      headers: {
+        Authorization: tokenStore.getToken
+      }
+    })
+    .then((res) => {
+      console.log(res)
+      return res.data.user_id
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+
+  console.log(user_id)
+
+  await axios
+    .get('http://8.130.25.189:8000/api/profile?user_id=' + user_id)
+    .then((res) => localStorage.setItem('enterprise', res.data.enterprise))
+  router.push('/CorporationInfo')
 }
 </script>

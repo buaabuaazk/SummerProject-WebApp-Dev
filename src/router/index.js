@@ -180,7 +180,6 @@ router.beforeEach(async (to, from, next) => {
       .then((res) => {
         console.log(res)
         return res.data.user_id
-        // localStorage.setItem('enterprise_id', res.data.enterprise_id)
       })
       .catch((err) => {
         console.log(err)
@@ -192,12 +191,15 @@ router.beforeEach(async (to, from, next) => {
       .get('http://8.130.25.189:8000/api/profile?user_id=' + user_id)
       .then((res) => {
         console.log(res)
-        // localStorage.setItem('enterprise_id', res.data.enterprise_id)
+        if (res.data.enterprise == null) next({ name: 'noCorporation' })
+        else {
+          localStorage.setItem('enterprise', res.data.enterprise)
+          next()
+        }
       })
       .catch((err) => {
         console.log(err)
       })
-    next({ name: 'noCorporation' })
   } else {
     next()
   }
