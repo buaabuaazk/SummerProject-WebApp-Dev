@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-24 14:29:21
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-27 15:10:30
+ * @LastEditTime: 2024-06-27 15:32:26
  * @FilePath: /frontend/src/views/Recruitment.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -26,7 +26,7 @@
           round
           type="info"
           size="small"
-          @click="router.push('/JobInfo')"
+          @click="router.push(`/JobInfo/${scope.row.recruit_id}`)"
         >
           详情
         </el-button>
