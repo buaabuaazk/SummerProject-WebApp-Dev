@@ -59,32 +59,66 @@
         </div>
       </CardContent>
     </Card>
-    <Dialog>
-      <DialogTrigger as-child>
-        <Button variant="outline"> Edit Profile </Button>
-      </DialogTrigger>
-      <DialogContent class="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <div class="grid gap-4 py-4">
-          <div class="grid grid-cols-4 items-center gap-4">
-            <Label for="name" class="text-right"> Name </Label>
-            <Input id="name" value="Pedro Duarte" class="col-span-3" />
-          </div>
-          <div class="grid grid-cols-4 items-center gap-4">
-            <Label for="username" class="text-right"> Username </Label>
-            <Input id="username" value="@peduarte" class="col-span-3" />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit"> Save changes </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <AlertDialog>
+      <AlertDialogTrigger><div class="hidden" ref="openButton"></div></AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Hello!</AlertDialogTitle>
+          <AlertDialogDescription> 请填写你的兴趣方向： </AlertDialogDescription>
+        </AlertDialogHeader>
+        <TagsInput v-model="interests" class="h-8">
+          <TagsInputItem v-for="(interest, index) in interests" :key="index" :value="interest">
+            <TagsInputItemText />
+            <TagsInputItemDelete />
+          </TagsInputItem>
+        </TagsInput>
+        <Popover v-model:open="open">
+          <PopoverTrigger as-child>
+            <Button
+              variant="outline"
+              role="combobox"
+              :aria-expanded="open"
+              class="w-[200px] justify-between"
+            >
+              {{ 'Select interesting...' }}
+              <CaretSortIcon class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-[200px] p-0">
+            <Command>
+              <CommandInput class="h-9" placeholder="Search interesting..." />
+              <CommandEmpty>没有其他选项.</CommandEmpty>
+              <CommandList>
+                <CommandGroup>
+                  <CommandItem
+                    v-for="{ tag_id, name } in filteredInterestList"
+                    :key="tag_id"
+                    :value="name"
+                    @select="
+                      (ev) => {
+                        if (typeof ev.detail.value === 'string') {
+                          console.log(value, ev.detail.value)
+                          interests.push(ev.detail.value)
+                          interest_ids.push(tag_id)
+                        }
+                      }
+                    "
+                  >
+                    {{ name }}
+                    <CheckIcon
+                      :class="cn('ml-auto h-4 w-4', value === name ? 'opacity-100' : 'opacity-0')"
+                    />
+                  </CommandItem>
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        <AlertDialogFooter>
+          <AlertDialogAction @click="submitInterests()">Submit</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
 </template>
 
@@ -98,45 +132,65 @@ import getVerificationCode from '@/utils/getVerificationCode'
 import { useRouter } from 'vue-router'
 import login from '@/utils/login'
 import axios from '@/utils/request'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { CaretSortIcon, CheckIcon } from '@radix-icons/vue'
+
+import { cn } from '@/lib/utils'
 import {
   TagsInput,
-  TagsInputInput,
   TagsInputItem,
   TagsInputItemDelete,
   TagsInputItemText
 } from '@/components/ui/tags-input'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
-
-import { ref } from 'vue'
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import { CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
+import { ref, computed, onMounted } from 'vue'
+import commonToast from '@/utils/commonToast'
 const router = useRouter()
 const data = ref({
   name: 'q9kkk',
-  email: '20374319@buaa.edu.cn',
+  email: '21373443@buaa.edu.cn',
   password: 'testfor1',
   password2: 'testfor1',
   vcode: '123456'
 })
 
+onMounted(async () => {
+  let res = await axios.get('/api/tag')
+  const data = res.data
+  console.log('🚀 ~ file: Register.vue:173 ~ onMounted ~ data:', data)
+  interestList = data
+})
 const vcodeStatus = ref(false)
 const remainingTime = ref(60)
+const value = ref('')
+const open = ref(false)
+
+const interests = ref([])
+const interest_ids = []
+let interestList = []
+const filteredInterestList = computed(() =>
+  interestList.filter((i) => !interests.value.includes(i.name))
+)
 
 const checkPassword = (password, password2) => {
   if (password !== password2) {
     console.log('🚀 ~ file: Register.vue:57 ~ checkPassword ~ password: password != password2')
   }
 }
-const getVcode = (email) => {
+const getVcode = async (email) => {
   console.log('🚀 ~ file: Register.vue:87 ~ getVcode ~ email:', email)
 
-  getVerificationCode(email)
+  await getVerificationCode(email)
   vcodeStatus.value = true
   let timer = setInterval(() => {
     if (remainingTime.value) {
@@ -151,32 +205,31 @@ const getVcode = (email) => {
   }, 60000)
 }
 
-const modal = ref(null)
-const modelValue = ref(['Apple', 'Banana'])
+const openButton = ref(null)
 const myRegister = async () => {
   const res = await register(data.value)
   if (res === true) {
-    const res = login(data.value.email, data.value.password)
+    const res = await login(data.value.email, data.value.password)
     if (res === true) {
-      openModal()
+      openButton.value.click()
     }
   }
+  // openButton.value.click()
 }
 
+const submitInterests = async () => {
+  console.log('🚀 ~ file: Register.vue:246 ~ submitInterests ~ interest:', interest_ids)
+  let res = await axios.patch('/api/user/detail', {
+    tag_id: interest_ids
+  })
+
+  console.log('🚀 ~ file: Register.vue:246 ~ submitInterests ~ res:', res.data)
+  if (res.data.code === 200) {
+    commonToast('success', 'Interests submitted successfully')
+    router.push('/')
+  }
+}
 const gotoLogin = () => {
   router.push('/sos/login')
-}
-
-const interests = ref([])
-const submitInterest = async () => {
-  // let res = await axios.post('/api/interest', {
-  //   interests: interests.value
-  // })
-  modal.value.showModal()
-  router.push('/')
-}
-const openModal = () => {
-  console.log(modal.value)
-  modal.value.showModal()
 }
 </script>

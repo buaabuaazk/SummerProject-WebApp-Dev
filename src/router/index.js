@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import axios from 'axios'
+import useTokenStore from '@/stores/useTokenStore'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -29,13 +32,25 @@ const router = createRouter({
       }
     },
     {
-      path: '/CorporationInfo',
+      path: '/CorporationInfo/',
+      name: 'CorporationInfo2',
+      component: () => import('@/views/CorporationInfo.vue'),
+      meta: {
+        requireAuth: true,
+        requireEnterprise: true,
+        title: '企业公开信息展示'
+      },
+      props: true
+    },
+    {
+      path: '/CorporationInfo/:id',
       name: 'CorporationInfo',
       component: () => import('@/views/CorporationInfo.vue'),
       meta: {
         requireAuth: true,
         title: '企业公开信息展示'
-      }
+      },
+      props: true
     },
     {
       path: '/CorporationManage',
@@ -142,7 +157,22 @@ const router = createRouter({
       meta: {
         requireAuth: false,
         title: '职位详情'
+      },
+      props: true
+    },
+    {
+      path: '/job-detail/:id',
+      name: 'JobDetail',
+      component: () => import('@/components/Corporation/JobDetail.vue'),
+      meta: {
+        requireAuth: false,
+        title: '职位详情2'
       }
+    },
+    {
+      path: '/Corporation404',
+      name: 'noCorporation',
+      component: () => import('@/components/Corporation/CorNotIn.vue')
     },
     //404页面，需要放在最后
     {
@@ -156,9 +186,40 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   if (to.meta.requireAuth && !localStorage.getItem('token')) {
     next({ name: 'Login' })
+  } else if (to.meta.requireEnterprise) {
+    const tokenStore = useTokenStore()
+    console.log(tokenStore.getToken)
+    let user_id = await axios
+      .get('http://8.130.25.189:8000/api/user/detail', {
+        headers: {
+          Authorization: tokenStore.getToken
+        }
+      })
+      .then((res) => {
+        console.log(res)
+        return res.data.user_id
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+
+    console.log(user_id)
+
+    await axios
+      .get('http://8.130.25.189:8000/api/profile?user_id=' + user_id)
+      .then((res) => {
+        console.log(res)
+        if (res.data.enterprise == null) next({ name: 'noCorporation' })
+        else {
+          next()
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   } else {
     next()
   }

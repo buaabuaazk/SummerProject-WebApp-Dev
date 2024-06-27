@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-27 09:22:45
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-27 09:42:56
+ * @LastEditTime: 2024-06-27 12:03:15
  * @FilePath: /frontend1/tailwind.config.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -98,5 +98,4 @@ module.exports = {
     }
   },
   plugins: [animate]
-  //plugins: [animate, require('daisyui')]
 }

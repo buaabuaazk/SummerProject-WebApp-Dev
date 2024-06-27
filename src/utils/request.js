@@ -2,11 +2,13 @@ import axios from 'axios'
 import { useToast } from '@/components/ui/toast/use-toast'
 const { toast } = useToast()
 import _ from 'loadsh'
+import useTokenStore from '@/stores/useTokenStore'
+const tokenStore = useTokenStore()
 const instance = axios.create({
   baseURL:
-    import.meta.env.MODE === 'development' ? 'http://8.130.25.189:8000' : 'http://10.251.255.229',
+    import.meta.env.MODE === 'development' ? 'http://8.130.25.189:8000/' : 'http://10.251.255.229',
   timeout: 3000,
-  headers: { Authorization: localStorage.getItem('token') }
+  headers: { Authorization: tokenStore.getToken }
 })
 //请求拦截
 instance.interceptors.request.use(
@@ -37,12 +39,13 @@ instance.interceptors.response.use(
 
     const popupError = () => {
       toast({
-        title: '注册失败',
-        description: error.response.data.error,
+        title: '请求错误',
+        description: error,
         variant: 'destructive'
       })
     }
     _.debounce(popupError, 1000)()
+    // popupError()
     return Promise.reject(error)
   }
 )

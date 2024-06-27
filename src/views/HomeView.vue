@@ -10,11 +10,11 @@
     <div class="search-form">
       <a-input-search
         v-model:value="inputCotent"
-        placeholder="input search text"
-        enter-button="Search"
+        placeholder="新发现"
+        enter-button
         size="large"
         @search="onSearch"
-        style="width: 40rem; margin-left: 30rem"
+        style="width: 30rem; margin-left: 30rem"
       />
     </div>
   </div>
@@ -33,17 +33,17 @@
       </a-card>
     </div>
     <div class="advert-contanier">
-      <a-carousel autoplay style="width: 50rem">
+      <a-carousel autoplay style="width: 50rem; height: 14rem;">
         <div>
           <img
             src="https://img2.baidu.com/it/u=1350586071,1444048650&fm=253&fmt=auto&app=120&f=JPEG?w=1215&h=621"
-            style="width: 50rem; height: 13rem"
+            style="width: 50rem;height: 14rem"
           />
         </div>
         <div>
           <img
             src="https://img0.baidu.com/it/u=3718556516,3058635220&fm=253&fmt=auto&app=138&f=PNG?w=499&h=320"
-            style="width: 50rem; height: 13rem"
+            style="width: 50rem; height: 14rem"
           />
         </div>
         <div>
@@ -59,17 +59,11 @@
           />
         </div>
       </a-carousel>
-      <div class="advert-enterprise">
-        <a-card>
-          <a-card-grid class="company-adv" v-for="item in companyadv" :key="item.id">
-              <img
-                :src="item.src"
-                style="width: 3rem; height: 1.5rem;"
-              />
-              <p>{{item.name}}</p>
-          </a-card-grid>
-        </a-card>
-      </div>
+      <a-card class="advert-enterprise" style="border: #fafaf3;">
+        <a-card-grid class="company-adv w-[12.5%] flex flex-col justify-center " v-for="item in companyadv" :key="item.id">
+            <img :src="item.src" style="width: 3rem;" />
+        </a-card-grid>
+      </a-card>
     </div>
   </div>
 
@@ -89,10 +83,11 @@
         v-for="item in data"
         :key="item.id"
         :title="item.job_name"
+        @click="this.$router.push(`/jobInfo/${item.recruit_id}`)"
         style="width: 23rem; margin-right: 1.5rem"
       >
         <template #extra
-          ><a href="#">{{ item.job_salary }}</a></template
+          ><a href="#" style="color: red;">{{ item.job_salary }}</a></template
         >
         <div>
           <div class="advantege" style="display: flex">
@@ -100,7 +95,7 @@
               v-for="itemadv in item.job_advantage"
               :key="itemadv.id"
               type="text"
-              style="margin-right: 1rem; background: #fafaf3"
+              style="margin-right: 1rem; background: #f8f8f2"
               >{{ itemadv }}</a-button
             >
           </div>
@@ -123,7 +118,7 @@
           </div>
           <a-divider style="margin-bottom: 0" />
           <div class="enterprise-info" style="display: flex; margin-bottom: 0">
-            <img :src="item.enterprise_icon" style="width: 8rem; height: 6rem" />
+            <img :src="item.enterprise_icon" style="width: 8rem;object-fit: fill;" />
             <div style="margin-top: 1rem; margin-left: 2rem">
               <p>{{ item.enterprise_name }}</p>
               <p style="margin-top: 1rem">{{ item.enterprise_field }}</p>
@@ -132,7 +127,7 @@
         </div>
       </a-card>
     </div>
-    <a-button @click="fetchNewData()" style="margin-left: 30rem;">查看更多</a-button>
+    <a-button @click="fetchNewData()" style="margin-left: 30rem">查看更多</a-button>
   </div>
 
   <!-- 聊天消息 -->
@@ -145,6 +140,7 @@
 import { ref } from 'vue'
 import axios from '@/utils/request'
 import { onMounted } from 'vue'
+
 import {
   RightOutlined,
   EnvironmentOutlined,
@@ -153,11 +149,11 @@ import {
 } from '@ant-design/icons-vue'
 import MessageBar from '@/components/MessageBar.vue'
 
-const inputCotent = ref('')   //搜索输入
+const inputCotent = ref('') //搜索输入
 const data = ref(null) //招聘数据
 const error = ref()
-const type = ref(1)   //搜索岗位类型：1为游客，2为已登录用户
-const page = ref(1)   //分页查询
+const type = ref(1) //搜索岗位类型：1为游客，2为已登录用户
+const page = ref(1) //分页查询
 const cities = ref([
   '北京',
   '上海',
@@ -175,40 +171,41 @@ const cities = ref([
   '青岛',
   '大连'
 ])
-const companyadv = ref([  //公司广告
+const companyadv = ref([
+  //公司广告
   {
-    src: "https://sxsimg.xiaoyuanzhao.com/adservice/image/20240401154657DPh9tsZb6QUaNJ2TXv.jpg",
-    name: "特斯拉",
+    src: 'https://sxsimg.xiaoyuanzhao.com/adservice/image/20240401154657DPh9tsZb6QUaNJ2TXv.jpg',
+    name: '特斯拉'
   },
   {
-    src: "https://sxsimg.xiaoyuanzhao.com/adservice/image/20230721134844VPGvg5NGpKms7sYnq3.png",
-    name: "快手",
+    src: 'https://sxsimg.xiaoyuanzhao.com/adservice/image/20230721134844VPGvg5NGpKms7sYnq3.png',
+    name: '快手'
   },
   {
-    src: "https://sxsimg.xiaoyuanzhao.com/adservice/image/20231018111500FmIaJscA1iMaaCEwwU.jpg",
-    name: "奔驰",
+    src: 'https://sxsimg.xiaoyuanzhao.com/adservice/image/20231018111500FmIaJscA1iMaaCEwwU.jpg',
+    name: '奔驰'
   },
   {
-    src: "https://sxsimg.xiaoyuanzhao.com/adservice/image/20220923170708ehOpyk6uV1M15CheOD.png",
-    name: "荣耀",
+    src: 'https://sxsimg.xiaoyuanzhao.com/adservice/image/20220923170708ehOpyk6uV1M15CheOD.png',
+    name: '荣耀'
   },
   {
-    src: "https://sxsimg.xiaoyuanzhao.com/company_log/2021-08-28/2e649b6207a711eca853f6ecfe74f268.png",
-    name: "滴滴",
+    src: 'https://sxsimg.xiaoyuanzhao.com/company_log/2021-08-28/2e649b6207a711eca853f6ecfe74f268.png',
+    name: '滴滴'
   },
   {
-    src: "https://sxsimg.xiaoyuanzhao.com/company_log/2022-03-29/eb807166af4611ec9d9592855453b3eb.jpg",
-    name: "自如",
+    src: 'https://sxsimg.xiaoyuanzhao.com/company_log/2022-03-29/eb807166af4611ec9d9592855453b3eb.jpg',
+    name: '自如'
   },
   {
-    src: "https://sxsimg.xiaoyuanzhao.com/92/A5/92085822E6BAE187C864B784712E5DA5.png",
-    name: "有道",
+    src: 'https://sxsimg.xiaoyuanzhao.com/92/A5/92085822E6BAE187C864B784712E5DA5.png',
+    name: '有道'
   },
   {
-    src: "https://sxsimg.xiaoyuanzhao.com/04/11/04C44C9C7187F8CF2A5239FAC0B95511.jpg",
-    name: "京东",
-  },
-]);
+    src: 'https://sxsimg.xiaoyuanzhao.com/04/11/04C44C9C7187F8CF2A5239FAC0B95511.jpg',
+    name: '京东'
+  }
+])
 
 // 获取招聘岗位
 const fetchData = async (way) => {
@@ -216,10 +213,15 @@ const fetchData = async (way) => {
     const response = await axios.get('/api/recruit/list_recruit', {
       params: {
         type: way,
-        page: page,
+        page: page.value
       }
     })
-    data.value = response.data
+    if (page.value === 1) {
+      data.value = response.data
+    } else {
+      data.value = data.value.concat(response.data)
+      console.log(data.value)
+    }
   } catch (err) {
     error.value = err.message
   }
@@ -228,13 +230,13 @@ const fetchData = async (way) => {
 // 更改搜索岗位类型
 const changeType = async () => {
   try {
-    if(type.value === 1) {
-      type.value = 2;
+    if (type.value === 1) {
+      type.value = 2
     } else {
-      type.value = 1;
+      type.value = 1
     }
-    page.value = 1;
-    fetchData(type.value, page.value);
+    page.value = 1
+    fetchData(type.value, page.value)
   } catch (err) {
     error.value = err.message
   }
@@ -243,8 +245,8 @@ const changeType = async () => {
 // 获取下一页数据
 const fetchNewData = async () => {
   try {
-    page.value = page.value + 1;
-    fetchData(type.value, page.value);
+    page.value = page.value + 1
+    await fetchData(type.value, page.value)
   } catch (err) {
     error.value = err.message
   }
@@ -255,7 +257,7 @@ const searchJob = async (cityName) => {
   try {
     const response = await axios.get('/api/recruit/search', {
       params: {
-        query: cityName,
+        query: cityName
       }
     })
     data.value = response.data
@@ -269,7 +271,7 @@ const onSearch = async () => {
   try {
     const response = await axios.get('/api/recruit/highsearch', {
       params: {
-        query: this.searchContent,
+        query: this.searchContent
       }
     })
     data.value = response.data
@@ -279,14 +281,14 @@ const onSearch = async () => {
 }
 
 onMounted(() => {
-  fetchData(type, page.value)
+  fetchData(type.value, page.value)
 })
 </script>
 
 <style scoped>
 :deep(.slick-slide) {
   text-align: center;
-  height: 12rem;
+  height: 14rem;
   line-height: 12rem;
   background: #364d79;
   overflow: hidden;
@@ -316,7 +318,7 @@ onMounted(() => {
   width: 6rem;
   height: 3rem;
   text-align: center;
-  margin-right: 0.26rem;
+  margin-right: 0.27rem;
 }
 
 .job-list-container {
