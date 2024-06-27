@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/job-detail/${job?.id}`">
+  <router-link :to="`/job-detail/${job.id}`">
     <div
       class="w-full md:w-[16rem] 2xl:w-[18rem] h-[16rem] md:h-[18rem] bg-white flex flex-col justify-between shadow-lg rounded-md px-3 py-5"
     >
@@ -36,8 +36,12 @@
 <script setup>
 import { ref } from 'vue'
 
+// import { useRouter } from 'vue-router'
+// const router = useRouter()
+
 const props = defineProps({
   job: Object
+  // jobs: Array
 })
 
 let job = ref(props.job)
