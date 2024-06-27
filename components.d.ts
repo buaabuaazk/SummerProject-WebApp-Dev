@@ -56,6 +56,7 @@ declare module 'vue' {
     Header: typeof import('./src/components/Header.vue')['default']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
     JobCard: typeof import('./src/components/Corporation/JobCard.vue')['default']
+    JobDetail: typeof import('./src/components/Corporation/JobDetail.vue')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
     Login: typeof import('./src/components/Login.vue')['default']
     MessageBar: typeof import('./src/components/MessageBar.vue')['default']
