@@ -176,9 +176,13 @@ import CreateCorporation from '@/views/CreateCorporation.vue'
 
 import { EnvelopeIcon, MapPinIcon, PhoneIcon } from '@heroicons/vue/24/outline'
 import { PaperClipIcon } from '@heroicons/vue/20/solid'
+import useTokenStore from '@/stores/useTokenStore'
 
 const props = defineProps({
-  enterprise: String
+  id: {
+    type: [String, Number],
+    required: true
+  }
 })
 
 let test = defineModel()
@@ -438,7 +442,40 @@ const info = ref({
 })
 
 onMounted(async () => {
-  const enterprise = localStorage.getItem('enterprise')
+  // const enterprise = localStorage.getItem('enterprise')
+  let enterprise
+  if (props?.id) {
+    enterprise = props.id
+  } else {
+    const tokenStore = useTokenStore()
+    console.log(tokenStore.getToken)
+    let user_id = await axios
+      .get('http://8.130.25.189:8000/api/user/detail', {
+        headers: {
+          Authorization: tokenStore.getToken
+        }
+      })
+      .then((res) => {
+        console.log(res)
+        return res.data.user_id
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+
+    console.log(user_id)
+
+    await axios
+      .get('http://8.130.25.189:8000/api/profile?user_id=' + user_id)
+      .then((res) => {
+        console.log(res)
+        enterprise = res.data.enterprise
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
   await axios
     .get('http://8.130.25.189:8000/api/enterprise/info?enterprise_id=' + enterprise)
     .then((res) => {

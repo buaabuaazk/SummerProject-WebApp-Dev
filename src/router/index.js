@@ -32,14 +32,25 @@ const router = createRouter({
       }
     },
     {
-      path: '/CorporationInfo',
-      name: 'CorporationInfo',
+      path: '/CorporationInfo/',
+      name: 'CorporationInfo2',
       component: () => import('@/views/CorporationInfo.vue'),
       meta: {
         requireAuth: true,
         requireEnterprise: true,
         title: '企业公开信息展示'
-      }
+      },
+      props: true
+    },
+    {
+      path: '/CorporationInfo/:id',
+      name: 'CorporationInfo',
+      component: () => import('@/views/CorporationInfo.vue'),
+      meta: {
+        requireAuth: true,
+        title: '企业公开信息展示'
+      },
+      props: true
     },
     {
       path: '/CorporationManage',
@@ -149,6 +160,15 @@ const router = createRouter({
       }
     },
     {
+      path: '/job-detail/:id',
+      name: 'JobDetail',
+      component: () => import('@/components/Corporation/JobDetail.vue'),
+      meta: {
+        requireAuth: false,
+        title: '职位详情2'
+      }
+    },
+    {
       path: '/Corporation404',
       name: 'noCorporation',
       component: () => import('@/components/Corporation/CorNotIn.vue')
@@ -193,7 +213,6 @@ router.beforeEach(async (to, from, next) => {
         console.log(res)
         if (res.data.enterprise == null) next({ name: 'noCorporation' })
         else {
-          localStorage.setItem('enterprise', res.data.enterprise)
           next()
         }
       })
