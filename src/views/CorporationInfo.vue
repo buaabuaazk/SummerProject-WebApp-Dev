@@ -14,6 +14,16 @@
             title="Edit"
             containerStyles="py-1.5 px-3 md:px-5 focus:outline-none bg-blue-600  hover:bg-blue-700 text-white rounded text-sm md:text-base border border-blue-600"
           />
+          <CustomButton
+            @click="jump"
+            title="招聘管理"
+            containerStyles="py-1.5 px-3 md:px-5 focus:outline-none bg-red-600  hover:bg-red-700 text-white rounded text-sm md:text-base border border-blue-600"
+          />
+          <CustomButton
+            @click="jump2"
+            title="应聘审核"
+            containerStyles="py-1.5 px-3 md:px-5 focus:outline-none bg-slate-600  hover:bg-slate-700 text-white rounded text-sm md:text-base border border-blue-600"
+          />
 
           <!-- <CustomButton
           title="Upload Job"
@@ -136,6 +146,9 @@ import CreateCorporation from '@/views/CreateCorporation.vue'
 import { EnvelopeIcon, MapPinIcon, PhoneIcon } from '@heroicons/vue/24/outline'
 import { PaperClipIcon } from '@heroicons/vue/20/solid'
 import useTokenStore from '@/stores/useTokenStore'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const props = defineProps({
   id: {
@@ -152,7 +165,16 @@ function closeModal() {
   isOpen.value = false
 }
 function openModal() {
+  // router.push('/Recruitment')
   isOpen.value = true
+}
+function jump() {
+  router.push('/Recruitment')
+  // isOpen.value = true
+}
+function jump2() {
+  router.push('/ApplymentAction')
+  // isOpen.value = true
 }
 
 const jobs = ref([
