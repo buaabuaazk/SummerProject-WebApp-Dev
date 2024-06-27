@@ -300,21 +300,18 @@
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div> -->
 
                       <div class="border-b border-gray-900/10 pb-12">
-                        <h2 class="text-base font-semibold leading-7 text-gray-900">
-                          Notifications
-                        </h2>
+                        <h2 class="text-base font-semibold leading-7 text-gray-900">次要信息</h2>
                         <p class="mt-1 text-sm leading-6 text-gray-600">
-                          We'll always let you know about important changes, but you pick what else
-                          you want to hear about.
+                          以下是一些企业感兴趣的行业信息选择👇🏻
                         </p>
 
                         <div class="mt-10 space-y-10">
                           <fieldset>
                             <legend class="text-sm font-semibold leading-6 text-gray-900">
-                              By Email
+                              业务领域选择
                             </legend>
                             <div class="mt-6 space-y-6">
                               <div class="relative flex gap-x-3">
@@ -328,10 +325,10 @@
                                 </div>
                                 <div class="text-sm leading-6">
                                   <label for="comments" class="font-medium text-gray-900"
-                                    >Comments</label
+                                    >前端开发</label
                                   >
                                   <p class="text-gray-500">
-                                    Get notified when someones posts a comment on a posting.
+                                    使用HTML、CSS和JavaScript创建网页应用的用户界面和用户体验
                                   </p>
                                 </div>
                               </div>
@@ -346,10 +343,10 @@
                                 </div>
                                 <div class="text-sm leading-6">
                                   <label for="candidates" class="font-medium text-gray-900"
-                                    >Candidates</label
-                                  >
+                                    >后端开发
+                                  </label>
                                   <p class="text-gray-500">
-                                    Get notified when a candidate applies for a job.
+                                    涉及服务器端开发、管理数据库并确保网页应用的顺利运行
                                   </p>
                                 </div>
                               </div>
@@ -364,16 +361,104 @@
                                 </div>
                                 <div class="text-sm leading-6">
                                   <label for="offers" class="font-medium text-gray-900"
-                                    >Offers</label
+                                    >数据分析</label
                                   >
                                   <p class="text-gray-500">
-                                    Get notified when a candidate accepts or rejects an offer.
+                                    检查、清理和建模数据以发现有用信息并支持决策
+                                  </p>
+                                </div>
+                              </div>
+                              <div class="relative flex gap-x-3">
+                                <div class="flex h-6 items-center">
+                                  <input
+                                    id="offers"
+                                    name="offers"
+                                    type="checkbox"
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                  />
+                                </div>
+                                <div class="text-sm leading-6">
+                                  <label for="offers" class="font-medium text-gray-900"
+                                    >机器学习</label
+                                  >
+                                  <p class="text-gray-500">
+                                    人工智能的一个子集，涉及训练算法以根据数据做出预测或决策
+                                  </p>
+                                </div>
+                              </div>
+                              <div class="relative flex gap-x-3">
+                                <div class="flex h-6 items-center">
+                                  <input
+                                    id="offers"
+                                    name="offers"
+                                    type="checkbox"
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                  />
+                                </div>
+                                <div class="text-sm leading-6">
+                                  <label for="offers" class="font-medium text-gray-900"
+                                    >网络安全</label
+                                  >
+                                  <p class="text-gray-500">保护系统、网络和程序免受数字攻击</p>
+                                </div>
+                              </div>
+                              <div class="relative flex gap-x-3">
+                                <div class="flex h-6 items-center">
+                                  <input
+                                    id="offers"
+                                    name="offers"
+                                    type="checkbox"
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                  />
+                                </div>
+                                <div class="text-sm leading-6">
+                                  <label for="offers" class="font-medium text-gray-900"
+                                    >云计算</label
+                                  >
+                                  <p class="text-gray-500">
+                                    通过互联网提供计算服务，包括存储、处理和网络
+                                  </p>
+                                </div>
+                              </div>
+                              <div class="relative flex gap-x-3">
+                                <div class="flex h-6 items-center">
+                                  <input
+                                    id="offers"
+                                    name="offers"
+                                    type="checkbox"
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                  />
+                                </div>
+                                <div class="text-sm leading-6">
+                                  <label for="offers" class="font-medium text-gray-900"
+                                    >DevOps</label
+                                  >
+                                  <p class="text-gray-500">
+                                    将软件开发（Dev）和IT运维（Ops）结合起来的一套实践，以缩短开发生命周期
+                                  </p>
+                                </div>
+                              </div>
+                              <div class="relative flex gap-x-3">
+                                <div class="flex h-6 items-center">
+                                  <input
+                                    id="offers"
+                                    name="offers"
+                                    type="checkbox"
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                  />
+                                </div>
+                                <div class="text-sm leading-6">
+                                  <label for="offers" class="font-medium text-gray-900"
+                                    >用户体验设计</label
+                                  >
+                                  <p class="text-gray-500">
+                                    通过改善产品交互的可用性、可访问性和愉悦性来增强用户满意度
                                   </p>
                                 </div>
                               </div>
                             </div>
                           </fieldset>
-                          <fieldset>
+                          <!-- <fieldset>
                             <legend class="text-sm font-semibold leading-6 text-gray-900">
                               Push Notifications
                             </legend>
@@ -421,9 +506,9 @@
                                 >
                               </div>
                             </div>
-                          </fieldset>
+                          </fieldset> -->
                         </div>
-                      </div> -->
+                      </div>
                     </div>
 
                     <div class="mt-6 flex items-center justify-end gap-x-6">
