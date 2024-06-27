@@ -27,73 +27,32 @@
           <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium leading-6 text-gray-900">公司全名</dt>
             <dd class="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              <input type="text" class="flex-grow" v-model="info.name" />
+              <span class="flex-grow">{{ info.name }}</span>
               <!-- <span class="flex-grow">{{ info.name + '有限公司' }} </span> -->
-              <span class="ml-4 flex-shrink-0">
-                <button
-                  type="button"
-                  class="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500"
-                  @click="updateInfo()"
-                >
-                  Update
-                </button>
-              </span>
             </dd>
           </div>
           <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium leading-6 text-gray-900">公司主要业务</dt>
             <dd class="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               <span class="flex-grow">Backend Developer</span>
-              <span class="ml-4 flex-shrink-0">
-                <button
-                  type="button"
-                  class="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Update
-                </button>
-              </span>
             </dd>
           </div>
           <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium leading-6 text-gray-900">联系邮箱</dt>
             <dd class="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               <span class="flex-grow">{{ info.email }}</span>
-              <span class="ml-4 flex-shrink-0">
-                <button
-                  type="button"
-                  class="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Update
-                </button>
-              </span>
             </dd>
           </div>
           <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium leading-6 text-gray-900">平均薪资</dt>
             <dd class="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               <span class="flex-grow">$120,000</span>
-              <span class="ml-4 flex-shrink-0">
-                <button
-                  type="button"
-                  class="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Update
-                </button>
-              </span>
             </dd>
           </div>
           <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt class="text-sm font-medium leading-6 text-gray-900">企业介绍</dt>
             <dd class="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               <span class="flex-grow">{{ info.introduction }}</span>
-              <span class="ml-4 flex-shrink-0">
-                <button
-                  type="button"
-                  class="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Update
-                </button>
-              </span>
             </dd>
           </div>
           <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -113,14 +72,14 @@
                       type="button"
                       class="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500"
                     >
-                      Update
+                      Download
                     </button>
                     <span class="text-gray-200" aria-hidden="true">|</span>
                     <button
                       type="button"
                       class="rounded-md bg-white font-medium text-gray-900 hover:text-gray-800"
                     >
-                      Remove
+                      Preview
                     </button>
                   </div>
                 </li>
@@ -137,14 +96,14 @@
                       type="button"
                       class="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500"
                     >
-                      Update
+                      Download
                     </button>
                     <span class="text-gray-200" aria-hidden="true">|</span>
                     <button
                       type="button"
                       class="rounded-md bg-white font-medium text-gray-900 hover:text-gray-800"
                     >
-                      Remove
+                      Preview
                     </button>
                   </div>
                 </li>
