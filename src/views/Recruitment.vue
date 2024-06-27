@@ -26,7 +26,7 @@
           round
           type="info"
           size="small"
-          @click="this.$router.push('/JobInfo')"
+          @click="router.push('/JobInfo')"
         >
           详情
         </el-button>
@@ -93,7 +93,8 @@ import { ref } from 'vue'
 import dayjs from 'dayjs'
 import { onMounted } from 'vue';
 import axios from '../utils/request';
-
+import { useRouter } from 'vue-router';
+const router = useRouter()
 onMounted(async () => {
       console.log('页面加载完成！');
       console.log(tableData)

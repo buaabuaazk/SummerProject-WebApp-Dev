@@ -82,7 +82,7 @@
                 <img
                   class="h-10 w-10 rounded-full"
                   :src="getAvatar()"
-                  alt="未登录"
+                  alt="暂未登录"
                   @click="ifLogin()"
                 />
               </MenuButton>
@@ -253,8 +253,11 @@ onMounted(() => {
   })
 })
 function ifLogin(){
-  if(tokenStore.getToken==null){
-    //console.log('a1aa')
+  console.log('call iflogin')
+  console.log(tokenStore.getToken)
+  if(tokenStore.getToken==null||tokenStore.getToken==''){
+    router.push('./sos/login')
+    console.log('a1aa')
     logout()
     router.push('./sos/login')
   }
