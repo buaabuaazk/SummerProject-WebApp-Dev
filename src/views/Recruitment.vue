@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-24 14:29:21
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-27 14:57:37
+ * @LastEditTime: 2024-06-27 15:10:30
  * @FilePath: /frontend/src/views/Recruitment.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -98,7 +98,7 @@ const router = useRouter()
 onMounted(async () => {
       console.log('页面加载完成！');
       console.log(tableData)
-      let res=await axios.get('http://100.92.39.61:8000/api/recruit/11')
+      let res=await axios.get('http://100.92.39.61:8000/api/recruit/16')
       tableData.value=res.data
       console.log(res)
       //更新tabledata
@@ -181,9 +181,9 @@ const SubmitForm = ()=>{
   }
 
 
-  var axios = require('axios');
-var data = JSON.stringify({
-   "job_name": "虚拟网络研发工程师",
+
+  var data = JSON.stringify({
+   "job_name":form.value.job_name ,
    "job_salary": "35-45K",
    "job_advantage": {
       "优势1": "免费班车",
@@ -194,7 +194,7 @@ var data = JSON.stringify({
    "job_month": 6,
    "enterprise": 16,
    "created_at": "2024-06-29T10:10:34.700582+08:00",
-   "job_needed_people": 5,
+   "job_needed_people": 6,
    "job_interested_id": [
       1,
       2,
