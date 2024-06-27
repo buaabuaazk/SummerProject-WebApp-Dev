@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-24 14:29:21
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-25 15:52:28
+ * @LastEditTime: 2024-06-26 22:49:44
  * @FilePath: /frontend/src/views/Recruitment.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -15,11 +15,11 @@
 <!-- Timeline -->
 <template>
   <el-table :data="tableData" style="width: 100%" max-height="250">
-    <el-table-column fixed prop="name" label="岗位名称" width="300" />
-    <el-table-column prop="salary" label="岗位薪资" width="200" />
+    <el-table-column fixed prop="job_name" label="岗位名称" width="300" />
+    <el-table-column prop="job_salary" label="岗位薪资" width="200" />
     <el-table-column prop="number" label="招聘人数" width="150" />
-    <el-table-column prop="address" label="工作地点" width="500" />
-    <el-table-column prop="day" label="每周工作天数" width="150" />
+    <el-table-column prop="job_location" label="工作地点" width="500" />
+    <el-table-column prop="job_day" label="每周工作天数" width="150" />
     <el-table-column fixed="right" label="Operations" min-width="120">
       <template #default="scope">
         <el-button
@@ -84,15 +84,22 @@
       </div>
     </template>
   </el-dialog>
+
+
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
 import dayjs from 'dayjs'
 import { onMounted } from 'vue';
+import axios from '../utils/request';
 
-onMounted(() => {
+onMounted(async () => {
       console.log('页面加载完成！');
+      console.log(tableData)
+      let res=await axios.get('http://100.92.39.61:8000/api/recruit/4')
+      tableData.value=res.data
+      console.log(res)
       //更新tabledata
     });
 
@@ -113,78 +120,67 @@ const form = ref({
   "number":"",
   "job_day": "",
   "job_month":"",
-  "enterprise_logo": "https://sxsimg.xiaoyuanzhao.com/61/80/619CBC6070EA409410303439DDF9B480.png",
+  "job_request":"",
   "enterprise_field": "",
-  "recruiter": ""
+  "enterprise_icon":""
 })
 
-
-const tableData = ref([
-  
-  
-])
+const tableData = ref([])
 
 const SubmitForm = ()=>{
-  tableData.value.push({
-    date: form.value.job_name,
-    name: form.value.job_name,
-    salary: form.value.job_salary,
-    number: form.value.number,
-    address: form.value.job_location,
-    day: form.value.job_day
+    tableData.value.push({
+  'enterprise':1,
+  'introduction':'zty',
+  'name':'lzy',
+  'job_name':form.value.job_name,
+  'job_salary':form.value.job_salary,
+  'job_advantage':form.value.job_advantage,
+  'job_location':form.value.job_location,
+  'job_day':form.value.job_day,
+  'job_month':form.value.job_month,
+  'number':form.value.number,
+  'job_request':form.value.job_request,
+  'enterprise_field':form.value.enterprise_field,
+  'enterprise_icon':form.value.enterprise_icon
   })
+  
   dialogFormVisible.value=false
   //发送表单api
-  var axios = require('axios');
-  var FormData = require('form-data');
-  var data = new FormData();
-  data.append('enterprise', 1);
-  data.append('introduction', 'zty');
-  data.append('name', 'lzy');
-  data.append('job_name', form.value.job_name);
-  data.append('job_salary', form.value.job_salary);
-  data.append('job_advantage', form.value.job_advantage);
-  data.append('job_location', form.value.job_location);
-  data.append('job_day', form.value.job_day);
-  data.append('job_month', form.value.job_month);
-  data.append('number', form.value.number);
-  data.append('recruiter', '1');
-  data.append('enterprise_filed', form.value.enterprise_field);
-
-  var config = {
-    method: 'post',
-    url: '8.130.25.189:8000/api/recruit/recruit_create',
-    headers: { 
-      //'User-Agent': 'Apifox/1.0.0 (https://apifox.com)', 
-      //...data.getHeaders()
-    },
-    data : data
-  };
-
-axios(config)
-.then(function (response) {
-  console.log(JSON.stringify(response.data));
+  
+  axios.post('http://100.98.24.78:8000/api/recruit/recruit_create',{
+  'enterprise':4,
+  'introduction':'zty',
+  'name':'lzy',
+  'job_name':form.value.job_name,
+  'job_salary':form.value.job_salary,
+  'job_advantage':form.value.job_advantage,
+  'job_location':form.value.job_location,
+  'job_day':form.value.job_day,
+  'job_month':form.value.job_month,
+  'number':form.value.number,
+  'job_request':form.value.job_request,
+  'enterprise_field':form.value.enterprise_field,
+  'enterprise_icon':form.value.enterprise_icon
 })
-.catch(function (error) {
-  console.log(error);
-});
+
 }
 
 const deleteRow = (index: number) => {
   tableData.value.splice(index, 1)
 }
 
-const onAddItem = () => {
+/*const onAddItem = () => {
   now.setDate(now.getDate() + 1)
   tableData.value.push({
     date: dayjs(now).format('YYYY-MM-DD'),
     name: 'Tom',
     salary: "",
     number: 0,
-    address: 'No. 189, Grove St, Los Angeles',
+    address: '',
     day: 5
   })
 }
+*/
 </script>
 
   

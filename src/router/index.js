@@ -105,7 +105,7 @@ const router = createRouter({
       name: 'Recruitment',
       component: () => import('@/views/Recruitment.vue'),
       meta: {
-        requireAuth: true,
+        requireAuth: false,
         title: '招聘信息发布' //表单页
       }
     },
