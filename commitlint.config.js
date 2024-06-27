@@ -19,7 +19,7 @@ export default {
         'revert', // 回退
         'build', // 打包
         'ci', // 与持续集成服务有关的改动
-        "init"
+        'init'
       ]
     ],
     // subject 大小写不做校验
