@@ -1,6 +1,6 @@
 <template>
-  <button :class="`inline-flex items-center ${containerStyles}`">
-    {{ title }}
+  <button :class="`inline-flex items-center ${props.containerStyles}`">
+    {{ props.title }}
     <div class="ml-2">
       <PencilSquareIcon class="h-6 w-6 text-gray-500" />
     </div>
