@@ -61,7 +61,7 @@
                     创建企业
                   </DialogTitle>
 
-                  <form>
+                  <form @submit.prevent>
                     <div class="space-y-12">
                       <div class="border-b border-gray-900/10 pb-12">
                         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -481,7 +481,12 @@ let formData = ref({
 
 const submit = async () => {
   await axios
-    .post('http://8.130.25.189:8000/api/enterprise/register', formData.value)
+    .post('http://8.130.25.189:8000/api/enterprise/register', formData.value, {
+      headers: {
+        Authorization: tokenStore.getToken,
+        'Content-Type': 'application/json'
+      }
+    })
     .then((res) => {
       console.log(res)
     })
