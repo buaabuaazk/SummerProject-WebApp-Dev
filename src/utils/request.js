@@ -6,7 +6,7 @@ import useTokenStore from '@/stores/useTokenStore'
 const tokenStore = useTokenStore()
 const instance = axios.create({
   baseURL:
-    import.meta.env.MODE === 'development' ? 'http://frp-cat.top:49119' : 'http://10.251.255.229',
+    import.meta.env.MODE === 'development' ? 'http://100.92.39.61:8000' : 'http://10.251.255.229',
   timeout: 3000,
   headers: { Authorization: tokenStore.getToken }
 })
