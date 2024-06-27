@@ -118,7 +118,7 @@ const router = createRouter({
     {
       path: '/Recruitment',
       name: 'Recruitment',
-      component: () => import('@/views/Recruitment2.vue'),
+      component: () => import('@/views/Recruitment.vue'),
       meta: {
         requireAuth: false,
         title: '招聘信息发布' //表单页

@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-24 14:29:21
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-27 11:26:42
+ * @LastEditTime: 2024-06-27 13:01:47
  * @FilePath: /frontend/src/views/Recruitment.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -111,15 +111,15 @@ const dialogFormVisible = ref(false)
 const formLabelWidth = '160px'
 
 const form = ref({
-  "enterprise":1,
+  "enterprise":11,
   "introduction":"",
   "job_name": "",
   "job_salary": "",
   "job_advantage": ['a','b','c'],
   "job_location": "",
-  "number":"",
-  "job_day": "",
-  "job_month":"",
+  "number":6,
+  "job_day": 5,
+  "job_month":6,
   "job_request":['a','b','c'],
   "enterprise_name":"",
   "enterprise_field": "",
@@ -147,25 +147,69 @@ const SubmitForm = ()=>{
   
   dialogFormVisible.value=false
   //发送表单api
-  
-  let res=axios.post('http://100.98.24.78:8000/api/recruit/recruit_create',{
-  'enterprise':11,
-  'introduction':'zty',
-  'name':'lzy',
+  let data1={
+    
+  'enterprise':16,
   'job_name':form.value.job_name,
   'job_salary':form.value.job_salary,
-  'job_advantage':JSON.stringify(form.value.job_advantage),
+  'job_advantage':{
+    "优势1": "免费班车",
+    "优势2": "周末双休"
+  },
+  'created_at':"2024-06-29",
   'job_location':form.value.job_location,
   'job_day':form.value.job_day,
   'job_month':form.value.job_month,
-  'number':form.value.number,
-  'job_request':JSON.stringify(form.value.job_request),
+  'job_request':{
+    "需求1": "熟悉Docker、Kubernetes或者Openstack,并有相关研发和优化经验优先",
+    "需求2": "有信创国产化研发和测试经验优先"
+  },
+  'job_content': {
+      "内容1": "协助MA整理材料文献,核对资料等（肺癌）",
+      "内容2": "深度参与医学部项目，并参会议进行讨论",
+      "内容3": "在国际化的工作环境中，深入了解医药行业的商业模式和产业结构",
+      "内容4": "与内外部同事沟通与配合，全方位支持医学部工作运行 任职资格"
+    },
   'enterprise_field':form.value.enterprise_field,
   'enterprise_icon':form.value.enterprise_icon,
   'enterprise_name':'抖音',
-  'job_interested_id':10,
+  'job_interested_id':[
+    1,2,3,7,9,10,11
+  ],
   "job_needed_people":form.value.number
-})
+  }
+
+  /*let res=axios.post('http://100.98.24.78:8000/api/recruit/recruit_create',{
+  'enterprise':11,
+  'job_name':form.value.job_name,
+  'job_salary':form.value.job_salary,
+  'job_advantage':{
+    "优势1": "免费班车",
+    "优势2": "周末双休"
+  },
+  'created_at':"2024-06-29",
+  'job_location':form.value.job_location,
+  'job_day':form.value.job_day,
+  'job_month':form.value.job_month,
+  'job_request':{
+    "需求1": "熟悉Docker、Kubernetes或者Openstack,并有相关研发和优化经验优先",
+    "需求2": "有信创国产化研发和测试经验优先"
+  },
+  'job_content': {
+      "内容1": "协助MA整理材料文献,核对资料等（肺癌）",
+      "内容2": "深度参与医学部项目，并参会议进行讨论",
+      "内容3": "在国际化的工作环境中，深入了解医药行业的商业模式和产业结构",
+      "内容4": "与内外部同事沟通与配合，全方位支持医学部工作运行 任职资格"
+    },
+  'enterprise_field':form.value.enterprise_field,
+  'enterprise_icon':form.value.enterprise_icon,
+  'enterprise_name':'抖音',
+  'job_interested_id':[
+    1,2,3,7,9,10,11
+  ],
+  "job_needed_people":form.value.number
+})*/
+let res=axios.post('http://100.92.39.61:8000/api/recruit/recruit_create',JSON.stringify(data1))
 console.log(res)
 
 }
