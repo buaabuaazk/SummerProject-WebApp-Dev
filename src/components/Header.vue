@@ -79,7 +79,12 @@
               >
                 <span class="absolute -inset-1.5" />
                 <span class="sr-only">Open user menu</span>
-                <img class="h-8 w-8 rounded-full" src="@/assets/avatar1.png" alt="" />
+                <img
+                  class="h-10 w-10 rounded-full"
+                  :src="getAvatar()"
+                  alt="暂未登录"
+                  @click="ifLogin()"
+                />
               </MenuButton>
             </div>
             <transition
@@ -103,7 +108,7 @@
 
                 <MenuItem v-slot="{ active }">
                   <a
-                    href="#"
+                    href="/sos/login"
                     @click="logout"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
                     >退出登录</a
@@ -156,7 +161,12 @@
       <div class="border-t border-gray-200 pb-3 pt-4">
         <div class="flex items-center px-4">
           <div class="flex-shrink-0">
-            <img class="h-10 w-10 rounded-full" src="@/assets/avatar1.png" alt="" />
+            <img
+              class="h-10 w-10 rounded-full"
+              :src="getAvatar()"
+              alt="未登录"
+              @click="ifLogin()"
+            />
           </div>
           <div class="ml-3">
             <div class="text-base font-medium text-gray-800">Tom Cook</div>
@@ -181,7 +191,7 @@
 
           <DisclosureButton
             as="a"
-            href="#"
+            href="/sos/login"
             @click="logout"
             class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
             >退出登录</DisclosureButton
@@ -213,10 +223,11 @@ import {
 } from '@headlessui/vue'
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-
+import avatar1 from '@/assets/avatar1.png';
 // 在这里使用 onMounted 钩子函数代替 mounted()
 import { onMounted } from 'vue'
-
+import useTokenStore from '@/stores/useTokenStore'
+const tokenStore = useTokenStore()
 onMounted(() => {
   // 获取当前URL的查询字符串
   const path = window.location.pathname
@@ -241,9 +252,35 @@ onMounted(() => {
     }
   })
 })
-function logout() {
-  //待实现，清空当前登录的token和userid等
+function ifLogin(){
+  console.log('call iflogin')
+  console.log(tokenStore.getToken)
+  if(tokenStore.getToken==null||tokenStore.getToken==''){
+    router.push('./sos/login')
+    console.log('a1aa')
+    logout()
+    router.push('./sos/login')
+  }
+}
+function logout(){
   router.push('/sos/login')
+  //待实现，清空当前登录的token和userid等
+  console.log(tokenStore.getToken)
+  localStorage.setItem('token',null)
+  console.log(tokenStore.getToken)
+  router.push('/sos/login')
+  
+}
+function getAvatar(){
+  console.log('11111ew'+tokenStore.getToken)
+  if(tokenStore.getToken == null || tokenStore.getToken == ''){
+    //console.log('a1aa')
+    return null
+  }
+  else{
+    console.log(tokenStore.getToken)
+    return avatar1
+  }
 }
 function cancelAccount() {
   //待实现，请求后端删除账号数据，清空当前登录的token和userid等

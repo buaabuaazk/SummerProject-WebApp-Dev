@@ -83,7 +83,7 @@
         v-for="item in data"
         :key="item.id"
         :title="item.job_name"
-        @click="this.$router.push(`/jobInfo/${item.recruit_id}`)"
+        @click="goTo(`/jobInfo/${item.recruit_id}`)"
         style="width: 23rem; margin-right: 1.5rem"
       >
         <template #extra
@@ -148,6 +148,12 @@ import {
   IdcardOutlined
 } from '@ant-design/icons-vue'
 import MessageBar from '@/components/MessageBar.vue'
+import {useRouter} from 'vue-router'
+const router = useRouter()
+
+const goTo = (where) => {
+  router.push(where)
+}
 
 const inputCotent = ref('') //搜索输入
 const data = ref(null) //招聘数据
@@ -220,7 +226,7 @@ const fetchData = async (way) => {
       data.value = response.data
     } else {
       data.value = data.value.concat(response.data)
-      console.log(data.value)
+      console.log(response.data.length)
     }
   } catch (err) {
     error.value = err.message

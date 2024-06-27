@@ -46,6 +46,7 @@
                   drag
                   action="https://jsonplaceholder.typicode.com/posts/"
                   @change="handleFileUpload()"
+                  
                   multiple>
                   <i class="el-icon-upload"></i>
                   <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -124,9 +125,11 @@
 <script setup>
 import { ref } from 'vue';
 //import axios from '@/utils/request'
-import axios from 'axios'
+import axios from '../utils/request';
 import { onMounted } from 'vue';
+
 import useTokenStore from '@/stores/useTokenStore'
+const tokenStore = useTokenStore()
 const profile = ref({
   username: '',
   first_name: '',
@@ -178,12 +181,9 @@ const interestOptions = [
 onMounted(() => {
   console.log('组件已挂载');
   const userId = 3;
-  axios.get('http://8.130.25.189:8000/api/user/detail', {
-      params: {
-        user_id: userId
-      },
+  axios.get('/api/user/detail', {
       headers: {
-        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxOTQ5MzAwLCJpYXQiOjE3MTg5MjUzMDAsImp0aSI6IjM5NjAwMjI3ZGUzZDQ1YTY4MDYzZjFkYTg1ZGJjMGIwIiwidXNlcl9pZCI6MX0.Rm_tZnQ9zcg9qLwWtEAjdjIj0J6zo0SqFiWMdB5ntdQ'
+        Authorization: tokenStore.getToken
       }
     })
   .then(response => {
@@ -199,18 +199,10 @@ onMounted(() => {
     // 可以在界面上显示错误信息或者其他处理
   });
 });
-const getOptions = () => {
-    return interestOptions;
-};
-  const generateOptions = () => {
-    return numbers.map((num, index) => ({
-      value: `${num}`,
-      label: `${num}`
-    }));
-  };
-const handleFileUpload = (event) => {
+const handleFileUpload = (file, newFileList) => {
   console.log('start upload')
-  profile.value.file = event.target.files[0];
+  //profile.value.file = event.target.files[0];
+  fileList.value = newFileList;
   console.log('Uploaded file:', profile.value.file);
   // Handle file upload logic here
 };
@@ -219,14 +211,12 @@ const uploadResume = () => {
   // 创建一个 FormData 对象
   console.log('start call upload')
   const formData = new FormData();
-  const fileInput = document.querySelector('input[type=file]'); // 通过选择器获取文件上传 input
-
+  //const fileInput = document.querySelector('input[type=file]'); // 通过选择器获取文件上传 input
   // 将文件添加到 FormData 中
   formData.append('file', profile.value.file); // 使用 Composition API 中的 file 属性
-
-  axios.post('http://8.130.25.189:8000/api/user/resume', formData, {
+  axios.post('api/user/resume', formData, {
           headers: {
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxOTQ5MzAwLCJpYXQiOjE3MTg5MjUzMDAsImp0aSI6IjM5NjAwMjI3ZGUzZDQ1YTY4MDYzZjFkYTg1ZGJjMGIwIiwidXNlcl9pZCI6MX0.Rm_tZnQ9zcg9qLwWtEAjdjIj0J6zo0SqFiWMdB5ntdQ'
+            Authorization: tokenStore.getToken
           }
         })
           .then(response => {
@@ -237,13 +227,14 @@ const uploadResume = () => {
             console.log(error)
           })
 };
-
+/*
 const downloadResume = () => {
   const link = document.createElement('a');
   link.href = 'path_to_resume.pdf'; // Replace with the actual path to the resume file
   link.download = 'resume.pdf';
   link.click();
 };
+
 const confirmEdit = () => {
   isEditable.value = false;
   profile.value.detailedInformation.interest = editableInterest.value;
@@ -252,6 +243,7 @@ const confirmEdit = () => {
   // axios.put('/api/interest', { interest: editableInterest.value });
   // 可以使用fetch, axios等第三方库来发送请求
 };
+*/
 const submit = () => {
   const userId = 3;
   console.log('11111')
@@ -259,20 +251,31 @@ const submit = () => {
   console.log('传过去的新数据是'+profile.value.degree)
   const formData = new FormData();
   //formData.append('user_id', 3);
-  formData.append('username',profile.value.username)
-  formData.append('degree',profile.value.degree)
-  formData.append('email',profile.value.email)
-  formData.append('first_name',profile.value.first_name)
-  formData.append('last_name',profile.value.last_name)
-  formData.append('blog',profile.value.blog)
-  formData.append('repo',profile.value.repo)
-  axios.patch('http://8.130.25.189:8000/api/user/detail', formData,{
+  if (profile.value.username) {
+    formData.append('username',profile.value.username)
+  }
+  if (profile.value.degree) {
+    formData.append('degree',profile.value.degree)
+  }
+  if (profile.value.email) {
+    formData.append('email',profile.value.email)
+  }
+  if (profile.value.first_name) {
+    formData.append('first_name',profile.value.first_name)
+  }
+  if (profile.value.last_name) {
+    formData.append('last_name',profile.value.last_name)
+  }
+  if (profile.value.blog) {
+    formData.append('blog',profile.value.blog)
+  }
+  if (profile.value.repo) {
+    formData.append('repo',profile.value.repo)
+  }
+  axios.patch('/api/user/detail', formData,{
       headers: {
-        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxOTQ5MzAwLCJpYXQiOjE3MTg5MjUzMDAsImp0aSI6IjM5NjAwMjI3ZGUzZDQ1YTY4MDYzZjFkYTg1ZGJjMGIwIiwidXNlcl9pZCI6MX0.Rm_tZnQ9zcg9qLwWtEAjdjIj0J6zo0SqFiWMdB5ntdQ'
+        Authorization: tokenStore.getToken
       },
-      params:{
-        user_id: 3
-      }
     })
   .then(response => {
     console.log('修改用户信息成功');
@@ -287,12 +290,6 @@ const submit = () => {
     // 可以在界面上显示错误信息或者其他处理
   });
 };
-const handleResumeUploadSuccess =()=>{
-
-};
-const handleResumeUploadError =()=>{
-
-}
 </script>
 
 <style scoped>
