@@ -1,34 +1,36 @@
 <template>
-  <div
-    class="w-full md:w-[16rem] 2xl:w-[18rem] h-[16rem] md:h-[18rem] bg-white flex flex-col justify-between shadow-lg rounded-md px-3 py-5"
-  >
-    <div class="flex gap-3">
-      <img :src="job.company.profileUrl" :alt="job?.company?.name" class="w-14 h-14" />
+  <router-link :to="`/job-detail/${job?.id}`">
+    <div
+      class="w-full md:w-[16rem] 2xl:w-[18rem] h-[16rem] md:h-[18rem] bg-white flex flex-col justify-between shadow-lg rounded-md px-3 py-5"
+    >
+      <div class="flex gap-3">
+        <img :src="job.company.profileUrl" :alt="job?.company?.name" class="w-14 h-14" />
 
-      <div class="">
-        <p class="text-lg font-semibold truncate">{{ job?.jobTitle }}</p>
-        <span class="flex gap-2 items-center">
-          <GoLocation class="text-slate-900 text-sm" />
-          {{ job?.location }}
+        <div class="">
+          <p class="text-lg font-semibold truncate">{{ job?.jobTitle }}</p>
+          <span class="flex gap-2 items-center">
+            <GoLocation class="text-slate-900 text-sm" />
+            {{ job?.location }}
+          </span>
+        </div>
+      </div>
+
+      <div class="py-3">
+        <p class="text-sm">
+          {{ job?.detail[0]?.desc?.slice(0, 150) + '...' }}
+        </p>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <p class="bg-[#1d4fd826] text-[#1d4fd8] py-0.5 px-1.5 rounded font-semibold text-sm">
+          {{ job?.jobType }}
+        </p>
+        <span class="text-gray-500 text-sm">
+          {{ timeSince(job?.createdAt) }}
         </span>
       </div>
     </div>
-
-    <div class="py-3">
-      <p class="text-sm">
-        {{ job?.detail[0]?.desc?.slice(0, 150) + '...' }}
-      </p>
-    </div>
-
-    <div class="flex items-center justify-between">
-      <p class="bg-[#1d4fd826] text-[#1d4fd8] py-0.5 px-1.5 rounded font-semibold text-sm">
-        {{ job?.jobType }}
-      </p>
-      <span class="text-gray-500 text-sm">
-        {{ timeSince(job?.createdAt) }}
-      </span>
-    </div>
-  </div>
+  </router-link>
 </template>
 
 <script setup>
