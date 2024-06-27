@@ -93,11 +93,67 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { computed, ref } from 'vue'
 
+import useTokenStore from '@/stores/useTokenStore'
+
+import axios from 'axios'
+
 const props = defineProps({
   isOpen: Boolean,
   openModal: Function,
   closeModal: Function
 })
 
-function handleSubmit() {}
+let formData = ref({
+  name: '',
+  introduction: ''
+})
+
+let handleSubmit = async () => {
+  let enterprise
+
+  const tokenStore = useTokenStore()
+  console.log(tokenStore.getToken)
+  let user_id = await axios
+    .get('http://8.130.25.189:8000/api/user/detail', {
+      headers: {
+        Authorization: tokenStore.getToken
+      }
+    })
+    .then((res) => {
+      console.log(res)
+      return res.data.user_id
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+
+  console.log(user_id)
+
+  await axios
+    .get('http://8.130.25.189:8000/api/profile?user_id=' + user_id)
+    .then((res) => {
+      console.log(res)
+      enterprise = res.data.enterprise
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+
+  await axios
+    .patch(
+      'http://8.130.25.189:8000/api/enterprise/info?enterprise_id=' + enterprise,
+      formData.value,
+      {
+        headers: {
+          Authorization: tokenStore.getToken
+        }
+      }
+    )
+    .then((res) => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
 </script>
