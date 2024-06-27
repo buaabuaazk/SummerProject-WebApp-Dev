@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-24 14:29:21
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-26 22:49:44
+ * @LastEditTime: 2024-06-27 11:26:42
  * @FilePath: /frontend/src/views/Recruitment.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -17,7 +17,7 @@
   <el-table :data="tableData" style="width: 100%" max-height="250">
     <el-table-column fixed prop="job_name" label="岗位名称" width="300" />
     <el-table-column prop="job_salary" label="岗位薪资" width="200" />
-    <el-table-column prop="number" label="招聘人数" width="150" />
+    <el-table-column prop="job_needed_people" label="招聘人数" width="150" />
     <el-table-column prop="job_location" label="工作地点" width="500" />
     <el-table-column prop="job_day" label="每周工作天数" width="150" />
     <el-table-column fixed="right" label="Operations" min-width="120">
@@ -97,7 +97,7 @@ import axios from '../utils/request';
 onMounted(async () => {
       console.log('页面加载完成！');
       console.log(tableData)
-      let res=await axios.get('http://100.92.39.61:8000/api/recruit/4')
+      let res=await axios.get('http://100.92.39.61:8000/api/recruit/11')
       tableData.value=res.data
       console.log(res)
       //更新tabledata
@@ -115,12 +115,13 @@ const form = ref({
   "introduction":"",
   "job_name": "",
   "job_salary": "",
-  "job_advantage": "",
+  "job_advantage": ['a','b','c'],
   "job_location": "",
   "number":"",
   "job_day": "",
   "job_month":"",
-  "job_request":"",
+  "job_request":['a','b','c'],
+  "enterprise_name":"",
   "enterprise_field": "",
   "enterprise_icon":""
 })
@@ -128,7 +129,7 @@ const form = ref({
 const tableData = ref([])
 
 const SubmitForm = ()=>{
-    tableData.value.push({
+    /*tableData.value.push({
   'enterprise':1,
   'introduction':'zty',
   'name':'lzy',
@@ -142,26 +143,30 @@ const SubmitForm = ()=>{
   'job_request':form.value.job_request,
   'enterprise_field':form.value.enterprise_field,
   'enterprise_icon':form.value.enterprise_icon
-  })
+  })*/
   
   dialogFormVisible.value=false
   //发送表单api
   
-  axios.post('http://100.98.24.78:8000/api/recruit/recruit_create',{
-  'enterprise':4,
+  let res=axios.post('http://100.98.24.78:8000/api/recruit/recruit_create',{
+  'enterprise':11,
   'introduction':'zty',
   'name':'lzy',
   'job_name':form.value.job_name,
   'job_salary':form.value.job_salary,
-  'job_advantage':form.value.job_advantage,
+  'job_advantage':JSON.stringify(form.value.job_advantage),
   'job_location':form.value.job_location,
   'job_day':form.value.job_day,
   'job_month':form.value.job_month,
   'number':form.value.number,
-  'job_request':form.value.job_request,
+  'job_request':JSON.stringify(form.value.job_request),
   'enterprise_field':form.value.enterprise_field,
-  'enterprise_icon':form.value.enterprise_icon
+  'enterprise_icon':form.value.enterprise_icon,
+  'enterprise_name':'抖音',
+  'job_interested_id':10,
+  "job_needed_people":form.value.number
 })
+console.log(res)
 
 }
 
