@@ -40,20 +40,13 @@
             <!--在这里写-->
             <div style="display: flex; justify-content: space-between;">
               <div style="flex: 1; margin-right: 20px; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
-                <h3>上传简历</h3>
-                <el-upload
-                  class="upload-demo"
-                  drag
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  @change="handleFileUpload()"
-                  
-                  multiple>
-                  <i class="el-icon-upload"></i>
-                  <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                  <div class="el-upload__tip" slot="tip">只能上传pdf文件，且不超过3MB</div>
-                </el-upload>
-                <el-button  @click="uploadResume">点击上传
-                </el-button>
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                  <label class="block text-sm font-medium text-gray-700">上传简历</label>
+                  <input type="file" @change="handleFileUpload" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                  <button @click="uploadResume" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    上传简历
+                  </button>
+                </div>
               </div>
               <div style="flex: 1; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
                 <h3>大模型优化简历</h3>
@@ -199,34 +192,31 @@ onMounted(() => {
     // 可以在界面上显示错误信息或者其他处理
   });
 });
-const handleFileUpload = (file, newFileList) => {
-  console.log('start upload')
-  //profile.value.file = event.target.files[0];
-  fileList.value = newFileList;
-  console.log('Uploaded file:', profile.value.file);
-  // Handle file upload logic here
-};
 
+const handleFileUpload = (event) => {
+    profile.value.file = event.target.files[0];
+    console.log('Uploaded file:', profile.value.file);
+    // Handle file upload logic here
+  };
+  
 const uploadResume = () => {
-  // 创建一个 FormData 对象
-  console.log('start call upload')
-  const formData = new FormData();
-  //const fileInput = document.querySelector('input[type=file]'); // 通过选择器获取文件上传 input
-  // 将文件添加到 FormData 中
-  formData.append('file', profile.value.file); // 使用 Composition API 中的 file 属性
-  axios.post('api/user/resume', formData, {
-          headers: {
-            Authorization: tokenStore.getToken
-          }
-        })
-          .then(response => {
-            console.log('1111111')
-            alert('简历上传成功！')
-          })
-          .catch(error => {
-            console.log(error)
-          })
-};
+    // 创建一个 FormData 对象
+    const formData = new FormData();
+    const fileInput = document.querySelector('input[type=file]'); // 通过选择器获取文件上传 input
+  
+    // 将文件添加到 FormData 中
+    formData.append('file', profile.value.file); // 使用 Composition API 中的 file 属性
+  
+    axios.post('/api/user/resume', formData, )
+            .then(response => {
+              console.log('1111111')
+              alert('简历上传成功！')
+            })
+            .catch(error => {
+              console.log(error)
+            })
+  };
+
 /*
 const downloadResume = () => {
   const link = document.createElement('a');
