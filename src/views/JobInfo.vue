@@ -53,7 +53,9 @@
             </div>
           </CardContent>
           <CardFooter>
-            <Button class="mx-auto" @click="submitResume(props.id)">投递简历</Button>
+            <Button class="mx-auto" @click="submitResume(props.id)" :disabled="!isLogined()"
+              >投递简历</Button
+            >
           </CardFooter>
         </Card>
       </div>
@@ -96,6 +98,8 @@ import submitResume from '@/utils/submitResume'
 import axios from '@/utils/request'
 import { Badge } from '@/components/ui/badge'
 import { useRouter } from 'vue-router'
+import useTokenStore from '@/stores/useTokenStore'
+const tokenStore = useTokenStore()
 
 const router = useRouter()
 
@@ -105,6 +109,14 @@ const props = defineProps({
     required: true
   }
 })
+
+const isLogined = () => {
+  if (tokenStore.getToken) {
+    return true
+  } else {
+    return false
+  }
+}
 
 let data = ref({
   recruit_id: 4,
