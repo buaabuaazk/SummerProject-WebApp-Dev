@@ -1,19 +1,11 @@
 <template>
-  <!--
-      This example requires updating your template:
-  
-      ```
-      <html class="h-full">
-      <body class="h-full">
-      ```
-    -->
   <div>
     <main class="grid h-dvh place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div class="text-center">
         <p class="text-base font-semibold text-indigo-600">404</p>
         <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">页面不存在</h1>
         <p class="mt-6 text-base leading-7 text-gray-600">
-          对不起，您并没有加入任何企业，或许你可以尝试创建企业称为企业管理员👇🏻或者加入其他推荐的企业
+          对不起，您并没有加入任何企业，或许你可以尝试创建企业成为企业管理员👇🏻或者加入其他推荐的企业
         </p>
         <div class="mt-10 flex items-center justify-center gap-x-6">
           <a
@@ -27,6 +19,7 @@
           >
         </div>
       </div>
+
       <div class="bg-white">
         <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
           <h2 class="text-xl font-bold text-gray-900">热门企业列表</h2>

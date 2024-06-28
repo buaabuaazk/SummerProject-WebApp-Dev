@@ -30,7 +30,8 @@
             <a id="link1" href="/" class="mouse-not-on">招聘信息</a>
             <a id="link2" href="/PostView" class="mouse-not-on">社区动态</a>
             <a id="link3" href="/unknown" class="mouse-not-on">我的关注</a>
-            <a id="link4" href="/CorporationInfo" class="mouse-not-on">企业管理</a>
+            <a id="link4" href="/CorporationInfo" class="mouse-not-on">我的企业</a>
+            <a id="link5" href="/CorporationManage" class="mouse-not-on">企业管理</a>
           </div>
         </div>
         <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
@@ -178,6 +179,12 @@
           as="a"
           href="/CorporationInfo"
           class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+          >我的企业</DisclosureButton
+        >
+        <DisclosureButton
+          as="a"
+          href="/CorporationManage"
+          class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
           >企业管理</DisclosureButton
         >
       </div>
@@ -295,18 +302,18 @@ function ifLogin() {
 function logout() {
   router.push('/sos/login')
   //待实现，清空当前登录的token和userid等
-  console.log(tokenStore.getToken)
+  // console.log(tokenStore.getToken)
   localStorage.setItem('token', null)
-  console.log(tokenStore.getToken)
+  // console.log(tokenStore.getToken)
   router.push('/sos/login')
 }
 function getAvatar() {
-  console.log('11111ew' + tokenStore.getToken)
+  // console.log('11111ew' + tokenStore.getToken)
   if (tokenStore.getToken == null || tokenStore.getToken == '') {
     //console.log('a1aa')
     return null
   } else {
-    console.log(tokenStore.getToken)
+    // console.log(tokenStore.getToken)
     return avatar1
   }
 }
