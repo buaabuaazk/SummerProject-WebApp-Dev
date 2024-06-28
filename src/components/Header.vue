@@ -30,7 +30,7 @@
             <a id="link1" href="/" class="mouse-not-on">招聘信息</a>
             <a id="link2" href="/PostView" class="mouse-not-on">社区动态</a>
             <a id="link3" href="/unknown" class="mouse-not-on">我的关注</a>
-            <a id="link4" href="/CorporationInfo" class="mouse-not-on">我的企业</a>
+            <a id="link4" href="/CorporationInfo" class="mouse-not-on">企业管理</a>
           </div>
         </div>
         <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
@@ -178,7 +178,7 @@
           as="a"
           href="/CorporationInfo"
           class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
-          >我的企业</DisclosureButton
+          >企业管理</DisclosureButton
         >
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">
