@@ -212,7 +212,7 @@ router.beforeEach(async (to, from, next) => {
       .get('http://8.130.25.189:8000/api/profile?user_id=' + user_id)
       .then((res) => {
         console.log(res)
-        if (res.data.enterprise == null) next({ name: 'noCorporation' })
+        if (res.data.enterprise1 == null) next({ name: 'noCorporation' })
         else {
           next()
         }

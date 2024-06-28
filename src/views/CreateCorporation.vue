@@ -34,37 +34,21 @@
                 class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
               >
                 <DialogTitle as="h3" class="text-lg font-semibold leading-6 text-gray-900">
-                  Edit Company Profile
+                  更新企业信息
                 </DialogTitle>
 
                 <form class="w-full mt-2 flex flex-col gap-5" @submit.prevent="handleSubmit">
-                  <TextInput name="name" label="Company Name" type="text" />
-
-                  <TextInput
-                    name="location"
-                    label="Location/Address"
-                    placeholder="eg. Califonia"
-                    type="text"
-                  />
+                  <TextInput name="name" label="企业姓名" type="text" />
 
                   <div class="w-full flex gap-2">
-                    <div class="w-1/2">
-                      <TextInput
-                        name="contact"
-                        label="Contact"
-                        placeholder="Phone Number"
-                        type="text"
-                      />
-                    </div>
-
                     <div class="w-1/2 mt-2">
-                      <label class="text-gray-600 text-sm mb-1">Company Logo</label>
+                      <label class="text-gray-600 text-sm mb-1">企业Logo</label>
                       <input type="file" />
                     </div>
                   </div>
 
                   <div class="flex flex-col">
-                    <label class="text-gray-600 text-sm mb-1">About Company</label>
+                    <label class="text-gray-600 text-sm mb-1">关于企业</label>
                     <textarea
                       class="ounded border border-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-base px-4 py-2 resize-none"
                       rows="4"
@@ -105,7 +89,8 @@ const props = defineProps({
 
 let formData = ref({
   name: '',
-  introduction: ''
+  introduction: '',
+  file: null
 })
 
 let handleSubmit = async () => {
