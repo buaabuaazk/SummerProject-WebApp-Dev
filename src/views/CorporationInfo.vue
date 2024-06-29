@@ -8,7 +8,7 @@
           <h3 class="text-base font-bold leading-7 text-gray-900">{{ info.name }}</h3>
           <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">下面是企业的相关介绍👇🏻</p>
         </div>
-        <div class="flex items-center justifu-center py-5 md:py-0 gap-4">
+        <div class="flex items-center justifu-center py-5 md:py-0 gap-4" v-if="info.is_admin">
           <CustomButton
             @click="openModal"
             title="Edit"
@@ -132,18 +132,23 @@
       </div>
     </div>
 
-    <CreateCorporation :isOpen="isOpen" :closeModal="closeModal" :openModal="openModal" />
+    <CreateCorporation
+      :isOpen="isOpen"
+      :closeModal="closeModal"
+      :openModal="openModal"
+      :updateData="updateData"
+      v-if="enterpriseInfo"
+      :enterpriseInfo="enterpriseInfo"
+    />
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import axios from 'axios'
 import CustomButton from '@/components/Corporation/CustomButton.vue'
 import JobCard from '@/components/Corporation/JobCard.vue'
 import CreateCorporation from '@/views/CreateCorporation.vue'
 
-import { EnvelopeIcon, MapPinIcon, PhoneIcon } from '@heroicons/vue/24/outline'
 import { PaperClipIcon } from '@heroicons/vue/20/solid'
 import {
   staticJobs,
@@ -183,7 +188,8 @@ const info = ref({
   location: 'US State',
   email: '1270414897@gmail.com',
   contact: '13467843418',
-  jobPosts: ['1', '2', '3']
+  jobPosts: ['1', '2', '3'],
+  is_admin: false
 })
 
 async function fetchData() {
@@ -195,33 +201,24 @@ async function fetchData() {
   console.log(enterpriseInfo.value)
 }
 
+async function updateData() {
+  enterpriseInfo.value = await getEnterpriseInfo(info.value.id)
+  info.value.name = enterpriseInfo.value.name
+  info.value.introduction = enterpriseInfo.value.introduction
+  info.value.icon_url = enterpriseInfo.value.icon_url
+  info.value.is_admin = userProfile.value.is_admin
+}
+
 onMounted(async () => {
   await fetchData()
+  info.value.id = userProfile.value.enterprise
   if (props?.id) {
     enterpriseInfo.value = await getEnterpriseInfo(props.id)
+    info.value.id = props.id
   }
   info.value.name = enterpriseInfo.value.name
   info.value.introduction = enterpriseInfo.value.introduction
   info.value.icon_url = enterpriseInfo.value.icon_url
+  info.value.is_admin = userProfile.value.is_admin
 })
-
-const updateInfo = async (
-  name = enterpriseInfo.value.name,
-  introduction = enterpriseInfo.value.introduction,
-  icon_url = enterpriseInfo.value.icon_url
-) => {
-  const data = {
-    name: name,
-    introduction: introduction,
-    img: icon_url
-  }
-  await axios
-    .put('http://8.130.25.189:8000/api/enterprise/info?enterprise_id=1', data)
-    .then((res) => {
-      console.log(res)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}
 </script>
