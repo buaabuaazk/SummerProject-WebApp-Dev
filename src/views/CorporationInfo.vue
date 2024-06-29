@@ -3,7 +3,7 @@
     <div class="">
       <!-- 展示（tailwindcss） -->
       <div class="flex gap-2">
-        <img class="inline-block h-20 w-20 rounded-full" :src="info.icon_url" alt="" />
+        <img class="inline-block h-20 w-20 rounded-full" :src="info.icon" alt="" />
         <div class="px-4 sm:px-0">
           <h3 class="text-base font-bold leading-7 text-gray-900">{{ info.name }}</h3>
           <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">下面是企业的相关介绍👇🏻</p>
@@ -205,7 +205,7 @@ async function updateData() {
   enterpriseInfo.value = await getEnterpriseInfo(info.value.id)
   info.value.name = enterpriseInfo.value.name
   info.value.introduction = enterpriseInfo.value.introduction
-  info.value.icon_url = enterpriseInfo.value.icon_url
+  info.value.icon = enterpriseInfo.value.icon
   info.value.is_admin = userProfile.value.is_admin
 }
 
@@ -218,7 +218,7 @@ onMounted(async () => {
   }
   info.value.name = enterpriseInfo.value.name
   info.value.introduction = enterpriseInfo.value.introduction
-  info.value.icon_url = enterpriseInfo.value.icon_url
+  info.value.icon = enterpriseInfo.value.icon
   info.value.is_admin = userProfile.value.is_admin
 })
 </script>

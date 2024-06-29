@@ -111,6 +111,7 @@
                                     name="file-upload"
                                     type="file"
                                     class="sr-only"
+                                    @change="handleFileUpload"
                                   />
                                 </label>
                                 <p class="pl-1">or drag and drop</p>
@@ -170,24 +171,43 @@ const props = defineProps({
 let formData = ref({
   name: '',
   introduction: '',
-  icon_url: ''
+  icon: '',
+  file: null,
+  field: ''
 })
 
 onMounted(() => {
   formData.value.name = props.enterpriseInfo.name
   formData.value.introduction = props.enterpriseInfo.introduction
-  formData.value.icon_url = props.enterpriseInfo.icon_url
+  formData.value.icon = props.enterpriseInfo.icon
   console.log(props.enterpriseInfo)
 })
 
+function handleFileUpload(e) {
+  const file = e.target.files[0]
+  console.log(file)
+  formData.value.file = file
+}
+
 let handleSubmit = async () => {
   props.closeModal()
-  console.log(formData.value)
+
+  const formDataUpload = new FormData()
+
+  formDataUpload.append('name', formData.value.name)
+  formDataUpload.append('introduction', formData.value.introduction)
+  formDataUpload.append('file', formData.value.file)
+  formDataUpload.append('field', formData.value.field)
+
+  console.log(formDataUpload)
+
   const res = await axios.patch(
     '/api/enterprise/info?enterprise_id=' + props.enterpriseInfo.enterprise_id,
-    formData.value
+    formDataUpload
   )
-  await props.updateData()
+  setTimeout(async () => {
+    await props.updateData()
+  }, 3000)
   console.log(res)
 }
 </script>

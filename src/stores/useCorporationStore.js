@@ -4,7 +4,7 @@ const token = JSON.parse(localStorage.getItem('token')).token
 
 // console.log(token)
 
-const baseUrl = 'http://8.130.25.189:8000'
+const baseUrl = 'http://100.122.113.8:8000'
 
 const axios_instance = axios.create({
   baseURL: baseUrl,
@@ -254,10 +254,15 @@ const getUserInfo = async () => {
   return res.data
 }
 const getUserProfile = async () => {
-  const userInfo = await getUserInfo()
-  const user_id = userInfo.user_id
-  const res = await axios_instance.get('/api/profile?user_id=' + user_id)
-  return res.data
+  try {
+    // Code to handle successful API call
+    const userInfo = await getUserInfo()
+    const user_id = userInfo.user_id
+    const res = await axios_instance.get('/api/profile?user_id=' + user_id)
+    return res.data
+  } catch (error) {
+    return null
+  }
 }
 const getEnterpriseInfo = async (enterprise_id) => {
   const res = await axios_instance.get('/api/enterprise/info?enterprise_id=' + enterprise_id)
