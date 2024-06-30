@@ -10,7 +10,7 @@
       </div>
     </div>
     <button
-      @click="messageStore.changeChatState"
+      @click="messageStore.openMessageBox"
       style="position: absolute; margin-top: 90vh; margin-left: 90vw; background-color: blue"
     >
       CHAT
