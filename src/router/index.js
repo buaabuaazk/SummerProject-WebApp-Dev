@@ -85,7 +85,12 @@ const router = createRouter({
       },
       children: [
         {
-          path: 'Info',
+          path: 'Test',
+          name: 'IdCoTest',
+          component: () => import('@/components/Corporation/CoTest.vue')
+        },
+        {
+          path: '',
           name: 'IdCoInfo',
           component: () => import('@/components/Corporation/CoInfo.vue')
         },
@@ -219,15 +224,6 @@ const router = createRouter({
         title: '职位详情'
       },
       props: true
-    },
-    {
-      path: '/job-detail/:id',
-      name: 'JobDetail',
-      component: () => import('@/components/Corporation/JobDetail.vue'),
-      meta: {
-        requireAuth: false,
-        title: '职位详情2'
-      }
     },
     {
       path: '/Corporation404',

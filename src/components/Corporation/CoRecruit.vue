@@ -63,29 +63,6 @@
                         </span>
                       </DisclosureButton>
                     </h3>
-                    <DisclosurePanel class="pt-6">
-                      <div class="space-y-6">
-                        <div
-                          v-for="(option, optionIdx) in section.options"
-                          :key="option.value"
-                          class="flex items-center"
-                        >
-                          <input
-                            :id="`filter-mobile-${section.id}-${optionIdx}`"
-                            :name="`${section.id}[]`"
-                            :value="option.value"
-                            type="checkbox"
-                            :checked="option.checked"
-                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                          />
-                          <label
-                            :for="`filter-mobile-${section.id}-${optionIdx}`"
-                            class="ml-3 text-sm text-gray-500"
-                            >{{ option.label }}</label
-                          >
-                        </div>
-                      </div>
-                    </DisclosurePanel>
                   </Disclosure>
                 </form>
               </DialogPanel>
@@ -97,7 +74,7 @@
       <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900">企业招聘</h1>
         <p class="mt-4 max-w-xl text-sm text-gray-700">
-          拉勾招聘为求职者提供最新的北京企业招聘信息，北京招聘信息，海量公司在线招聘，直接开聊，在线约面试，找工作就上拉勾北京人才招聘网。
+          勾八招聘为求职者提供最新的北京企业招聘信息，北京招聘信息，海量公司在线招聘，直接开聊，在线约面试，找工作就上拉勾北京人才招聘网。
         </p>
       </div>
 
@@ -140,6 +117,16 @@
                           active ? 'bg-gray-100' : '',
                           'block px-4 py-2 text-sm'
                         ]"
+                        @click="
+                          () => {
+                            for (let i = 0; i < sortOptions.length; i++) {
+                              sortOptions[i].current = false
+                            }
+                            option.current = true
+                            activeSort = option.name
+                            renew()
+                          }
+                        "
                         >{{ option.name }}</a
                       >
                     </MenuItem>
@@ -169,9 +156,9 @@
                     >
                       <span>{{ section.name }}</span>
                       <span
-                        v-if="sectionIdx === 0"
+                        v-if="activeLists[sectionIdx].length != 0"
                         class="ml-1.5 rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-gray-700"
-                        >1</span
+                        >{{ activeLists[sectionIdx].length }}</span
                       >
                       <ChevronDownIcon
                         class="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -202,6 +189,26 @@
                               :value="option.value"
                               type="checkbox"
                               :checked="option.checked"
+                              @click="
+                                () => {
+                                  option.checked = !option.checked
+                                  if (
+                                    activeFilters.findIndex(
+                                      (filter) => filter.value === option.value
+                                    ) === -1
+                                  ) {
+                                    activeFilters.push(option)
+                                  } else {
+                                    activeFilters.splice(
+                                      activeFilters.findIndex(
+                                        (filter) => filter.value === option.value
+                                      ),
+                                      1
+                                    )
+                                  }
+                                  renew()
+                                }
+                              "
                               class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                             />
                             <label
@@ -238,15 +245,6 @@
                   class="m-1 inline-flex items-center rounded-full border border-gray-200 bg-white py-1.5 pl-3 pr-2 text-sm font-medium text-gray-900"
                 >
                   <span>{{ activeFilter.label }}</span>
-                  <button
-                    type="button"
-                    class="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
-                  >
-                    <span class="sr-only">Remove filter for {{ activeFilter.label }}</span>
-                    <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                      <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" />
-                    </svg>
-                  </button>
                 </span>
               </div>
             </div>
@@ -258,25 +256,25 @@
       <div class="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
         <div class="-ml-4 -mt-2 flex flex-wrap items-center justify-between sm:flex-nowrap">
           <div class="ml-4 mt-2">
-            <h3 class="text-base font-semibold leading-6 text-gray-900">Job Postings</h3>
+            <h3 class="text-base font-semibold leading-6 text-gray-900">目前正在招聘的岗位👇🏻</h3>
           </div>
           <div class="ml-4 mt-2 flex-shrink-0">
             <button
               type="button"
               class="relative inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Create new job
+              创建新的职位
             </button>
           </div>
         </div>
       </div>
       <ul role="list" class="divide-y divide-gray-200">
-        <li v-for="i in 5" :key="i">
+        <li v-for="recruit in page_data" :key="recruit.recruit_id">
           <a href="#" class="block hover:bg-gray-50">
             <div class="px-4 py-4 sm:px-6">
               <div class="flex items-center justify-between">
-                <div class="truncate text-sm font-medium text-indigo-600">
-                  User Interface Designer
+                <div class="truncate text-xl font-medium text-indigo-500">
+                  {{ recruit.job_name }}
                 </div>
                 <div class="ml-2 flex flex-shrink-0">
                   <span
@@ -285,18 +283,76 @@
                   >
                 </div>
               </div>
+              <dl
+                class="mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-4"
+              >
+                <div
+                  class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1 bg-white px-2 py-2 sm:px-4 xl:px-6"
+                >
+                  <dt class="text-sm font-medium leading-6 text-gray-500">工作天数</dt>
+                  <dd class="text-xs font-medium">day / week</dd>
+                  <dd
+                    class="w-full flex-none text-xl font-medium leading-10 tracking-tight text-gray-900"
+                  >
+                    {{ recruit.job_day }}
+                  </dd>
+                </div>
+                <div
+                  class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1 bg-white px-2 py-2 sm:px-4 xl:px-6"
+                >
+                  <dt class="text-sm font-medium leading-6 text-gray-500">工作月数</dt>
+                  <dd class="text-xs font-medium">month / year</dd>
+                  <dd
+                    class="w-full flex-none text-xl font-medium leading-10 tracking-tight text-gray-900"
+                  >
+                    {{ recruit.job_month }}
+                  </dd>
+                </div>
+                <div
+                  class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1 bg-white px-2 py-2 sm:px-4 xl:px-6"
+                >
+                  <dt class="text-sm font-medium leading-6 text-gray-500">薪资</dt>
+                  <dd class="text-xs font-medium">K / month</dd>
+                  <dd
+                    class="w-full flex-none text-xl font-medium leading-10 tracking-tight text-gray-900"
+                  >
+                    {{ recruit.job_salary }}
+                  </dd>
+                </div>
+                <div
+                  class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1 bg-white px-2 py-2 sm:px-4 xl:px-6"
+                >
+                  <dt class="text-sm font-medium leading-6 text-gray-500">工作优势</dt>
+                  <dd class="text-xs font-medium">
+                    {{ Object.keys(recruit.job_advantage).length }}
+                  </dd>
+
+                  <ul class="w-full px-4 list-decimal">
+                    <li
+                      v-for="(advantage, index) in recruit.job_advantage"
+                      :key="index"
+                      class="flex-none text-sm font-medium leading-7 tracking-tight text-gray-900"
+                    >
+                      {{ advantage }}
+                    </li>
+                  </ul>
+                </div>
+              </dl>
               <div class="mt-2 flex justify-between">
                 <div class="sm:flex">
                   <div class="flex items-center text-sm text-gray-500">
                     <UsersIcon class="h-5 w-5 mr-1" />
-                    Design
+                    {{ recruit.job_needed_people }}
                   </div>
                 </div>
                 <div class="ml-2 flex items-center text-sm text-gray-500">
                   <MapPinIcon class="w-5 h-5 mr-1" />
-                  Remote
+                  {{ recruit.job_location }}
                 </div>
               </div>
+              <p class="mt-1 text-sm italic text-gray-500">
+                {{ recruit.job_content['内容1'] }}........
+              </p>
             </div>
           </a>
         </li>
@@ -307,11 +363,23 @@
     >
       <div class="flex flex-1 justify-between sm:hidden">
         <a
+          @click="
+            () => {
+              index = index - 10 < 0 ? 0 : index - 10
+              renew()
+            }
+          "
           href="#"
           class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >Previous</a
         >
         <a
+          @click="
+            () => {
+              index = index + 10 > data.length ? index : index + 10
+              renew()
+            }
+          "
           href="#"
           class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >Next</a
@@ -322,15 +390,17 @@
           <p class="text-sm text-gray-700">
             Showing
             {{ ' ' }}
-            <span class="font-medium">1</span>
+            <span class="font-medium">{{ index + 1 }}</span>
             {{ ' ' }}
             to
             {{ ' ' }}
-            <span class="font-medium">10</span>
+            <span class="font-medium">{{
+              index + 11 > data.length ? data.length : index + 11
+            }}</span>
             {{ ' ' }}
             of
             {{ ' ' }}
-            <span class="font-medium">97</span>
+            <span class="font-medium">{{ data.length }}</span>
             {{ ' ' }}
             results
           </p>
@@ -338,6 +408,12 @@
         <div>
           <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
             <a
+              @click="
+                () => {
+                  index = index - 10 < 0 ? 0 : index - 10
+                  renew()
+                }
+              "
               href="#"
               class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
@@ -346,41 +422,29 @@
             </a>
             <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
             <a
+              v-for="i in Math.ceil(data.length / 10)"
+              :key="i"
+              @click="
+                () => {
+                  index = (i - 1) * 10
+                  renew()
+                }
+              "
               href="#"
               aria-current="page"
-              class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >1</a
+              :class="[
+                Math.ceil(index / 10) + 1 == i ? 'bg-indigo-400' : '',
+                'relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold text-black focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 active:bg-indigo-600'
+              ]"
+              >{{ i }}</a
             >
             <a
-              href="#"
-              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              >2</a
-            >
-            <a
-              href="#"
-              class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
-              >3</a
-            >
-            <span
-              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0"
-              >...</span
-            >
-            <a
-              href="#"
-              class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
-              >8</a
-            >
-            <a
-              href="#"
-              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              >9</a
-            >
-            <a
-              href="#"
-              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              >10</a
-            >
-            <a
+              @click="
+                () => {
+                  index = index + 10 > data.length ? index : index + 10
+                  renew()
+                }
+              "
               href="#"
               class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
@@ -395,15 +459,11 @@
 </template>
 
 <script setup>
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
-import { ref } from 'vue'
+import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from '@heroicons/vue/20/solid'
+import { computed, onMounted, ref } from 'vue'
 
-import { MapPinIcon } from '@heroicons/vue/24/outline'
-import { UsersIcon } from '@heroicons/vue/24/outline'
+import { MapPinIcon, UsersIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
-import { staticJobs } from '@/stores/useCorporationStore'
-
-const jobs = ref(staticJobs)
 import {
   Dialog,
   DialogPanel,
@@ -421,44 +481,150 @@ import {
   TransitionChild,
   TransitionRoot
 } from '@headlessui/vue'
-import { XMarkIcon } from '@heroicons/vue/24/outline'
-import { ChevronDownIcon } from '@heroicons/vue/20/solid'
+
+import { getEnterpriseRecruit } from '@/stores/useCorporationStore'
+
+let index = ref(0)
+
+let enterpriseRecruit = ref(null)
+
+async function fetchData() {
+  enterpriseRecruit.value = await getEnterpriseRecruit()
+}
+
+function createFilter(form) {
+  for (let i = 0; i < form.length; i++) {
+    if (form[i].tag) {
+      for (let j = 0; j < form[i].tag.length; j++) {
+        filters.value[0].options.push({
+          value: form[i].tag[j],
+          label: form[i].tag[j],
+          checked: false
+        })
+      }
+    }
+    if (form[i].job_advantage) {
+      for (let j = 0; j < form[i].job_advantage.length; j++) {
+        filters.value[1].options.push({
+          value: form[i].job_advantage[j],
+          label: form[i].job_advantage[j],
+          checked: false
+        })
+      }
+    }
+    if (form[i].enterprise_field) {
+      filters.value[2].options.push({
+        value: form[i].enterprise_field,
+        label: form[i].enterprise_field,
+        checked: false
+      })
+    }
+    for (let i = 0; i < filters.value.length; i++) {
+      filters.value[i].options = filters.value[i].options.reduce((acc, current) => {
+        let labels = acc.map((item) => item.label)
+        if (!labels.includes(current.label) && current.label) {
+          acc.push(current)
+        }
+        return acc
+      }, [])
+    }
+  }
+}
+
+onMounted(async () => {
+  await fetchData()
+  createFilter(enterpriseRecruit.value)
+  renew()
+})
 
 const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
-  { name: 'Best Rating', href: '#', current: false },
-  { name: 'Newest', href: '#', current: false }
+  { name: '薪资最高', href: '#', current: false },
+  { name: '需求最多', href: '#', current: false },
+  { name: '最轻松', href: '#', current: false }
 ]
-const filters = [
+const filters = ref([
   {
     id: 'category',
-    name: 'Category',
-    options: [
-      { value: 'new-arrivals', label: 'All New Arrivals', checked: false },
-      { value: 'tees', label: 'Tees', checked: false },
-      { value: 'objects', label: 'Objects', checked: true }
-    ]
+    name: '标签',
+    options: []
   },
   {
-    id: 'color',
-    name: 'Color',
-    options: [
-      { value: 'white', label: 'White', checked: false },
-      { value: 'beige', label: 'Beige', checked: false },
-      { value: 'blue', label: 'Blue', checked: false }
-    ]
+    id: 'adv',
+    name: '工作优势',
+    options: []
   },
   {
-    id: 'sizes',
-    name: 'Sizes',
-    options: [
-      { value: 's', label: 'S', checked: false },
-      { value: 'm', label: 'M', checked: false },
-      { value: 'l', label: 'L', checked: false }
-    ]
+    id: 'field',
+    name: '领域',
+    options: []
   }
-]
-const activeFilters = [{ value: 'objects', label: 'Objects' }]
+])
+const activeFilters = ref([])
+
+const activeSort = ref(null)
+
+const activeLists = computed(() => {
+  return [
+    filters.value[0].options.filter((option) => option.checked),
+    filters.value[1].options.filter((option) => option.checked),
+    filters.value[2].options.filter((option) => option.checked)
+  ]
+})
+
+let data = ref([])
+let page_data = ref([])
+
+// 根据现有的sort和filter来筛选数据
+function renew() {
+  data.value = enterpriseRecruit.value.filter((item) => {
+    let flag = true
+    for (let i = 0; i < activeLists.value[0].length; i++) {
+      if (item.tag.includes(activeLists.value[0][i].label)) {
+        break
+      }
+      if (i === activeLists.value[0].length - 1) {
+        return false
+      }
+    }
+    for (let i = 0; i < activeLists.value[1].length; i++) {
+      if (item.job_advantage.includes(activeLists.value[1][i].label)) {
+        break
+      }
+      if (i === activeLists.value[1].length - 1) {
+        return false
+      }
+    }
+    for (let i = 0; i < activeLists.value[2].length; i++) {
+      if (item.enterprise_field == activeLists.value[2][i].label) {
+        break
+      }
+      if (i === activeLists.value[2].length - 1) {
+        return false
+      }
+    }
+    return flag
+  })
+  //   依据sort来排序
+  if (activeSort.value == '薪资最高') {
+    data.value.sort((a, b) => {
+      return getFirstNumberFromString(b.job_salary) - getFirstNumberFromString(a.job_salary)
+    })
+  } else if (activeSort.value == '需求最多') {
+    data.value.sort((a, b) => {
+      return b.job_needed_people - a.job_needed_people
+    })
+  } else if (activeSort.value == '最轻松') {
+    data.value.sort((a, b) => {
+      return a.job_day - b.job_day
+    })
+  }
+  page_data.value = data.value.slice(index.value, index.value + 10)
+}
+
+function getFirstNumberFromString(str) {
+  const match = str.match(/^\d+/)
+  return match ? match[0] : null
+}
 
 const open = ref(false)
 </script>
