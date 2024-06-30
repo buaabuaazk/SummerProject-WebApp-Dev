@@ -395,7 +395,7 @@
             to
             {{ ' ' }}
             <span class="font-medium">{{
-              index + 11 > data.length ? data.length : index + 11
+              index + 10 > data.length ? data.length : index + 10
             }}</span>
             {{ ' ' }}
             of
