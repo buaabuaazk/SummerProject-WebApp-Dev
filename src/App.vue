@@ -1,4 +1,5 @@
 <template>
+  <!-- <Header class="sticky top-0 z-50"></Header> -->
   <n-config-provider preflight-style-disabled>
     <n-notification-provider :max="3" placement="bottom-right">
       <div class="min-h-screen">
@@ -10,7 +11,7 @@
         </router-view>
         <!-- <Footer></Footer> -->
         <!-- <Toast /> -->
-        <div style="z-index: 100; width: 100%; height: 100%; overflow: hidden">
+        <!-- <div style="z-index: 100; width: 100%; height: 100%; overflow: hidden">
           <div v-show="messageStore.contactNow">
             <MessageBar />
           </div>
@@ -20,7 +21,7 @@
           style="position: absolute; margin-top: 90vh; margin-left: 90vw; background-color: blue"
         >
           CHAT
-        </button>
+        </button> -->
       </div>
     </n-notification-provider>
   </n-config-provider>

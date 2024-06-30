@@ -4,33 +4,33 @@
  * @Description: 登录接口
  */
 import { DEBUGGING } from '@/config'
+import { debug } from '@/config'
 import axios from './request'
 import useTokenStore from '@/stores/useTokenStore'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
 const tokenStore = useTokenStore()
 const currentUserStore = useCurrentUserStore()
 export default async function login(user_email, password) {
-  console.log('🚀 ~ file: login.js:12 ~ login ~ user_email, password:', user_email, password)
   try {
     let res = await axios.post('/api/user/login', {
       username: user_email,
       password
     })
 
-    if (DEBUGGING) {
-      console.log('🚀 ~ file: login.js:18 ~ login ~ res:', res.data)
-    }
+    debug.log('🚀 ~ file: login.js:20 ~ login ~ res:', res.data)
 
     const token = res.data.access
     tokenStore.setToken(`Bearer ${token}`)
-    res = await axios.get('/api/user/detail')
-    if (DEBUGGING) {
-      console.log('🚀 ~ file: login.js:18 ~ login ~ res:', res.data)
-    }
+    res = await axios.get('/api/user/detail', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    debug.log('🚀 ~ file: login.js:25 ~ login ~ res:', res.data)
     currentUserStore.setCurrentUser(res.data)
     return true
   } catch (error) {
-    console.log('🚀 ~ file: login.js:20 ~ login ~ error:', error)
+    debug.log('🚀 ~ file: login.js:20 ~ login ~ error:', error)
     return false
   }
 }

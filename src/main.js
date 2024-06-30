@@ -5,19 +5,17 @@
  * @FilePath: /frontend1/src/main.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-// import '@/assets/index.css'
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
 
 import App from './App.vue'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import router from './router'
 import ElementPlus from 'element-plus'
-// import 'element-plus/dist/index.css'
-import './assets/index.css'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import Antd from 'ant-design-vue'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import './assets/index.css'
+import 'element-plus/dist/index.css'
 import 'naive-chat/dist/style.css'
-
 import 'md-editor-v3/lib/style.css'
 import 'vfonts/Lato.css'
 
@@ -25,10 +23,9 @@ import 'vfonts/Lato.css'
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
-
-app.use(ElementPlus)
-app.use(PrimeVue)
-app.use(ToastService)
 app.use(pinia)
 app.use(router)
+
+app.use(ElementPlus)
+app.use(Antd)
 app.mount('#app')

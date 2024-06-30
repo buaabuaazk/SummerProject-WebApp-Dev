@@ -2,17 +2,22 @@ import axios from 'axios'
 import { baseURL, debug, DEBUGGING } from '@/config'
 import { NotifyPlugin } from 'tdesign-vue-next'
 import _ from 'loadsh'
-let token = localStorage.getItem('token')
-if (token) {
-  token = JSON.parse(token)
-  token = token.token
+
+const getToken = () => {
+  let token = localStorage.getItem('token')
+  debug.log(token)
+  if (token && token !== 'null') {
+    token = JSON.parse(token)
+    return token.token
+  }
+  return null
 }
 
 const instance = axios.create({
   baseURL:
     import.meta.env.MODE === 'development' ? 'http://100.92.185.35:8000' : 'http://10.251.255.229',
   timeout: 30000,
-  headers: { Authorization: token }
+  headers: { Authorization: getToken() }
 })
 
 function handleError(error) {
@@ -48,10 +53,10 @@ instance.interceptors.response.use(
     return response
   },
   (error) => {
-    _.throttle(handleError(error), 3000, {
+    _.throttle(handleError, 3000, {
       leading: true,
       trailing: false
-    })()
+    })(error)
     return Promise.reject(error)
   }
 )
