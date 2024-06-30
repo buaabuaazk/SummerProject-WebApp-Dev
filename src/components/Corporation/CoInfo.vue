@@ -103,8 +103,10 @@
                     </a>
                   </div>
                   <div v-if="user.is_admin" class="flex flex-col items-center">
-                    <UserPlusIcon class="h-6 w-6 text-gray-500" />
-                    <i class="text-xs font-bold underline decoration-sky-500 decoration-2">admin</i>
+                    <UserPlusIcon class="h-6 w-6 text-red-500" />
+                    <i class="text-xs font-bold underline decoration-pink-500 decoration-2"
+                      >admin</i
+                    >
                   </div>
                   <div v-else class="flex flex-col items-center">
                     <UserMinusIcon class="h-6 w-6 text-gray-500" />
