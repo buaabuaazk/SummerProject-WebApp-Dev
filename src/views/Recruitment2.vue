@@ -65,7 +65,7 @@ import axios from '../utils/request';
 onMounted(async () => {
       console.log('页面加载完成！');
       console.log(tableData)
-      let res=await axios.get('http://100.92.39.61:8000/api/recruit/11')
+      let res=await axios.get('http://10.251.255.229/api/recruit/16')
       console.log(res.data[1].job_request)
       /*for(let i=0;i<res.data.length;i++)
       {
