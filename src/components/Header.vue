@@ -23,7 +23,9 @@
       <div class="flex h-16 justify-between">
         <div class="flex px-2 lg:px-0">
           <div class="flex flex-shrink-0 items-center">
-            <img class="h-20 w-auto" src="@/assets/logo.png" alt="Your Company" />
+            <a href="./">
+              <img class="h-20 w-auto" src="@/assets/logo.png" alt="Your Company" />
+            </a>
           </div>
           <div class="hidden lg:ml-6 lg:flex lg:space-x-8">
             <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
@@ -31,25 +33,28 @@
             <a id="link2" href="/PostView" class="mouse-not-on">社区动态</a>
             <a id="link3" href="/unknown" class="mouse-not-on">我的关注</a>
             <a id="link4" href="/CorporationInfo" class="mouse-not-on">我的企业</a>
+            <a id="link5" href="/CorporationManage" class="mouse-not-on">企业管理</a>
           </div>
         </div>
-        <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
-          <div class="w-full max-w-lg lg:max-w-xs">
-            <label for="search" class="sr-only">Search</label>
-            <div class="relative">
-              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+        <!--
+          <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
+            <div class="w-full max-w-lg lg:max-w-xs">
+              <label for="search" class="sr-only">Search</label>
+              <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                </div>
+                <input
+                  id="search"
+                  name="search"
+                  class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  placeholder="Search"
+                  type="search"
+                />
               </div>
-              <input
-                id="search"
-                name="search"
-                class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="Search"
-                type="search"
-              />
             </div>
           </div>
-        </div>
+        -->
         <div class="flex items-center lg:hidden">
           <!-- Mobile menu button -->
           <DisclosureButton
@@ -82,7 +87,7 @@
                 <img
                   class="h-10 w-10 rounded-full"
                   :src="getAvatar()"
-                  alt="暂未登录"
+                  alt="未登录"
                   @click="ifLogin()"
                 />
               </MenuButton>
@@ -145,6 +150,16 @@
                       >登录</a
                     >
                   </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="/sos/register"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >注册</a
+                    >
+                  </MenuItem>
                 </template>
               </MenuItems>
             </transition>
@@ -179,6 +194,12 @@
           href="/CorporationInfo"
           class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
           >我的企业</DisclosureButton
+        >
+        <DisclosureButton
+          as="a"
+          href="/CorporationManage"
+          class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+          >企业管理</DisclosureButton
         >
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">
@@ -247,6 +268,7 @@ import {
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import avatar1 from '@/assets/avatar1.png'
+import avatar_default from '@/assets/userDefaultAvatar.png'
 // 在这里使用 onMounted 钩子函数代替 mounted()
 import { onMounted } from 'vue'
 import useTokenStore from '@/stores/useTokenStore'
@@ -261,11 +283,6 @@ const isLogined = () => {
 onMounted(() => {
   // 获取当前URL的查询字符串
   const path = window.location.pathname
-  // 解析查询字符串为URLSearchParams对象
-  //const urlParams = new URLSearchParams(queryString);
-  // 获取指定的查询参数值
-  //const styleParam = urlParams.get('style');
-  // 获取链接元素
   const link = document.getElementById('link2')
   console.log('start')
   console.log(path)
@@ -295,18 +312,18 @@ function ifLogin() {
 function logout() {
   router.push('/sos/login')
   //待实现，清空当前登录的token和userid等
-  console.log(tokenStore.getToken)
+  // console.log(tokenStore.getToken)
   localStorage.setItem('token', null)
-  console.log(tokenStore.getToken)
+  // console.log(tokenStore.getToken)
   router.push('/sos/login')
 }
 function getAvatar() {
-  console.log('11111ew' + tokenStore.getToken)
+  // console.log('11111ew' + tokenStore.getToken)
   if (tokenStore.getToken == null || tokenStore.getToken == '') {
     //console.log('a1aa')
-    return null
+    return avatar_default
   } else {
-    console.log(tokenStore.getToken)
+    // console.log(tokenStore.getToken)
     return avatar1
   }
 }

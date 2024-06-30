@@ -46,6 +46,8 @@
                   <button @click="uploadResume" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     上传简历
                   </button>
+                  <p>简历上传情况：</p>
+                  <a :href="profile.detailedInformation.resume">{{ profile.detailedInformation.resume }}</a>
                 </div>
               </div>
               <div style="flex: 1; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
@@ -62,16 +64,16 @@
             <div style="display: flex;">
               <div style="width: 50%;">
                 <a-form-item label="姓" style="width: 20rem">
-                  <a-input v-model:value="profile.first_name"/>
+                  <a-input v-model:value="profile.first_name" :placeholder="profile.detailedInformation.first_name"/>
                 </a-form-item>
                 <a-form-item label="名" style="width: 20rem">
-                  <a-input v-model:value="profile.last_name"/>
+                  <a-input v-model:value="profile.last_name" :placeholder="profile.detailedInformation.last_name"/>
                 </a-form-item>
                 <a-form-item label="用户名" style="width: 20rem">
-                  <a-input v-model:value="profile.username"/>
+                  <a-input v-model:value="profile.username" :placeholder="profile.detailedInformation.username"/>
                 </a-form-item>
                 <a-form-item label="学历" style="width: 10rem">
-                  <a-select v-model:value="profile.degree">
+                  <a-select v-model:value="profile.degree" :placeholder="profile.detailedInformation.degree">
                     <a-select-option value="高中">高中</a-select-option>
                     <a-select-option value="本科">本科</a-select-option>
                     <a-select-option value="硕士">硕士</a-select-option>
@@ -79,13 +81,14 @@
                   </a-select>
                 </a-form-item>
                 <a-form-item label="邮箱" style="width: 20rem">
-                  <a-input v-model:value="profile.email"/>
+                  <a-input v-model:value="profile.email" :placeholder="profile.detailedInformation.email"/>
                 </a-form-item>
               </div>
               <div style="width: 50%;">
                 <a-form-item label="兴趣岗位" style="width: 20rem">
                   <a-select
                     v-model:value="profile.interestJob"
+                    :placeholder="profile.detailedInformation.tag"
                     mode="multiple"
                     style="width: 100%"
                     placeholder="Please select"
@@ -94,10 +97,10 @@
                   ></a-select>
                 </a-form-item>
                 <a-form-item label="博客" style="width: 20rem">
-                  <a-input v-model:value="profile.blog"/>
+                  <a-input v-model:value="profile.blog" :placeholder="profile.detailedInformation.blog"/>
                 </a-form-item>
                 <a-form-item label="仓库" style="width: 20rem">
-                  <a-input v-model:value="profile.repo"/>
+                  <a-input v-model:value="profile.repo" :placeholder="profile.detailedInformation.repo"/>
                 </a-form-item>
                 <a-form-item style="color: deepskyblue;">
                   <a-button @click="submit">提交修改</a-button>
@@ -137,8 +140,7 @@ const profile = ref({
   file: null,
   detailedInformation:'',//放获取到的信息
 });
-const isEditable = ref(false);
-const editableInterest = ref('');
+
 const interestOptions = [
     "前端工程师",
     "后端工程师",
@@ -173,16 +175,15 @@ const interestOptions = [
   ];
 onMounted(() => {
   console.log('组件已挂载');
-  const userId = 3;
   axios.get('/api/user/detail', {
-      headers: {
-        Authorization: tokenStore.getToken
-      }
-    })
+      
+  })
   .then(response => {
     console.log('获取用户信息成功');
     console.log(response);
     console.log(response.data);
+    console.log(tokenStore.getToken)
+    console.log(response.data.tag)
     //console.log(profile.detailedInformation.username) profile.value.detailedInformation.username
     profile.value.detailedInformation=response.data;
     console.log('111'+profile.value.detailedInformation.username)
@@ -192,31 +193,28 @@ onMounted(() => {
     // 可以在界面上显示错误信息或者其他处理
   });
 });
-
 const handleFileUpload = (event) => {
-    profile.value.file = event.target.files[0];
-    console.log('Uploaded file:', profile.value.file);
-    // Handle file upload logic here
-  };
-  
+  profile.value.file = event.target.files[0];
+  console.log('Uploaded file:', profile.value.file);
+  // Handle file upload logic here
+};
 const uploadResume = () => {
-    // 创建一个 FormData 对象
-    const formData = new FormData();
-    const fileInput = document.querySelector('input[type=file]'); // 通过选择器获取文件上传 input
-  
-    // 将文件添加到 FormData 中
-    formData.append('file', profile.value.file); // 使用 Composition API 中的 file 属性
-  
-    axios.post('/api/user/resume', formData, )
-            .then(response => {
-              console.log('1111111')
-              alert('简历上传成功！')
-            })
-            .catch(error => {
-              console.log(error)
-            })
-  };
+  // 创建一个 FormData 对象
+  const formData = new FormData();
+  const fileInput = document.querySelector('input[type=file]'); // 通过选择器获取文件上传 input
 
+  // 将文件添加到 FormData 中
+  formData.append('file', profile.value.file); // 使用 Composition API 中的 file 属性
+
+  axios.post('/api/user/resume', formData, )
+	  .then(response => {
+	    console.log('1111111')
+	    alert('简历上传成功！')
+	  })
+	  .catch(error => {
+	    console.log(error)
+	  })
+};
 /*
 const downloadResume = () => {
   const link = document.createElement('a');
@@ -235,10 +233,11 @@ const confirmEdit = () => {
 };
 */
 const submit = () => {
-  const userId = 3;
   console.log('11111')
   console.log(profile.value)
   console.log('传过去的新数据是'+profile.value.degree)
+  profile.value.tag = interestToNumList(profile.value.interestJob)
+  console.log(profile.value.tag)
   const formData = new FormData();
   //formData.append('user_id', 3);
   if (profile.value.username) {
@@ -262,6 +261,7 @@ const submit = () => {
   if (profile.value.repo) {
     formData.append('repo',profile.value.repo)
   }
+  //if (profile.value.tag) {formData.append('tag',profile.value.tag)}
   axios.patch('/api/user/detail', formData,{
       headers: {
         Authorization: tokenStore.getToken
@@ -279,6 +279,28 @@ const submit = () => {
     console.error('修改用户信息失败', error);
     // 可以在界面上显示错误信息或者其他处理
   });
+};
+const mapNumbersToInterests = (numbers) => {
+  return numbers.map(number => {
+    if (number >= 1 && number <= 30) {
+      return interestOptions[number - 1]
+    } else {
+      return "错误岗位"; // 或者可以抛出错误
+    }
+  });
+};
+const numToInterest = (num) => {
+  return interestOptions[num - 1]
+}
+const numlistToInterest = (numList) => {
+  console.log(numlist)
+  //let interestList = numList.map(num => {return interestOptions[num - 1];});
+  return numList;
+}
+const interestToNumList = (interestList) => {
+  console.log(interestList);
+  let numList = interestList.map(interest => {return interestOptions.indexOf(interest) + 1;});
+  return numList;
 };
 </script>
 

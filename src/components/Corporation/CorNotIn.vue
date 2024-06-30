@@ -1,19 +1,11 @@
 <template>
-  <!--
-      This example requires updating your template:
-  
-      ```
-      <html class="h-full">
-      <body class="h-full">
-      ```
-    -->
   <div>
     <main class="grid h-dvh place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div class="text-center">
         <p class="text-base font-semibold text-indigo-600">404</p>
         <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">页面不存在</h1>
         <p class="mt-6 text-base leading-7 text-gray-600">
-          对不起，您并没有加入任何企业，或许你可以尝试创建企业👇🏻
+          对不起，您并没有加入任何企业，或许你可以尝试创建企业成为企业管理员👇🏻或者加入其他推荐的企业
         </p>
         <div class="mt-10 flex items-center justify-center gap-x-6">
           <a
@@ -25,6 +17,48 @@
           <a href="#" class="text-sm font-semibold text-gray-900"
             >联系帮助 <span aria-hidden="true">&rarr;</span></a
           >
+        </div>
+      </div>
+
+      <div class="bg-white">
+        <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+          <h2 class="text-xl font-bold text-gray-900">热门企业列表</h2>
+
+          <div
+            class="mt-8 grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8"
+          >
+            <div v-for="company in companies" :key="company.id" class="group">
+              <div class="relative">
+                <div class="relative h-72 w-full overflow-hidden rounded-lg">
+                  <img
+                    :src="company.imageSrc"
+                    :alt="company.imageAlt"
+                    class="h-full w-full object-cover object-center group-hover:opacity-75"
+                  />
+                </div>
+                <div class="relative mt-4">
+                  <h3 class="text-sm font-medium text-gray-900">{{ company.name }}</h3>
+                  <p class="mt-1 text-sm text-gray-500">{{ company.color }}</p>
+                </div>
+                <div
+                  class="absolute inset-x-0 top-0 flex h-72 items-end justify-end overflow-hidden rounded-lg p-4"
+                >
+                  <div
+                    aria-hidden="true"
+                    class="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black opacity-50"
+                  />
+                  <p class="relative text-lg font-semibold text-white">{{ company.price }}</p>
+                </div>
+              </div>
+              <div class="mt-6">
+                <a
+                  @click="router.push('/CorporationInfo/10')"
+                  class="relative flex items-center justify-center rounded-md border border-transparent bg-gray-100 px-8 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200"
+                  >查看详情<span class="sr-only">, {{ company.name }}</span></a
+                >
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
@@ -86,7 +120,7 @@
                                   autocomplete="username"
                                   class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                   placeholder="janesmith"
-                                  v-model="formData.enterprise_name"
+                                  v-model="formData.name"
                                   required
                                 />
                               </div>
@@ -105,7 +139,7 @@
                                 name="about"
                                 rows="3"
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                v-model="formData.enterprise_description"
+                                v-model="formData.introduction"
                                 required
                               />
                             </div>
@@ -139,6 +173,7 @@
                                       name="file-upload"
                                       type="file"
                                       class="sr-only"
+                                      @change="handleFileUpload"
                                     />
                                   </label>
                                   <p class="pl-1">or drag and drop</p>
@@ -512,7 +547,11 @@
                     </div>
 
                     <div class="mt-6 flex items-center justify-end gap-x-6">
-                      <button type="button" class="text-sm font-semibold leading-6 text-gray-900">
+                      <button
+                        type="button"
+                        class="text-sm font-semibold leading-6 text-gray-900"
+                        @click="closeModal"
+                      >
                         Cancel
                       </button>
                       <button
@@ -536,10 +575,10 @@
 
 <script setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } from '@headlessui/vue'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import useTokenStore from '@/stores/useTokenStore'
 
-import axios from 'axios'
+import axios from '@/utils/request'
 import { useRouter } from 'vue-router'
 
 const tokenStore = useTokenStore()
@@ -556,48 +595,77 @@ function openModal() {
 }
 
 let formData = ref({
-  enterprise_name: '',
-  enterprise_logo: '',
-  enterprise_description: '',
-  enterprise_interested_id: [],
-  enterprise_recruit_list: [],
-  enterprise_field: ''
+  name: '',
+  introduction: '',
+  file: null,
+  field: ''
 })
 
+const companies = [
+  {
+    id: 1,
+    name: '百度',
+    color: '百度是中国最大的搜索引擎',
+    href: '#',
+    imageSrc: 'https://pic.imgdb.cn/item/667e168cd9c307b7e9ca4086.jpg',
+    imageAlt:
+      'Front of zip tote bag with white canvas, black canvas straps and handle, and black zipper pulls.',
+    price: '140岗位'
+  },
+  {
+    id: 2,
+    name: '网易',
+    color: '网易是中国最大的游戏公司',
+    href: '#',
+    imageSrc: 'https://pic.imgdb.cn/item/667e17e8d9c307b7e9cc10fa.png',
+    imageAlt:
+      'Front of zip tote bag with white canvas, black canvas straps and handle, and black zipper pulls.',
+    price: '97岗位'
+  },
+  {
+    id: 3,
+    name: '京东',
+    color: '京东是中国最大的电商公司',
+    href: '#',
+    imageSrc: 'https://pic.imgdb.cn/item/667e17c1d9c307b7e9cbdd4a.jpg',
+    imageAlt:
+      'Front of zip tote bag with white canvas, black canvas straps and handle, and black zipper pulls.',
+    price: '34岗位'
+  },
+  {
+    id: 4,
+    name: '腾讯',
+    color: '腾讯是中国最大的社交公司',
+    href: '#',
+    imageSrc: 'https://pic.imgdb.cn/item/667e1802d9c307b7e9cc33ea.png',
+    imageAlt:
+      'Front of zip tote bag with white canvas, black canvas straps and handle, and black zipper pulls.',
+    price: '123岗位'
+  }
+]
+
 const submit = async () => {
-  await axios
-    .post('http://8.130.25.189:8000/api/enterprise/register', formData.value, {
-      headers: {
-        Authorization: tokenStore.getToken,
-        'Content-Type': 'application/json'
-      }
-    })
-    .then((res) => {
-      console.log(res)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+  closeModal()
 
-  let user_id = await axios
-    .get('http://8.130.25.189:8000/api/user/detail', {
-      headers: {
-        Authorization: tokenStore.getToken
-      }
-    })
-    .then((res) => {
-      console.log(res)
-      return res.data.user_id
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+  console.log(formData.value)
 
-  console.log(user_id)
+  const formDataUpload = new FormData()
 
-  await axios
-    .get('http://8.130.25.189:8000/api/profile?user_id=' + user_id)
-    .then((res) => localStorage.setItem('enterprise', res.data.enterprise))
-  router.push('/CorporationInfo')
+  formDataUpload.append('name', formData.value.name)
+  formDataUpload.append('introduction', formData.value.introduction)
+  formDataUpload.append('file', formData.value.file)
+  formDataUpload.append('field', formData.value.field)
+
+  axios.post('/api/enterprise/register', formDataUpload)
+
+  setTimeout(() => {
+    router.push('/CorporationInfo/')
+  }, 3000)
+}
+
+function handleFileUpload(e) {
+  const file = e.target.files[0]
+  console.log(file)
+  formData.value.file = file
 }
 </script>
