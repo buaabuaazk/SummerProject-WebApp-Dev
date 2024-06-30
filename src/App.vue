@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <Header class="sticky top-0 z-50"></Header>
-    <RouterView class="flex-1 flex flex-col justify-center"></RouterView>
+    <RouterView></RouterView>
     <!-- <Footer></Footer> -->
     <Toaster> </Toaster>
   </div>

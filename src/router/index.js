@@ -34,8 +34,40 @@ const router = createRouter({
     },
     {
       path: '/CorporationInfo/',
-      name: 'CorporationInfo2',
+      name: 'CorporationInfo',
       component: () => import('@/views/CorporationInfo.vue'),
+      children: [
+        {
+          path: 'Test',
+          name: 'CoTest',
+          component: () => import('@/components/Corporation/CoTest.vue')
+        },
+        {
+          path: '',
+          name: 'CoInfo',
+          component: () => import('@/components/Corporation/CoInfo.vue')
+        },
+        {
+          path: 'Recruit',
+          name: 'CoRecruit',
+          component: () => import('@/components/Corporation/CoRecruit.vue')
+        },
+        {
+          path: 'Trend',
+          name: 'CoTrend',
+          component: () => import('@/components/Corporation/CoTrend.vue')
+        },
+        {
+          path: 'User',
+          name: 'CoUser',
+          component: () => import('@/components/Corporation/CoUser.vue')
+        },
+        {
+          path: 'Settings',
+          name: 'CoSettings',
+          component: () => import('@/components/Corporation/CoSettings.vue')
+        }
+      ],
       meta: {
         requireAuth: true,
         requireEnterprise: true,
@@ -45,12 +77,39 @@ const router = createRouter({
     },
     {
       path: '/CorporationInfo/:id',
-      name: 'CorporationInfo',
+      name: 'CorporationInfoId',
       component: () => import('@/views/CorporationInfo.vue'),
       meta: {
         requireAuth: true,
         title: '企业公开信息展示'
       },
+      children: [
+        {
+          path: 'Info',
+          name: 'IdCoInfo',
+          component: () => import('@/components/Corporation/CoInfo.vue')
+        },
+        {
+          path: 'Recruit',
+          name: 'IdCoRecruit',
+          component: () => import('@/components/Corporation/CoRecruit.vue')
+        },
+        {
+          path: 'Trend',
+          name: 'IdCoTrend',
+          component: () => import('@/components/Corporation/CoTrend.vue')
+        },
+        {
+          path: 'User',
+          name: 'IdCoUser',
+          component: () => import('@/components/Corporation/CoUser.vue')
+        },
+        {
+          path: 'Settings',
+          name: 'IdCoSettings',
+          component: () => import('@/components/Corporation/CoSettings.vue')
+        }
+      ],
       props: true
     },
     {

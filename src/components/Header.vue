@@ -3,20 +3,6 @@
  * @Author: Q9K
  * @Description: 网页横栏
 -->
-<!--
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
--->
 <template>
   <Disclosure as="nav" class="bg-white shadow fixed w-full top-0 z-10" v-slot="{ open }">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
@@ -30,8 +16,7 @@
             <a id="link1" href="/" class="mouse-not-on">招聘信息</a>
             <a id="link2" href="/PostView" class="mouse-not-on">社区动态</a>
             <a id="link3" href="/unknown" class="mouse-not-on">我的关注</a>
-            <a id="link4" href="/CorporationInfo" class="mouse-not-on">我的企业</a>
-            <a id="link5" href="/CorporationManage" class="mouse-not-on">企业管理</a>
+            <a id="link4" href="/CorporationInfo" class="mouse-not-on">企业</a>
           </div>
         </div>
         <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
@@ -179,13 +164,7 @@
           as="a"
           href="/CorporationInfo"
           class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
-          >我的企业</DisclosureButton
-        >
-        <DisclosureButton
-          as="a"
-          href="/CorporationManage"
-          class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
-          >企业管理</DisclosureButton
+          >企业</DisclosureButton
         >
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">
