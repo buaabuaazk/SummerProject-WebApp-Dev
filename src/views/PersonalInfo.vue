@@ -32,9 +32,29 @@
       </div>
       <div style="flex: 180; padding: 20px;">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="动态" name="first" class="larger-tab">这是二轮的动态
+          <el-tab-pane label="关注" name="first" class="larger-tab">
+            <div style="background-color: #ececec; padding: 20px">
+              <a-row :gutter="16">
+                <a-col :span="8">
+                  <a-card :title="profile.detailedInformation.username" :bordered="false">
+                    <p>card content</p>
+                  </a-card>
+                </a-col>
+                <a-col :span="8">
+                  <a-card title="Card title" :bordered="false">
+                    <p>card content</p>
+                  </a-card>
+                </a-col>
+                <a-col :span="8">
+                  <a-card title="Card title" :bordered="false">
+                    <p>card content</p>
+                  </a-card>
+                </a-col>
+                
+              </a-row>
+            </div>
           </el-tab-pane>
-          <el-tab-pane label="关注" name="second" class="larger-tab">这是二轮的关注</el-tab-pane>
+          <el-tab-pane label="动态" name="second" class="larger-tab">这是二轮的关注</el-tab-pane>
           <el-tab-pane label="简历" name="third" class="larger-tab">
             <!--在这里写-->
             <!--在这里写-->
@@ -52,11 +72,21 @@
               </div>
               <div style="flex: 1; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
                 <h3>大模型优化简历</h3>
-                <el-button size="small" type="primary" @click="optimizeResume">优化简历</el-button>
-                <div v-if="optimizedResume" style="margin-top: 20px;">
+                <!--
+                  <el-button size="small" type="primary" @click="optimizeResume">优化简历</el-button>
+                -->
+                <div>
+                  <a-button type="primary" @click="optimizeResume">点击优化简历</a-button>
+                  <a-modal v-model:open="open" title="简历优化建议" @ok="handleOk" :width="800">
+                    <div v-html="format"></div>
+                  </a-modal>
+                </div>
+                <!--
+                  <div v-if="optimizedResume" style="margin-top: 20px;">
                   <h4>优化后的简历</h4>
                   <pre>{{ optimizedResume }}</pre>
                 </div>
+                -->
               </div>
             </div>
           </el-tab-pane>
@@ -91,8 +121,7 @@
                     :placeholder="profile.detailedInformation.tag"
                     mode="multiple"
                     style="width: 100%"
-                    placeholder="Please select"
-                    :options="[...Array(30)].map((_, i) => ({ value: interestOptions[i] }))"
+                    :options="interestOptions.map((option) => ({ value: option }))"
                     @change="handleChange"
                   ></a-select>
                 </a-form-item>
@@ -119,7 +148,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref , computed } from 'vue';
 //import axios from '@/utils/request'
 import axios from '../utils/request';
 import { onMounted } from 'vue';
@@ -134,13 +163,21 @@ const profile = ref({
   email:'',
   degree: '',
   interestJob: [],
+  tag: [],
   blog: '',
   repo: '',
   avatar: '',
   file: null,
   detailedInformation:'',//放获取到的信息
 });
-
+const open = ref(false);
+//const format = ref('我建议对简历进行如下优化：\n姓名：魏浩哲\n联系方式');
+const rawResumeText = ref(
+    '这是默认数据'
+  );
+const format = computed(() => {
+  return rawResumeText.value.replace(/\n/g, '<br>');
+});
 const interestOptions = [
     "前端工程师",
     "后端工程师",
@@ -261,6 +298,9 @@ const submit = () => {
   if (profile.value.repo) {
     formData.append('repo',profile.value.repo)
   }
+  //if (profile.value.tag) {formData.append('tag_id',profile.value.tag)}
+  console.log(profile.value.tag)
+  test();
   //if (profile.value.tag) {formData.append('tag',profile.value.tag)}
   axios.patch('/api/user/detail', formData,{
       headers: {
@@ -302,6 +342,49 @@ const interestToNumList = (interestList) => {
   let numList = interestList.map(interest => {return interestOptions.indexOf(interest) + 1;});
   return numList;
 };
+const test = ()=> {
+  console.log('原始的tag：'+profile.value.detailedInformation.tag)
+  console.log('用户输入的interest：'+profile.interestJob)
+  console.log('要传给后端的tag：'+profile.value.tag)
+}
+const showModal = () => {
+  open.value = true;
+  console.log('showmodal called')
+};
+const handleOk = e => {
+  console.log(e);
+  open.value = false;
+};
+const replaceNewlinesWithBreaks=(str) => {
+  return str.replace(/\\n/g, '<br>');
+}
+const boldTextBetweenStars = (str) => {
+  // 使用正则表达式捕获两个星号中间的内容
+  return str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+};
+
+const optimizeResume = ()=> {
+  console.log('optimizeResume called')
+  axios.post('/api/tweet/optimize_resume',)
+	  .then(response => {
+	    //
+      //format.value=response.data.suggestions;
+      console.log('返回的建议是'+response.data.suggestions)
+      //format.value=replaceNewlinesWithBreaks(response.data.suggestions)
+      rawResumeText.value=replaceNewlinesWithBreaks(response.data.suggestions)
+      rawResumeText.value=boldTextBetweenStars(response.data.suggestions)
+      console.log(rawResumeText.value)
+      console.log(format.value)
+	  })
+	  .catch(error => {
+	    console.log(error)
+	  })
+  console.log('显示简历优化信息 called')
+  showModal();
+  //这个是处理后的字符串（简历优化建议）
+  //format.value = rawResumeText.value.replace(/\n/g, '<br>');
+  //console.log(format.value)
+}
 </script>
 
 <style scoped>
