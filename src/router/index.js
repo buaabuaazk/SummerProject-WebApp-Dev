@@ -175,6 +175,11 @@ const router = createRouter({
       name: 'noCorporation',
       component: () => import('@/components/Corporation/CorNotIn.vue')
     },
+    {
+      path: '/search',
+      name: 'search',
+      component: () => import('@/views/SearchView.vue')
+    },
     //404页面，需要放在最后
     {
       path: '/:pathMatch(.*)*' /*其他页面*/,

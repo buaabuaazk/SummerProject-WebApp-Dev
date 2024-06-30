@@ -2,13 +2,13 @@ import axios from 'axios'
 import { useToast } from '@/components/ui/toast/use-toast'
 const { toast } = useToast()
 import _ from 'loadsh'
-import useTokenStore from '@/stores/useTokenStore'
-const tokenStore = useTokenStore()
+let token = localStorage.getItem('token')
+token = token?.token
 const instance = axios.create({
   baseURL:
     import.meta.env.MODE === 'development' ? 'http://100.122.113.8:8000' : 'http://10.251.255.229',
   timeout: 3000,
-  headers: { Authorization: tokenStore.getToken }
+  headers: { Authorization: token }
 })
 //请求拦截
 instance.interceptors.request.use(

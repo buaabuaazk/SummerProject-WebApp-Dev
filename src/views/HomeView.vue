@@ -129,11 +129,6 @@
     </div>
     <a-button @click="fetchNewData()" style="margin-left: 30rem">查看更多</a-button>
   </div>
-
-  <!-- 聊天消息 -->
-  <div v-if="false" class="chat">
-    <MessageBar />
-  </div>
 </template>
 
 <script setup>
@@ -147,7 +142,6 @@ import {
   DashboardOutlined,
   IdcardOutlined
 } from '@ant-design/icons-vue'
-import MessageBar from '@/components/MessageBar.vue'
 import {useRouter} from 'vue-router'
 const router = useRouter()
 
