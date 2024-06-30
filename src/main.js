@@ -12,19 +12,23 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
+// import 'element-plus/dist/index.css'
 import './assets/index.css'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import Antd from 'ant-design-vue'
 import 'naive-chat/dist/style.css'
 
+import 'md-editor-v3/lib/style.css'
+import 'vfonts/Lato.css'
+
+//
+const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
-const app = createApp(App)
-
-app.use(router)
-app.use(pinia)
 app.use(ElementPlus)
-app.use(Antd)
+app.use(PrimeVue)
+app.use(ToastService)
+app.use(pinia)
+app.use(router)
 app.mount('#app')

@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { useToast } from '@/components/ui/toast/use-toast'
-const { toast } = useToast()
+import { baseURL, debug, DEBUGGING } from '@/config'
+import { NotifyPlugin } from 'tdesign-vue-next'
 import _ from 'loadsh'
 let token = localStorage.getItem('token')
 if (token) {
@@ -14,22 +14,31 @@ const instance = axios.create({
   timeout: 30000,
   headers: { Authorization: token }
 })
+
+function handleError(error) {
+  let detail = undefined
+  if (error.response) {
+    detail = error.response.data
+  } else if (error.request) {
+    detail = error.request
+  } else {
+    detail = error.message
+  }
+  debug.log('🚀 ~ file: request.js:21 ~ handleError ~ detail:', detail)
+
+  if (DEBUGGING) {
+    NotifyPlugin.error({
+      title: '请求错误',
+      content: JSON.stringify(detail)
+    })
+  }
+}
 //请求拦截
 instance.interceptors.request.use(
   (config) => {
     return config
   },
   (error) => {
-    console.log('🚀 ~ file: request.js:18 ~ error:', error)
-
-    const popupError = () => {
-      toast({
-        title: '服务器或网络异常',
-        variant: 'destructive'
-      })
-    }
-    console.log('test')
-    _.debounce(popupError, 1000)()
     return Promise.reject(error)
   }
 )
@@ -39,17 +48,10 @@ instance.interceptors.response.use(
     return response
   },
   (error) => {
-    console.log('🚀 ~ file: request.js:34 ~ error:', error)
-
-    const popupError = () => {
-      toast({
-        title: '请求错误',
-        description: error,
-        variant: 'destructive'
-      })
-    }
-    _.debounce(popupError, 1000)()
-    // popupError()
+    _.throttle(handleError(error), 3000, {
+      leading: true,
+      trailing: false
+    })()
     return Promise.reject(error)
   }
 )
