@@ -1,31 +1,49 @@
 import axios from 'axios'
-import { useToast } from '@/components/ui/toast/use-toast'
-const { toast } = useToast()
+import { baseURL, debug, DEBUGGING } from '@/config'
+import { NotifyPlugin } from 'tdesign-vue-next'
 import _ from 'loadsh'
-let token = localStorage.getItem('token')
-token = token?.token
+
+const getToken = () => {
+  let token = localStorage.getItem('token')
+  debug.log(token)
+  if (token && token !== 'null') {
+    token = JSON.parse(token)
+    return token.token
+  }
+  return null
+}
+
 const instance = axios.create({
   baseURL:
-    import.meta.env.MODE === 'development' ? 'http://100.122.113.8:8000' : 'http://10.251.255.229',
-  timeout: 3000,
-  headers: { Authorization: token }
+    import.meta.env.MODE === 'development' ? 'http://100.92.185.35:8000' : 'http://10.251.255.229',
+  timeout: 30000,
+  headers: { Authorization: getToken() }
 })
+
+function handleError(error) {
+  let detail = undefined
+  if (error.response) {
+    detail = error.response.data
+  } else if (error.request) {
+    detail = error.request
+  } else {
+    detail = error.message
+  }
+  debug.log('🚀 ~ file: request.js:21 ~ handleError ~ detail:', detail)
+
+  if (DEBUGGING) {
+    NotifyPlugin.error({
+      title: '请求错误',
+      content: JSON.stringify(detail)
+    })
+  }
+}
 //请求拦截
 instance.interceptors.request.use(
   (config) => {
     return config
   },
   (error) => {
-    console.log('🚀 ~ file: request.js:18 ~ error:', error)
-
-    const popupError = () => {
-      toast({
-        title: '服务器或网络异常',
-        variant: 'destructive'
-      })
-    }
-    console.log('test')
-    _.debounce(popupError, 1000)()
     return Promise.reject(error)
   }
 )
@@ -35,17 +53,10 @@ instance.interceptors.response.use(
     return response
   },
   (error) => {
-    console.log('🚀 ~ file: request.js:34 ~ error:', error)
-
-    const popupError = () => {
-      toast({
-        title: '请求错误',
-        description: error,
-        variant: 'destructive'
-      })
-    }
-    _.debounce(popupError, 1000)()
-    // popupError()
+    _.throttle(handleError, 3000, {
+      leading: true,
+      trailing: false
+    })(error)
     return Promise.reject(error)
   }
 )

@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+/* @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -71,20 +71,5 @@
   }
   body {
     @apply bg-background text-foreground;
-    overflow-x: hidden
   }
-}
-
-@layer components {
-  .sidebar-icon {
-    @apply relative mx-auto my-2 flex h-12 w-12 cursor-pointer items-center justify-center rounded-3xl bg-[#D2D7DD] text-blue-500 transition-all duration-300 ease-linear hover:rounded-xl hover:bg-blue-600;
-  }
-  .sidebar-hr {
-    @apply bg-gray-200 dark:bg-gray-800
-    border border-gray-200 dark:border-gray-800 rounded-full
-    mx-2;
-  }
-  .sidebar-tooltip {
-    @apply absolute right-14 m-2 min-w-max origin-right scale-0 rounded-md bg-gray-900 p-2 text-xs font-bold text-white shadow-md transition-all duration-100 ease-linear;
-  }
-}
+} */
