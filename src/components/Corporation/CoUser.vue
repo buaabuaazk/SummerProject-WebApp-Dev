@@ -96,7 +96,7 @@ async function fetchData() {
   people.value = await getEnterpriseUserInfoProfile()
 }
 
-onMounted(() => {
-  fetchData()
+onMounted(async () => {
+  await fetchData()
 })
 </script>
