@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-24 14:29:21
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-27 15:59:46
+ * @LastEditTime: 2024-06-28 11:07:48
  * @FilePath: /frontend/src/views/Recruitment.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -14,7 +14,7 @@
 <!-- Card Blog -->
 <!-- Timeline -->
 <template>
-  <el-table :data="tableData" style="width: 100%" max-height="250">
+  <el-table :data="tableData" style="width: 100%" max-height="500">
     <el-table-column fixed prop="job_name" label="岗位名称" width="300" />
     <el-table-column prop="job_salary" label="岗位薪资" width="200" />
     <el-table-column prop="job_needed_people" label="招聘人数" width="150" />
