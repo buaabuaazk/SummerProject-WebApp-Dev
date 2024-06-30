@@ -24,7 +24,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/ApplymentAction',
+      path: '/ApplymentAction/:id',
       name: 'ApplymentAction',
       component: () => import('@/views/ApplymentAction.vue'),
       meta: {
@@ -117,7 +117,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/Recruitment',
+      path: '/Recruitment/:id',
       name: 'Recruitment',
       component: () => import('@/views/Recruitment.vue'),
       meta: {

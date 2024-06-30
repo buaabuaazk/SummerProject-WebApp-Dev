@@ -1,5 +1,5 @@
 <template>
-    <el-table :data="staffList" style="width: 100%" max-height="500" stripe border :default-sort="{ prop: 'date', order: 'descending' }">
+    <el-table :data="staffList" style="width: 100%" max-height="500rem" stripe border :default-sort="{ prop: 'date', order: 'descending' }">
         <el-table-column prop="name" label="员工姓名" width="200">
             <template #default="scope">
                 <el-popover effect="light" trigger="hover" placement="top" width="auto">
@@ -18,6 +18,7 @@
             { text: '市场营销', value: '市场营销' },
             { text: '运营', value: '运营' },
             { text: '设计', value: '设计' },
+            { text: '测试工程师', value: '' },
         ]"
         :filter-method="filter4"
         filter-placement="bottom-end"/>
@@ -77,6 +78,46 @@ var staffList:Staff[]=[
             "is_admin": false,
             "work_age": 0,
             "job": "测试工程师",
+            "user": 16,
+            "enterprise": 24,
+            "name":'小明',
+            "status":"普通员工"
+        },
+        {
+            "id": 23,
+            "is_admin": false,
+            "work_age": 5,
+            "job": "测试工程师2",
+            "user": 16,
+            "enterprise": 24,
+            "name":'小明2',
+            "status":"普通员工"
+        },
+        {
+            "id": 22,
+            "is_admin": false,
+            "work_age": 11,
+            "job": "测试工程师3",
+            "user": 16,
+            "enterprise": 24,
+            "name":'小明',
+            "status":"普通员工"
+        },
+        {
+            "id": 22,
+            "is_admin": false,
+            "work_age": 11,
+            "job": "测试工程师4",
+            "user": 16,
+            "enterprise": 24,
+            "name":'小明',
+            "status":"普通员工"
+        },
+        {
+            "id": 22,
+            "is_admin": false,
+            "work_age": 20,
+            "job": "测试工程师5",
             "user": 16,
             "enterprise": 24,
             "name":'小明',
