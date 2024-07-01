@@ -18,12 +18,12 @@
             <MessageBar />
           </div>
         </div>
-        <div class="h-screen fixed right-20 flex flex-col-reverse">
+        <div class="h-screen fixed left-4 flex flex-col-reverse">
           <button @click="messageStore.openMessageBox" class="mb-2">
             <div class="sidebar-icon group h-14 w-14 hover:rounded-xl hover:bg-green-500">
               <ChatBubbleLeftRightIcon class="h-10 w-10 text-green-700" />
 
-              <span class="sidebar-tooltip group-hover:scale-100">Chat</span>
+              <span class="sidebar-tooltip group-hover:scale-100 origin-left left-14">Chat</span>
             </div>
           </button>
         </div>
