@@ -52,6 +52,7 @@ import { onBeforeUnmount } from 'vue';
 import useTokenStore from '@/stores/useTokenStore';
 import { useMessageStore } from '@/stores/useMessageStore';
 import { useCurrentUserStore } from '@/stores/useCurrentUserStore'
+import { message } from 'ant-design-vue';
 
 const tokenStore = useTokenStore()
 const token = tokenStore.getToken
@@ -144,7 +145,6 @@ const messages = ref([])
 //     },
 //   }
 // )
-const test = ref([])
 
 const unreadCount = ref(0)
 const hasRead = ref([])
@@ -245,17 +245,17 @@ const fetchLatestMessage = async () => {
   }
 }
 
-// const fetchUnreadMessage = async () => {
-//   try {
-//     const response = await axios.get('/api/message/contact-unread-count', {
-//       headers: {
-//         'Authorization': token
-//       }
-//     })
-//   } catch (err){
-//     err.value = err.message
-//   }
-// }
+const fetchUnreadMessage = async () => {
+  try {
+    const response = await axios.get('/api/message/contact-unread-count', {
+      headers: {
+        'Authorization': token
+      }
+    })
+  } catch (err){
+    err.value = err.message
+  }
+}
 
 //获取与某人的聊天记录
 const fetchOneMessageHistory = async (toContactId) => {
@@ -265,8 +265,9 @@ const fetchOneMessageHistory = async (toContactId) => {
         'Authorization': token
       }
     })
-    messages.value = []
-    messages.value.push(...response.data)
+    // messages.value = []
+    // console.log(...response.data)
+    message.value = message.value.concat(response.data)
   } catch (err){
     console.log(err)
   }
@@ -300,17 +301,6 @@ const fetchAllMessage = async () => {
   }
 }
 
-//获取当前聊天窗口联系人信息
-const getCurrentContactInfo = () => {
-  return naiveChatRef.value?.getCurrentContact()
-}
-
-// const messageClick = (message) => {
-//   if(message.type === 'file') {
-
-//   }
-// }
-
 onMounted(() => {
   // socket.onopen = openSocket
   // socket.onmessage = getSocketMessage
@@ -334,27 +324,6 @@ onMounted(() => {
   //   clearInterval(interval);
   // });
 })
-
-const uploadFunction = async (event) => {
-  console.log('test')
-  const file = event.target.files[0];
-  console.log(file)
-  // if (file) {
-  //   const formData = new FormData();
-  //   formData.append('file', file);
-
-  //   try {
-  //     const response = await axios.post('/api/upload', formData, {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data'
-  //       }
-  //     });
-  //     console.log('File uploaded successfully:', response.data);
-  //   } catch (error) {
-  //     console.error('File upload failed:', error);
-  //   }
-  // }
-};
 
 onBeforeUnmount(() => {
   document.removeEventListener('mouseup', stopDrag);
