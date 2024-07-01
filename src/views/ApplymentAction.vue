@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-25 16:00:48
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-30 16:16:55
+ * @LastEditTime: 2024-07-01 10:04:48
  * @FilePath: /frontend1/src/views/ApplymentAction.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -58,9 +58,9 @@
 
         <el-table-column fixed="right" label="录用" min-width="120rem">
           <template #default="scope">
-            <el-button type="primary" round @click="Download(scope.row.resume_url)">下载简历</el-button>
-            <el-button type="info"  round >私信</el-button>
-            <el-button type="warning"  round @click="Accept(scope.row.user_id,scope.row.recruit_id)">录用</el-button>
+            <el-button  round @click="Download(scope.row.resume_url)">下载简历</el-button>
+            <el-button   round @click="sendmessage(scope.row.user_id)" >私信</el-button>
+            <el-button   round @click="Accept(scope.row.user_id,scope.row.recruit_id)">录用</el-button>
             <!-- @click.prevent="deleteRow(scope.$index)" -->
           </template>
         </el-table-column>
@@ -73,7 +73,9 @@ import { ref } from 'vue'
 import dayjs from 'dayjs'
 import { onMounted } from 'vue';
 import axios from '../utils/request';
-import { useRouter } from 'vue-router';
+import { useRouter,useRoute } from 'vue-router';
+import { useMessageStore } from '@/stores/useMessageStore';
+
 const router = useRouter()
 
 interface Worker {
@@ -86,6 +88,7 @@ interface Worker {
     recruit_id:Number
 
 }
+const enterpriseid=ref(0)
 
 const filter4 = (value: string, row:Worker ) => {
     return row.job_name === value
@@ -138,27 +141,36 @@ const Download= async (x)=>{
 const Accept=(x,y)=>{
     //workerList.value[x-1].luyong=true
     console.log(x)
-    let res=axios.post('/api/recruit/send_offer/',{
-        enterprise_id:16,
+    let res=axios.post('http://100.98.24.78:8000/api/recruit/send_offer/',{
+        enterprise_id:enterpriseid.value,
         recruit_id:y,
         user_id:x
     })
-    console.log(res)
+    console.log(x,y)
+}
+
+const sendmessage=(x)=>{
+    useMessageStore().setContactId(x)
+    useMessageStore().changeChatState
 }
 
 onMounted(async ()=>{
-   
+    //console.log(typeof(useRoute().params.id))
+    //sendmessage(4)
+    let str=useRoute().params.id
+    //console.log(str)
+    let id=Number(str)
+    enterpriseid.value=Number(str)
     var config = {
     method: 'get',
-    url: 'http://100.98.24.78:8000/api/recruit/16/applicants/',
+    url: 'http://100.98.24.78:8000/api/recruit/'+useRoute().params.id+'/applicants/',
     headers: { 
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxOTQ5MzAwLCJpYXQiOjE3MTg5MjUzMDAsImp0aSI6IjM5NjAwMjI3ZGUzZDQ1YTY4MDYzZjFkYTg1ZGJjMGIwIiwidXNlcl9pZCI6MX0.Rm_tZnQ9zcg9qLwWtEAjdjIj0J6zo0SqFiWMdB5ntdQ', 
         },
     };
 
     let res1 = await axios(config)
-    //let resdata=ref([])
-    //resdata=res1.data.received_resumes
+    
     console.log(res1)
     //workerList=res1.data
     //console.log(workerList)

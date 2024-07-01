@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-24 14:29:21
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-30 16:05:08
+ * @LastEditTime: 2024-07-01 10:08:21
  * @FilePath: /frontend/src/views/Recruitment.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -133,7 +133,7 @@ import { ref } from 'vue'
 import dayjs from 'dayjs'
 import { onMounted } from 'vue';
 import axios from '../utils/request';
-import { useRouter } from 'vue-router';
+import { useRouter,useRoute} from 'vue-router';
 import { ClassDictionary } from 'clsx';
 const router = useRouter()
 const props = defineProps({
@@ -145,8 +145,13 @@ const props = defineProps({
 
 onMounted(async () => {
       console.log('页面加载完成！');
-      console.log(`${props}`)
-      let res=await axios.get('/api/recruit/16')
+      //console.log(typeof(useRoute().params.id))
+      let str=useRoute().params.id
+      //console.log(str)
+      let id=Number(str)
+      form.value.enterprise=Number(str)
+      console.log(form.value.enterprise)
+      let res=await axios.get('http://8.130.25.189:8000/api/recruit/'+useRoute().params.id)
       for(let i=0;i<res.data.length;i++){
         tableData.push({
         "recruit_id": res.data[i].recruit_id,
@@ -254,9 +259,10 @@ var tableData : Job[]=[
         "tag": []
       },
       
+      
 ]
 
-const SubmitForm = ()=>{
+const SubmitForm = async ()=>{
   var advantage={}
   var request={}
   var content={}
@@ -271,8 +277,10 @@ const SubmitForm = ()=>{
   }
   //console.log(advantage)
   dialogFormVisible.value=false
+  //console.log(typeof(form.value.enterprise))
   //发送表单api
-
+  let response=await axios.get('http://8.130.25.189:8000/api/enterprise/info?enterprise_id='+form.value.enterprise)
+  //console.log(response)
   var data = JSON.stringify({
    "job_name":form.value.job_name ,
    "job_salary": form.value.job_salary,
@@ -280,7 +288,7 @@ const SubmitForm = ()=>{
    "job_location": form.value.job_location,
    "job_day": form.value.job_day,
    "job_month": form.value.job_month,
-   "enterprise": 16,
+   "enterprise": form.value.enterprise,
    "created_at": "2024-06-29T10:10:34.700582+08:00",
    "job_needed_people": form.value.number,
    "job_interested_id": [
@@ -294,21 +302,19 @@ const SubmitForm = ()=>{
    ],
    "job_request": request,
    "job_content": content,
-   "enterprise_name": "哇哦互联",
+   "enterprise_name": response.data.name,
    "enterprise_field": form.value.enterprise_field.join(','),
-   "enterprise_icon": "https://sxsimg.xiaoyuanzhao.com/2B/EE/2BFD5C732B853B5ACAE0CB397EEC99EE.jpeg"
+   "enterprise_icon": response.data.icon,
 });
+console.log(data)
+
 
 var config = {
    method: 'post',
-   url: '/api/recruit/recruit_create',
+   url: 'http://8.130.25.189:8000/api/recruit/recruit_create',
    headers: { 
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIyMTY4NjY0LCJpYXQiOjE3MTkxNDQ2NjQsImp0aSI6ImViYTk3OWM0YmQ4NzQ3MWQ4OWFhMTgzMjYyYjczZWY2IiwidXNlcl9pZCI6M30.9JXjllHVQ3sEl5-eO5YpUAAOojMSAXH9tAdsEX7N2Bc', 
-      'User-Agent': 'Apifox/1.0.0 (https://apifox.com)', 
-      'Content-Type': 'application/json', 
-      'Accept': '*/*', 
-      'Host': '100.92.39.61:8000', 
-      'Connection': 'keep-alive'
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIyMTY4NjY0LCJpYXQiOjE3MTkxNDQ2NjQsImp0aSI6ImViYTk3OWM0YmQ4NzQ3MWQ4OWFhMTgzMjYyYjczZWY2IiwidXNlcl9pZCI6M30.9JXjllHVQ3sEl5-eO5YpUAAOojMSAXH9tAdsEX7N2Bc',   
+    'Content-Type': 'application/json', 
    },
    data : data
 };
@@ -316,6 +322,7 @@ var config = {
 axios(config)
 .then(function (response) {
    console.log(JSON.stringify(response.data));
+   console.log('aaaa')
 })
 .catch(function (error) {
    console.log(error);
@@ -340,8 +347,11 @@ const filter1 = (value: string, row:Job ) => {
     day: 5
   })
 }
+
+
 */
+
+
 </script>
 
-  
   
