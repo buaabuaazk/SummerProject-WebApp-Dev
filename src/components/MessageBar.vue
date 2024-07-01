@@ -6,7 +6,7 @@
 
 <template>
   <div
-    class="draggable"
+    class="dragarea"
     :style="{
       top: `${position.top}px`,
       left: `${position.left}px`,
@@ -31,10 +31,10 @@
         <p style="background-color: rgb(0, 255, 81);">备忘录: WorkNow团队加班开发中~敬请期待~</p>
     </template>
     <template #sidebar-contact-header>
-        <button style="background-color: rgb(6, 1, 1); margin-left: 5rem;">我的朋友</button>
+        <button style="margin-left: 5rem;">我的朋友</button>
     </template>
     <template #sidebar-header>
-        <button style="background-color: rgb(14, 12, 12); margin-top: 0rem;">友好交流~</button>
+        <button @click="messageStore.closeMessageBox">等会儿聊~</button>
     </template>
   </NaiveChat>
   </div>
@@ -46,9 +46,12 @@ import axios from '@/utils/request'
 import { NaiveChat } from 'naive-chat'
 import { onBeforeUnmount } from 'vue';
 import useTokenStore from '@/stores/useTokenStore';
+import { useMessageStore } from '@/stores/useMessageStore';
 
 const tokenStore = useTokenStore()
 const token = tokenStore.getToken
+const messageStore = useMessageStore()
+
 const naiveChatRef = ref()
 
 // const changeFreeSiderBarStyle = () => {
@@ -66,21 +69,6 @@ const naiveChatRef = ref()
 //     }
 // }
 
-// const position=ref({ top: 0, left: 0 })
-// const offsetX=ref(0)
-// const offsetY=ref(0)
-// const width=ref(900)
-// const height=ref(720)
-// const clickStartTime = ref(0)
-// const dragThreshold = 1
-// const draggableContainer = ref(null)
-// const startDrag = (event) => {
-//   offsetX.value = event.clientX - event.target.offsetLeft;
-//   offsetY.value = event.clientY - event.target.offsetTop;
-//   document.addEventListener('mousemove', drag);
-//   document.addEventListener('mouseup', stopDrag);
-// }
-
 const position = ref({ top: 0, left: 0 });
 const width = ref(800);
 const height = ref(650);
@@ -93,7 +81,7 @@ const clipRight = ref(0)
 const draggableContainer = ref(null);
 
 const mouseDownHandler = (event) => {
-  if (event.target.closest('.draggable') === draggableContainer.value) {
+  if (event.target.closest('.dragarea') === draggableContainer.value) {
     clickStartTime.value = new Date().getTime();
     document.addEventListener('mouseup', mouseUpHandler);
   }
@@ -104,12 +92,11 @@ const mouseUpHandler = (event) => {
   const clickEndTime = new Date().getTime();
   const clickDuration = clickEndTime - clickStartTime.value;
   if (clickDuration >= dragThreshold) {
+    document.body.style.cursor = 'move';
     offsetX.value = event.clientX - draggableContainer.value.offsetLeft;
     offsetY.value = event.clientY - draggableContainer.value.offsetTop;
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', stopDrag);
-  } else {
-    console.log('Normal click action');
   }
 };
 
@@ -135,66 +122,46 @@ const drag = (event) => {
 const stopDrag = () => {
   document.removeEventListener('mousemove', drag);
   document.removeEventListener('mouseup', stopDrag);
+  document.body.style.cursor = 'default';
 }
 
 const userInfo = {
-  id: '100',
+  id: 5,
   nickname: 'King',
   avatar: 'https://thirdwx.qlogo.cn/mmopen/vi_32/RMksZlPP4myx9pbGzt3PmV2FNIpia8hVHpUXbHM0RfbJtsSMEWCLicbvGuJRMpoAam3sZclNo0YtOnvJ0a8eMtyQ/132',
 }
 
-const tempContact = ref({
-  id: '',
-  nickname: '',
-  avatar: '',
-  lastMessage: '',
-  lastTime: '',
-  index: '',
-  unread: '',
-})
+const contacts = ref([]) //联系人信息{id, avatar, nickname, lastmessage}
 
-const contacts = ref([
-{
-    id: 1,
-    nickname: 'xiao',
-    avatar: '',
-    lastMessage: '',
-    lastTime: Date.now(),
-    index: 'A',
-  }
-])
-
-const tempMessage = ref({
-  id: '',
-  content: '',
-  type: '',
-  toContactId: '',
-  status: '',
-  sendTime: '',
-  fromUser: {
-    id: '',
-    avatar: '',
-  },
-})
 const messageHistory = ref([])
 
 const newMessage = ref('')
 
 const messages = ref([])
+const testMessage = ref(
+  {
+    content: 'testfile',
+    type: 'file',
+    toContactId: 2,
+    status: 'success',
+    sendTime: 1691056800000,
+    fileName: '艳萍简历.doc',
+    fileSize: 18238,
+    fromUser: {
+      id: 1,
+      avatar: '',
+    },
+  }
+)
+const test = ref([])
 
 const unreadCount = ref(0)
 
 const pullMessage = ({ next, contactId }) => {
-  if (contactId === 15) {
-    asyncFn(() => {
-      next(messages, true)
-    })
-  }
-  else {
-    asyncFn(() => {
-      next([], true)
-    })
-  }
+  fetchOneMessageHistory(contactId)
+  asyncFn(() => {
+      next(messages.value, true)
+  })
 }
 
 const asyncFn = (fn) => {
@@ -206,24 +173,26 @@ const asyncFn = (fn) => {
 const sendMessage = (obj) => {
   const {message, next} = obj
   console.log(message)
-  // socket.send(JSON.stringify(message))
-  const response = axios.post('http://100.111.110.112:8000/api/message/create', {
-    params: {
-      sender: '1',
-      receiver: '',
-      content: '',
-      type: '',
-      timestamp: '',
-      status: '',
-      fileName: '',
-      fileSize: '',
+  const response = axios.post('http://100.111.110.112:8000/api/message/create', 
+    {
+      content: message.content,
+      type: message.type,
+      toContactId: message.toContactId,
+      status: message.status,
+      sendTime: message.sendTime,
+      fileName: message.fileName,
+      fileSize: message.fileSize,
+      fromUser: message.fromUser,
     },
-    headers: {
+    {
+      headers: {
       'Authorization': token
     }
-  })
-
+    }
+  )
+  console.log(response.data)
   if(response.data === 'ok') {
+    console.log('success')
     asyncFn(() => {
       next({
         id: message.id,
@@ -246,18 +215,8 @@ const fetchLatestMessage = async () => {
         'Authorization': token
       }
     })
-    for(let item of response.data.latest_messages) {
-      tempContact.value = {
-        id: item.contact_id,
-        nickname: item.contact,
-        avatar: item.contact_icon,
-        lastMessage: item.message.content,
-        lastTime: item.message.timestamp,
-        index: 'X', //名字首字母
-        unread: 3
-      };
-      contacts.value.push(tempContact.value)
-    }
+    console.log(response.data.latest_messages)
+    contacts.value.push(...response.data.latest_messages)
   } catch (err) {
     err.value = err.message
   }
@@ -283,22 +242,13 @@ const fetchOneMessageHistory = async (toContactId) => {
         'Authorization': token
       }
     })
+    messages.value = []
+    console.log(messages.value)
     console.log(response.data)
-    for (const item of response.data) {
-      tempMessage.value = {
-        id: item.id,
-        content: item.content,
-        type: item.type,
-        toContactId: item.receiver,
-        status: item.status,
-        sendTime: item.timestamp,
-        fromUser: {
-          id: item.sender,
-          avatar: 'https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/icon/enterprise/default.png',
-        },
-      }
-      messages.values.push(tempMessage.value)
-    }
+    messages.value.push(...response.data)
+    messages.value.push(testMessage.value)
+    console.log(messages.value)
+    console.log('test')
   } catch (err){
     console.log(err)
   }
@@ -337,6 +287,12 @@ const getCurrentContactInfo = () => {
   return naiveChatRef.value?.getCurrentContact()
 }
 
+// const messageClick = (message) => {
+//   if(message.type === 'file') {
+
+//   }
+// }
+
 onMounted(() => {
   // socket.onopen = openSocket
   // socket.onmessage = getSocketMessage
@@ -346,9 +302,10 @@ onMounted(() => {
   //contacts.value = getContacts()
   document.addEventListener('mouseup', stopDrag)
   naiveChatRef.value?.initContacts(contacts.value)
-  //fetchLatestMessage()
+  fetchLatestMessage()
+  //sendMessage()
   // fetchUnreadMessage()
-  fetchOneMessageHistory(2)
+  //fetchOneMessageHistory(2)
   // fetchTotalUnreadMessageNumber()
   // fetchAllMessage()
   //const interval = setInterval(fetchTotalUnreadMessageNumber, 5000);
@@ -365,9 +322,8 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.draggable {
+.dragarea {
   position: absolute;
-  cursor: move;
   overflow: hidden;
 }
 </style>

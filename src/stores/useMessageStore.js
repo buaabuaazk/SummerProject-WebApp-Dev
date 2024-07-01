@@ -11,21 +11,27 @@ import { ref } from 'vue';
 
 export const useMessageStore = defineStore('message', () => {
   // 是否打开聊天框
-  const contactNow = ref(true);
+  const contactNow = ref(false);
 
   // 联系人Id
   const toContactId = ref();
 
-  // 打开或关闭聊天框
-  function changeChatState() {
-    contactNow.value = !contactNow.value;
+  // 打开聊天框
+  function openMessageBox() {
+    contactNow.value = true;
     console.log(contactNow.value)
   }
 
-  // 设置联系人Id
-  function setContactId(id) {
-    toContactId.value = id;
+  //关闭聊天框
+  function closeMessageBox() {
+    contactNow.value = false
   }
 
-  return { contactNow, toContactId, changeChatState, setContactId };
+  // 向用户id聊天
+  function sendMessage(id) {
+    toContactId.value = id
+    contactNow.value = true
+  }
+
+  return { contactNow, toContactId, openMessageBox, closeMessageBox, sendMessage };
 });

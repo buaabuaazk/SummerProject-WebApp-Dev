@@ -13,7 +13,7 @@
         placeholder="新发现"
         enter-button
         size="large"
-        @search="onSearch"
+        @search="handleSearchButtonClick"
         style="width: 30rem; margin-left: 30rem"
       />
     </div>
@@ -135,13 +135,13 @@
 import { ref } from 'vue'
 import axios from '@/utils/request'
 import { onMounted } from 'vue'
-
 import {
   RightOutlined,
   EnvironmentOutlined,
   DashboardOutlined,
   IdcardOutlined
 } from '@ant-design/icons-vue'
+import { useSearchStore } from '@/stores/useSearchStore'
 import {useRouter} from 'vue-router'
 const router = useRouter()
 
@@ -218,6 +218,7 @@ const fetchData = async (way) => {
     })
     if (page.value === 1) {
       data.value = response.data
+      console.log(data.value[1].job_advantage)
     } else {
       data.value = data.value.concat(response.data)
       console.log(response.data.length)
@@ -266,18 +267,12 @@ const searchJob = async (cityName) => {
   }
 }
 
-// 高级搜索
-const onSearch = async () => {
-  try {
-    const response = await axios.get('/api/recruit/highsearch', {
-      params: {
-        query: this.searchContent
-      }
-    })
-    data.value = response.data
-  } catch (err) {
-    error.value = err.message
-  }
+const handleSearchButtonClick = () => {
+  const searchStore = useSearchStore()
+  searchStore.setContent(inputCotent.value)
+  console.log(inputCotent.value)
+  console.log(searchStore.getContent)
+  router.push('/search')
 }
 
 onMounted(() => {
