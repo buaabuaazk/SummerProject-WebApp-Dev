@@ -97,7 +97,7 @@ import {
 } from '@/components/ui/card'
 import Button from '@/components/ui/button/Button.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import axios from '@/utils/request'
 import { Badge } from '@/components/ui/badge'
 import { useRouter } from 'vue-router'
@@ -126,13 +126,16 @@ const isLogined = () => {
 }
 
 const data = ref({})
+const recruitment_id = ref(props.id)
 
 const goToEnterprise = () => {
   router.push(`/CorporationInfo/${data.value.enterprise}`)
 }
 
-onMounted(async () => {
-  const res = await axios.get(`/api/recruit/jobinfo/${props.id}`)
+onMounted(async () => {})
+
+watch(recruitment_id, async (oldval, newval) => {
+  const res = await axios.get(`/api/recruit/jobinfo/${newval}`)
   data.value = res.data
   data.value.created_at = data.value.created_at.substring(0, 10)
   debug.log('🚀 ~ file: JobInfo.vue:65 ~ getInfo ~ data:', data.value)

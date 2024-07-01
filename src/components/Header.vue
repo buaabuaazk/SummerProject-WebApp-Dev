@@ -21,26 +21,26 @@
             <a id="link4" href="/CorporationInfo" class="mouse-not-on">企业</a>
           </div>
         </div>
-        
-          <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
-            <div class="w-full max-w-lg lg:max-w-xs">
-              <label for="search" class="sr-only">Search</label>
-              <div class="relative">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                </div>
-                <input
-                  id="search"
-                  name="search"
-                  class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="Search"
-                  type="search"
-                />
+
+        <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
+          <div class="w-full max-w-lg lg:max-w-xs">
+            <label for="search" class="sr-only">Search</label>
+            <div class="relative">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
               </div>
+              <input
+                id="search"
+                name="search"
+                class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                placeholder="Search"
+                type="search"
+              />
             </div>
           </div>
-        
-        <div class="flex items-center lg:hidden">
+        </div>
+
+        <div class="block lg:hidden mt-3">
           <!-- Mobile menu button -->
           <DisclosureButton
             class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
@@ -256,7 +256,7 @@ import useTokenStore from '@/stores/useTokenStore'
 const tokenStore = useTokenStore()
 const avatar = ref()
 const email = ref()
-const username =ref()
+const username = ref()
 const isLogined = () => {
   if (tokenStore.getToken) {
     return true
@@ -313,9 +313,9 @@ function getAvatar() {
         console.log('获取用户信息成功')
         console.log(response)
         console.log(response.data)
-        avatar.value=response.data.icon
-        email.value=response.data.email
-        username.value=response.data.username
+        avatar.value = response.data.icon
+        email.value = response.data.email
+        username.value = response.data.username
         console.log(avatar.value)
         //console.log(profile.value.detailedInformation.user_id)
       })
