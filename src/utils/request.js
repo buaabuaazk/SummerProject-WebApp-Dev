@@ -1,8 +1,8 @@
 /*
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-07-01 10:39:59
- * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-07-01 16:34:54
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-07-01 20:38:54
  * @FilePath: /frontend2/src/utils/request.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,7 +22,7 @@ const getToken = () => {
 }
 
 const instance = axios.create({
-  baseURL: import.meta.env.MODE === 'development' ? 'http://100.98.24.78:8000' : 'http://10.251.255.229',
+  baseURL: import.meta.env.MODE === 'development' ? baseURL : 'http://10.251.255.229',
   timeout: 30000,
   headers: { Authorization: getToken() }
 })
