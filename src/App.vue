@@ -14,7 +14,7 @@
         <!-- <Footer></Footer> -->
         <!-- <Toast /> -->
         <div style="z-index: 100; width: 100%; height: 100%; overflow: hidden">
-          <div v-show="messageStore.contactNow">
+          <div v-if="messageStore.contactNow">
             <MessageBar />
           </div>
         </div>

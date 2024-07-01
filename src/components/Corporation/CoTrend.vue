@@ -32,15 +32,25 @@ import { ref, onMounted } from 'vue'
 import { ChatBubbleLeftIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
 import { getUserProfile, getEnterprisePosts } from '@/stores/useCorporationStore'
 
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
+
 let userProfile = ref(null)
 let enterprisePosts = ref([])
 
 async function fetchData() {
   userProfile.value = await getUserProfile()
-  enterprisePosts.value = await getEnterprisePosts(userProfile.value.enterprise)
+  if (route.params.id) {
+    enterprisePosts.value = await getEnterprisePosts(route.params.id)
+  } else {
+    enterprisePosts.value = await getEnterprisePosts(userProfile.value.enterprise)
+  }
 }
 
 onMounted(async () => {
   await fetchData()
+  console.log('CoRecruit_ID', route.params.id)
 })
 </script>

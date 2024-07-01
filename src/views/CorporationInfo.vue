@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CoSideBar :enterprise_id="props.enterprise_id" />
+    <CoSideBar :enterprise_id="route.params.id" />
     <div class="mr-16">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
@@ -13,9 +13,14 @@
 
 <script setup>
 import CoSideBar from '@/components/Corporation/CoSideBar.vue'
+import { onMounted } from 'vue'
 
-const props = defineProps({
-  enterprise_id: String || Number
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+onMounted(() => {
+  console.log('route', route.params.id)
 })
 </script>
 

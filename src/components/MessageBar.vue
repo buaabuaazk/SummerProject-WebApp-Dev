@@ -33,43 +33,39 @@
     <template #sidebar-contact-header>
         <button style="margin-left: 5rem;">我的朋友</button>
     </template>
+
     <template #sidebar-header>
-        <button @click="messageStore.closeMessageBox">等会儿聊~</button>
+      <a-button @click="messageStore.closeMessageBox"> 稍后再聊~</a-button>
+    </template>
+
+    <template #message-tools>      
     </template>
   </NaiveChat>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import axios from '@/utils/request'
 import { NaiveChat } from 'naive-chat'
 import { onBeforeUnmount } from 'vue';
 import useTokenStore from '@/stores/useTokenStore';
 import { useMessageStore } from '@/stores/useMessageStore';
+import useCurrentUserStore  from '@/stores/useCurrentUserStore'
+import { message } from 'ant-design-vue';
 
 const tokenStore = useTokenStore()
 const token = tokenStore.getToken
 const messageStore = useMessageStore()
+const currentUserStore = useCurrentUserStore()
+const currentUser = currentUserStore.getCurrentUser
 
 const naiveChatRef = ref()
 
-// const changeFreeSiderBarStyle = () => {
-//     if(freeIM.value) {
-//         const sidebarElement = freeIM.value.$el.querySelector('.free-sidebar');
-//         if(sidebarElement) {
-//             sidebarElement.style.backgroundColor = 'lightblue';
-//             sidebarElement.style.width = '10rem';
-//         }
-//         const messageElement = freeIM.value.$el.querySelector('.free-sider-message');
-//         if(messageElement) {
-//             // messageElement.style.backgroundColor = 'blue';
-//             // messageElement.style.width = '10rem';
-//         }
-//     }
-// }
+const selectedFile = ref(null);
+const sendMessageTriggered = ref(false)
 
-const position = ref({ top: 0, left: 0 });
+const position = ref({ top: 70, left: 200 });
 const width = ref(800);
 const height = ref(650);
 const offsetX = ref(0);
@@ -125,43 +121,43 @@ const stopDrag = () => {
   document.body.style.cursor = 'default';
 }
 
+console.log(currentUser)
 const userInfo = {
-  id: 5,
-  nickname: 'King',
-  avatar: 'https://thirdwx.qlogo.cn/mmopen/vi_32/RMksZlPP4myx9pbGzt3PmV2FNIpia8hVHpUXbHM0RfbJtsSMEWCLicbvGuJRMpoAam3sZclNo0YtOnvJ0a8eMtyQ/132',
+  id: currentUser.user_id,
+  nickname: currentUser.username,
+  avatar: currentUser.icon,
 }
-
+console.log(userInfo)
 const contacts = ref([]) //联系人信息{id, avatar, nickname, lastmessage}
 
-const messageHistory = ref([])
-
-const newMessage = ref('')
-
 const messages = ref([])
-const testMessage = ref(
-  {
-    content: 'testfile',
-    type: 'file',
-    toContactId: 2,
-    status: 'success',
-    sendTime: 1691056800000,
-    fileName: '艳萍简历.doc',
-    fileSize: 18238,
-    fromUser: {
-      id: 1,
-      avatar: '',
-    },
-  }
-)
-const test = ref([])
+// const testMessage = ref(
+//   {
+//     content: 'testfile',
+//     type: 'file',
+//     toContactId: 2,
+//     status: 'success',
+//     sendTime: 1691056800000,
+//     fileName: '艳萍简历.doc',
+//     fileSize: 18238,
+//     fromUser: {
+//       id: 1,
+//       avatar: '',
+//     },
+//   }
+// )
 
 const unreadCount = ref(0)
+const hasRead = ref([])
 
 const pullMessage = ({ next, contactId }) => {
-  fetchOneMessageHistory(contactId)
-  asyncFn(() => {
-      next(messages.value, true)
-  })
+  if (!hasRead.value[contactId]) {
+    fetchOneMessageHistory(contactId)
+    asyncFn(() => {
+        next(messages.value, true)
+    })
+    hasRead.value[contactId] = true
+  }
 }
 
 const asyncFn = (fn) => {
@@ -170,85 +166,109 @@ const asyncFn = (fn) => {
   }, 1000)
 }
 
-const sendMessage = (obj) => {
+const sendMessage = async (obj) => {
   const {message, next} = obj
   console.log(message)
-  const response = axios.post('http://100.111.110.112:8000/api/message/create', 
-    {
-      content: message.content,
-      type: message.type,
-      toContactId: message.toContactId,
-      status: message.status,
-      sendTime: message.sendTime,
-      fileName: message.fileName,
-      fileSize: message.fileSize,
-      fromUser: message.fromUser,
-    },
-    {
-      headers: {
-      'Authorization': token
-    }
-    }
-  )
-  console.log(response.data)
-  if(response.data === 'ok') {
-    console.log('success')
-    asyncFn(() => {
-      next({
-        id: message.id,
-        toContactId: message.toContactId,
-        status: 'success',
-      })
-    })
+  if(message.type === 'file') {
+    // const uploadResponse = await axios.post('http://100.92.185.35:8000/api/message/upload_chat_file/', formData,
+    //   {
+    //     headers: {
+    //       'Authorization': token
+    //     }
+    //   }
+    // )
+    // const response = await axios.post('http://100.92.185.35:8000/api/message/create', 
+    //     {
+    //       id: message.id,
+    //       sender: message.fromUser.id,
+    //       toContactId: message.toContactId,
+    //       content: 'test',
+    //       type: message.type,
+    //       status: 'going',
+    //       fileName: '123',
+    //       fileSize: '123',
+    //       read: false
+    //     },
+    //     {
+    //       headers: {
+    //         'Authorization': token
+    //       }
+    //     }
+    //   )
   } else {
-    console.log('Don\'t send the message successfully')
+      const response = await axios.post('/api/message/create', 
+        {
+          id: message.id,
+          sender: message.fromUser.id,
+          toContactId: message.toContactId,
+          content: 'test',
+          type: message.type,
+          status: 'going',
+          fileName: '123',
+          fileSize: '123',
+          read: false
+        },
+        {
+          headers: {
+            'Authorization': token
+          }
+        }
+      )
+      console.log(response.data)
+      if(response.status === 201) {
+        console.log('success')
+        asyncFn(() => {
+          next({
+            id: message.id,
+            toContactId: message.toContactId,
+            status: 'success',
+          })
+        })
+    }
   }
 }
 
-const changeContact = () => {}
+const changeContact = (contactId) => {
+  //console.log(contactId)
+}
 
 //获取最新消息
 const fetchLatestMessage = async () => {
   try {
-    const response = await axios.get('http://100.111.110.112:8000/api/message/latest-message', {
+    const response = await axios.get('/api/message/latest-message', {
       headers: {
         'Authorization': token
       }
     })
-    console.log(response.data.latest_messages)
     contacts.value.push(...response.data.latest_messages)
   } catch (err) {
     err.value = err.message
   }
 }
 
-// const fetchUnreadMessage = async () => {
-//   try {
-//     const response = await axios.get('http://100.111.110.112:8000/api/message/contact-unread-count', {
-//       headers: {
-//         'Authorization': token
-//       }
-//     })
-//   } catch (err){
-//     err.value = err.message
-//   }
-// }
-
-//获取与某人的聊天记录
-const fetchOneMessageHistory = async (toContactId) => {
+const fetchUnreadMessage = async () => {
   try {
-    const response = await axios.get(`http://100.111.110.112:8000/api/message/with/${toContactId}`, {
+    const response = await axios.get('/api/message/contact-unread-count', {
       headers: {
         'Authorization': token
       }
     })
-    messages.value = []
-    console.log(messages.value)
-    console.log(response.data)
-    messages.value.push(...response.data)
-    messages.value.push(testMessage.value)
-    console.log(messages.value)
-    console.log('test')
+  } catch (err){
+    err.value = err.message
+  }
+}
+
+//获取与某人的聊天记录
+const fetchOneMessageHistory = async (toContactId) => {
+  try {
+    const response = await axios.get(`/api/message/with/${toContactId}`, {
+      headers: {
+        'Authorization': token
+      }
+    })
+    // messages.value = []
+    // console.log(...response.data)
+    message.value = message.value.concat(response.data)
   } catch (err){
     console.log(err)
   }
@@ -256,7 +276,7 @@ const fetchOneMessageHistory = async (toContactId) => {
 
 const fetchTotalUnreadMessageNumber = async () => {
   try {
-    const response = await axios.get('http://100.111.110.112:8000/api/message/unread-count', {
+    const response = await axios.get('/api/message/unread-count', {
       headers: {
         'Authorization': token
       }
@@ -272,7 +292,7 @@ const fetchTotalUnreadMessageNumber = async () => {
 
 const fetchAllMessage = async () => {
   try {
-    const response = await axios.get('http://100.111.110.112:8000/api/message/list', {
+    const response = await axios.get('/api/message/list', {
       headers: {
         'Authorization': token
       }
@@ -282,17 +302,6 @@ const fetchAllMessage = async () => {
   }
 }
 
-//获取当前聊天窗口联系人信息
-const getCurrentContactInfo = () => {
-  return naiveChatRef.value?.getCurrentContact()
-}
-
-// const messageClick = (message) => {
-//   if(message.type === 'file') {
-
-//   }
-// }
-
 onMounted(() => {
   // socket.onopen = openSocket
   // socket.onmessage = getSocketMessage
@@ -301,8 +310,9 @@ onMounted(() => {
 
   //contacts.value = getContacts()
   document.addEventListener('mouseup', stopDrag)
-  naiveChatRef.value?.initContacts(contacts.value)
+  sendMessageTriggered.value = messageStore.sendMessageTriggered
   fetchLatestMessage()
+  naiveChatRef.value?.initContacts(contacts.value)
   //sendMessage()
   // fetchUnreadMessage()
   //fetchOneMessageHistory(2)
@@ -319,6 +329,40 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('mouseup', stopDrag);
 })
+
+watch(() => messageStore.sendMessageTriggered, async (newMessage) => {
+    const flag = ref(false)
+    for(const item of contacts.value) {
+      console.log(item.id)
+      console.log(messageStore.toContactId)
+      console.log(typeof item.id, item.id) // 输出类型和值
+      console.log(typeof messageStore.toContactId, messageStore.toContactId)
+      if(Number(item.id) === Number(messageStore.toContactId)) {
+        flag.value = true
+        console.log('equal')
+        break
+      }
+    }
+    if (flag.value === false) {
+      console.log(flag.value)
+      const response = await axios.get('/api/user/info', {
+        params: {
+          user_id: messageStore.toContactId
+        }
+      })
+      const newContact = {
+        id: response.data.user_id,
+        nickname: response.data.username,
+        avatar: response.data.icon,
+        lastMessage: '打个招呼吧',
+        lastTime: Date.now()
+      }
+      console.log(response.data.username)
+      contacts.value.unshift(newContact)
+      console.log(contacts.value)
+      naiveChatRef.value?.initContacts(contacts.value)
+    }
+});
 </script>
 
 <style scoped>
@@ -326,4 +370,5 @@ onBeforeUnmount(() => {
   position: absolute;
   overflow: hidden;
 }
+
 </style>
