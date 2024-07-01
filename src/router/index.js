@@ -226,21 +226,7 @@ const router = createRouter({
       name: 'search',
       component: () => import('@/views/SearchView.vue')
     },
-    {
-      path: '/test',
-      name: 'Test',
-      component: () => import('@/views/Test.vue')
-    },
-    {
-      path: '/test2',
-      name: 'test2',
-      component: () => import('@/views/Test2.vue')
-    },
-    {
-      path: '/test3',
-      name: 'test3',
-      component: () => import('@/views/Test3.vue')
-    },
+    
     //404页面，需要放在最后
     {
       path: '/:pathMatch(.*)*' /*其他页面*/,

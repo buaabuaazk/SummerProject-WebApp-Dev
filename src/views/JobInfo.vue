@@ -164,7 +164,7 @@ const goToEnterprise = () => {
 
 onMounted(async () => {
   // console.log(props.id)
-  const res = await axios.get(`/api/recruit/jobinfo/${props.id}`)
+  const res = await axios.get(`/api/recruit/jobinfo/${props.id}/`)
   const info = res.data
   console.log('🚀 ~ file: JobInfo.vue:65 ~ getInfo ~ data:', info)
   data.value = info
