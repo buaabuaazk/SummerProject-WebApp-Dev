@@ -55,9 +55,9 @@
         <n-button @click="transferPost()">转发</n-button>
         <t-comment :avatar="currentUser.icon">
           <template #content>
-            <div class="form-container">
+            <div class="flex flex-col items-end">
               <t-textarea v-model="replyData" placeholder="请输入内容" />
-              <n-button class="form-submit" @click="submitReply">回复</n-button>
+              <n-button class="mt-2" @click="submitReply">回复</n-button>
             </div>
           </template>
         </t-comment>
@@ -205,14 +205,3 @@ const showModal = async () => {
   visible.value = true
 }
 </script>
-
-<style lang="scss" scoped>
-.form-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  .form-submit {
-    margin-top: 0.5rem;
-  }
-}
-</style>
