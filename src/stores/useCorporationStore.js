@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '@/utils/request'
 
 const token = JSON.parse(localStorage.getItem('token'))?.token
 
@@ -776,9 +776,9 @@ const baseUrl = 'http://10.251.255.229'
 // ]
 
 const axios_instance = axios.create({
-  baseURL: baseUrl,
-  timeout: 500,
-  headers: { Authorization: token }
+  // baseURL: baseUrl,
+  // timeout: 500,
+  // headers: { Authorization: token }
 })
 
 const getUserInfo = async () => {

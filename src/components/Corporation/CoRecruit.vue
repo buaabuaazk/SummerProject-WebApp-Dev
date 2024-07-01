@@ -1,72 +1,431 @@
 <template>
   <div>
     <div class="bg-white">
-      <!-- Mobile filter dialog -->
-      <TransitionRoot as="template" :show="open">
-        <Dialog class="relative z-40 sm:hidden" @close="open = false">
+      <!-- form dialog -->
+      <TransitionRoot :show="isOpen" as="template">
+        <Dialog as="div" class="relative z-50" @close="isOpen = false">
           <TransitionChild
             as="template"
-            enter="transition-opacity ease-linear duration-300"
-            enter-from="opacity-0"
-            enter-to="opacity-100"
-            leave="transition-opacity ease-linear duration-300"
-            leave-from="opacity-100"
-            leave-to="opacity-0"
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
             <div class="fixed inset-0 bg-black bg-opacity-25" />
           </TransitionChild>
 
-          <div class="fixed inset-0 z-40 flex">
-            <TransitionChild
-              as="template"
-              enter="transition ease-in-out duration-300 transform"
-              enter-from="translate-x-full"
-              enter-to="translate-x-0"
-              leave="transition ease-in-out duration-300 transform"
-              leave-from="translate-x-0"
-              leave-to="translate-x-full"
-            >
-              <DialogPanel
-                class="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-12 shadow-xl"
+          <div class="fixed inset-0 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+              <TransitionChild
+                as="template"
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
               >
-                <div class="flex items-center justify-between px-4">
-                  <h2 class="text-lg font-medium text-gray-900">Filters</h2>
-                  <button
-                    type="button"
-                    class="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
-                    @click="open = false"
-                  >
-                    <span class="sr-only">Close menu</span>
-                    <XMarkIcon class="h-6 w-6" aria-hidden="true" />
-                  </button>
-                </div>
+                <DialogPanel
+                  class="min-w-[60%] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+                >
+                  <DialogTitle as="h3" class="text-lg font-semibold leading-6 text-gray-900">
+                    创建招聘
+                  </DialogTitle>
 
-                <!-- Filters -->
-                <form class="mt-4">
-                  <Disclosure
-                    as="div"
-                    v-for="section in filters"
-                    :key="section.name"
-                    class="border-t border-gray-200 px-4 py-6"
-                    v-slot="{ open }"
-                  >
-                    <h3 class="-mx-2 -my-3 flow-root">
-                      <DisclosureButton
-                        class="flex w-full items-center justify-between bg-white px-2 py-3 text-sm text-gray-400"
+                  <form @submit.prevent>
+                    <div class="space-y-12">
+                      <div class="border-b border-gray-900/10 pb-12">
+                        <p class="mt-1 text-sm leading-6 text-gray-600">
+                          以下这些信息将会展示在你的招聘页面上，让求职者更好地了解你的公司。
+                        </p>
+
+                        <div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                          <div class="sm:col-span-4">
+                            <label
+                              for="username"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >职位名称</label
+                            >
+                            <div class="mt-2">
+                              <div
+                                class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md"
+                              >
+                                <span
+                                  class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"
+                                  >岗位/</span
+                                >
+                                <input
+                                  type="text"
+                                  name="username"
+                                  id="username"
+                                  autocomplete="username"
+                                  class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                                  placeholder="例：前端工程师"
+                                  v-model="formData.job_name"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="border-b border-gray-900/10 pb-12">
+                        <h2 class="text-base font-semibold leading-7 text-gray-900">
+                          职位详细信息
+                        </h2>
+                        <p class="mt-1 text-sm leading-6 text-gray-600">
+                          下面是一些关于这个职位的详细信息，比如职位的薪资、工作地点等等👇🏻
+                        </p>
+
+                        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                          <div class="sm:col-span-3">
+                            <label
+                              for="first-name"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >工作天数(天/周)</label
+                            >
+                            <Listbox as="div" v-model="formData.job_day">
+                              <div class="relative mt-2">
+                                <ListboxButton
+                                  class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                >
+                                  <span class="block truncate">{{ formData.job_day.name }}</span>
+                                  <span
+                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                                  >
+                                    <ChevronUpDownIcon
+                                      class="h-5 w-5 text-gray-400"
+                                      aria-hidden="true"
+                                    />
+                                  </span>
+                                </ListboxButton>
+
+                                <transition
+                                  leave-active-class="transition ease-in duration-100"
+                                  leave-from-class="opacity-100"
+                                  leave-to-class="opacity-0"
+                                >
+                                  <ListboxOptions
+                                    class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                                  >
+                                    <ListboxOption
+                                      as="template"
+                                      v-for="day in days"
+                                      :key="day.id"
+                                      :value="day"
+                                      v-slot="{ active, selected }"
+                                    >
+                                      <li
+                                        :class="[
+                                          active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                                          'relative cursor-default select-none py-2 pl-8 pr-4'
+                                        ]"
+                                      >
+                                        <span
+                                          :class="[
+                                            selected ? 'font-semibold' : 'font-normal',
+                                            'block truncate'
+                                          ]"
+                                          >{{ day.name }}</span
+                                        >
+
+                                        <span
+                                          v-if="selected"
+                                          :class="[
+                                            active ? 'text-white' : 'text-indigo-600',
+                                            'absolute inset-y-0 left-0 flex items-center pl-1.5'
+                                          ]"
+                                        >
+                                          <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        </span>
+                                      </li>
+                                    </ListboxOption>
+                                  </ListboxOptions>
+                                </transition>
+                              </div>
+                            </Listbox>
+                          </div>
+
+                          <div class="sm:col-span-3">
+                            <label
+                              for="last-name"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >工作月份(月/年)</label
+                            >
+                            <Listbox as="div" v-model="formData.job_month">
+                              <div class="relative mt-2">
+                                <ListboxButton
+                                  class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                >
+                                  <span class="block truncate">{{ formData.job_month.name }}</span>
+                                  <span
+                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
+                                  >
+                                    <ChevronUpDownIcon
+                                      class="h-5 w-5 text-gray-400"
+                                      aria-hidden="true"
+                                    />
+                                  </span>
+                                </ListboxButton>
+
+                                <transition
+                                  leave-active-class="transition ease-in duration-100"
+                                  leave-from-class="opacity-100"
+                                  leave-to-class="opacity-0"
+                                >
+                                  <ListboxOptions
+                                    class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                                  >
+                                    <ListboxOption
+                                      as="template"
+                                      v-for="month in months"
+                                      :key="month.id"
+                                      :value="month"
+                                      v-slot="{ active, selected }"
+                                    >
+                                      <li
+                                        :class="[
+                                          active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                                          'relative cursor-default select-none py-2 pl-8 pr-4'
+                                        ]"
+                                      >
+                                        <span
+                                          :class="[
+                                            selected ? 'font-semibold' : 'font-normal',
+                                            'block truncate'
+                                          ]"
+                                          >{{ month.name }}</span
+                                        >
+
+                                        <span
+                                          v-if="selected"
+                                          :class="[
+                                            active ? 'text-white' : 'text-indigo-600',
+                                            'absolute inset-y-0 left-0 flex items-center pl-1.5'
+                                          ]"
+                                        >
+                                          <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                                        </span>
+                                      </li>
+                                    </ListboxOption>
+                                  </ListboxOptions>
+                                </transition>
+                              </div>
+                            </Listbox>
+                          </div>
+
+                          <div class="sm:col-span-3">
+                            <label
+                              for="email"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >所需人数</label
+                            >
+                            <div class="mt-2 flex rounded-md shadow-sm">
+                              <div class="relative flex flex-grow items-stretch focus-within:z-10">
+                                <div
+                                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                                >
+                                  <UsersIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                </div>
+                                <input
+                                  id="email"
+                                  class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                  placeholder="6"
+                                  v-model="formData.job_needed_people"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-span-3">
+                            <label
+                              for="price"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >薪水</label
+                            >
+                            <div class="relative mt-2 rounded-md shadow-sm">
+                              <div
+                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                              >
+                                <span class="text-gray-500 sm:text-sm">￥</span>
+                              </div>
+                              <input
+                                type="text"
+                                name="price"
+                                id="price"
+                                v-model="formData.job_salary"
+                                class="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                placeholder="0.00"
+                                aria-describedby="price-currency"
+                              />
+                              <div
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
+                              >
+                                <span class="text-gray-500 sm:text-sm" id="price-currency"
+                                  >RMB</span
+                                >
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="sm:col-span-3">
+                            <label
+                              for="country"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >工作地点</label
+                            >
+                            <div class="mt-2">
+                              <input
+                                type="text"
+                                name="street-address"
+                                id="street-address"
+                                v-model="formData.job_location"
+                                autocomplete="street-address"
+                                class="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+
+                          <div class="col-span-full">
+                            <label
+                              for="street-address"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >工作优势</label
+                            >
+                            <div class="mt-2">
+                              <textarea
+                                id="about"
+                                name="about"
+                                rows="3"
+                                v-model="formData.job_advantage"
+                                class="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                            <p
+                              class="mt-1 text-xs text-orange-300 underline decoration-wavy italic"
+                            >
+                              职位优势之间，请使用空格分开
+                            </p>
+                          </div>
+                          <div class="col-span-full">
+                            <label
+                              for="street-address"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >工作内容</label
+                            >
+                            <div class="mt-2">
+                              <textarea
+                                id="about"
+                                name="about"
+                                rows="3"
+                                v-model="formData.job_content"
+                                class="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                            <p
+                              class="mt-1 text-xs text-orange-300 underline decoration-wavy italic"
+                            >
+                              工作内容之间，请使用空格分开
+                            </p>
+                          </div>
+                          <div class="col-span-full">
+                            <label
+                              for="street-address"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >工作需求</label
+                            >
+                            <div class="mt-2">
+                              <textarea
+                                id="about"
+                                name="about"
+                                rows="3"
+                                v-model="formData.job_request"
+                                class="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                            <p
+                              class="mt-1 text-xs text-orange-300 underline decoration-wavy italic"
+                            >
+                              工作需求之间，请使用空格分开
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="border-b border-gray-900/10 pb-12">
+                        <h2 class="text-base font-semibold leading-7 text-gray-900">
+                          下面是企业涉及的相关领域需求👇🏻
+                        </h2>
+                        <p class="mt-1 text-sm leading-6 text-gray-600">
+                          请填写你的企业涉及的相关领域需求，比如技术、产品、设计等等
+                        </p>
+
+                        <div class="mt-10 space-y-10">
+                          <fieldset>
+                            <legend class="text-sm font-semibold leading-6 text-gray-900">
+                              Field
+                            </legend>
+                            <div
+                              class="mt-6 space-y-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 items-start justify-items-start"
+                            >
+                              <div
+                                class="relative flex gap-x-3"
+                                v-for="field in fields"
+                                :key="field.id"
+                              >
+                                <div class="flex h-6 items-center">
+                                  <input
+                                    type="checkbox"
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                    @click="
+                                      () => {
+                                        if (formData.job_interested_id.indexOf(field.id) === -1) {
+                                          formData.job_interested_id.push(field.id)
+                                        } else {
+                                          formData.job_interested_id.splice(
+                                            formData.job_interested_id.indexOf(field.id),
+                                            1
+                                          )
+                                        }
+                                      }
+                                    "
+                                  />
+                                </div>
+                                <div class="text-sm leading-6">
+                                  <label for="comments" class="font-medium text-gray-900">{{
+                                    field.name
+                                  }}</label>
+                                  <p class="text-gray-500">{{ field.description }}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mt-6 flex items-center justify-end gap-x-6">
+                      <button
+                        @click="isOpen = false"
+                        type="button"
+                        class="text-sm font-semibold leading-6 text-gray-900"
                       >
-                        <span class="font-medium text-gray-900">{{ section.name }}</span>
-                        <span class="ml-6 flex items-center">
-                          <ChevronDownIcon
-                            :class="[open ? '-rotate-180' : 'rotate-0', 'h-5 w-5 transform']"
-                            aria-hidden="true"
-                          />
-                        </span>
-                      </DisclosureButton>
-                    </h3>
-                  </Disclosure>
-                </form>
-              </DialogPanel>
-            </TransitionChild>
+                        取消
+                      </button>
+                      <button
+                        type="submit"
+                        @click="submit"
+                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        提交
+                      </button>
+                    </div>
+                  </form>
+                </DialogPanel>
+              </TransitionChild>
+            </div>
           </div>
         </Dialog>
       </TransitionRoot>
@@ -262,6 +621,7 @@
             <button
               type="button"
               class="relative inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              @click="isOpen = true"
             >
               创建新的职位
             </button>
@@ -275,7 +635,7 @@
           class="shadow-2xl rounded-lg m-1"
           @click="() => router.push(`/jobinfo/${recruit.recruit_id}`)"
         >
-          <a href="#" class="block hover:bg-gray-50">
+          <a href="#" class="block hover:bg-gray-50 hover:scale-105 transition-all ease-linear">
             <div class="px-4 py-4 sm:px-6">
               <div class="flex items-center justify-between">
                 <div class="truncate text-xl font-medium text-indigo-500">
@@ -471,12 +831,9 @@ import { MapPinIcon, UsersIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 import { useRouter, useRoute } from 'vue-router'
 
-const router = useRouter()
-const route = useRoute()
+import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } from '@headlessui/vue'
 
 import {
-  Dialog,
-  DialogPanel,
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
@@ -487,10 +844,10 @@ import {
   Popover,
   PopoverButton,
   PopoverGroup,
-  PopoverPanel,
-  TransitionChild,
-  TransitionRoot
+  PopoverPanel
 } from '@headlessui/vue'
+
+import { PhotoIcon, UserCircleIcon } from '@heroicons/vue/24/solid'
 
 import {
   getUserProfile,
@@ -498,11 +855,214 @@ import {
   getEnterpriseRecruit
 } from '@/stores/useCorporationStore'
 
+import {
+  Listbox,
+  ListboxButton,
+  ListboxLabel,
+  ListboxOption,
+  ListboxOptions
+} from '@headlessui/vue'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
+
+import axios from '@/utils/request'
+
+const router = useRouter()
+const route = useRoute()
 let index = ref(0)
 
 let userProfile = ref(null)
 let enterpriseInfo = ref(null)
 let enterpriseRecruit = ref(null)
+
+const days = [
+  { id: 1, name: 1 },
+  { id: 2, name: 2 },
+  { id: 3, name: 3 },
+  { id: 4, name: 4 },
+  { id: 5, name: 5 },
+  { id: 6, name: 6 },
+  { id: 7, name: 7 }
+]
+const months = [
+  { id: 1, name: 1 },
+  { id: 2, name: 2 },
+  { id: 3, name: 3 },
+  { id: 4, name: 4 },
+  { id: 5, name: 5 },
+  { id: 6, name: 6 },
+  { id: 7, name: 7 },
+  { id: 8, name: 8 },
+  { id: 9, name: 9 },
+  { id: 10, name: 10 },
+  { id: 11, name: 11 },
+  { id: 12, name: 12 }
+]
+
+const fields = [
+  {
+    id: 1,
+    name: '前端工程师',
+    description: '开发用户界面'
+  },
+  {
+    id: 2,
+    name: '后端工程师',
+    description: '构建服务器端逻辑'
+  },
+  {
+    id: 3,
+    name: '全栈工程师',
+    description: '掌握前后端技术'
+  },
+  {
+    id: 4,
+    name: '数据科学家',
+    description: '数据分析与建模'
+  },
+  {
+    id: 5,
+    name: '数据分析师',
+    description: '处理与解释数据'
+  },
+  {
+    id: 6,
+    name: '机器学习工程师',
+    description: '开发智能算法'
+  },
+  {
+    id: 7,
+    name: '人工智能工程师',
+    description: '设计智能系统'
+  },
+  {
+    id: 8,
+    name: '算法工程师',
+    description: '优化算法性能'
+  },
+  {
+    id: 9,
+    name: '大数据工程师',
+    description: '处理海量数据'
+  },
+  {
+    id: 10,
+    name: '云计算工程师',
+    description: '管理云服务'
+  },
+  {
+    id: 11,
+    name: 'DevOps工程师',
+    description: '运维与开发整合'
+  },
+  {
+    id: 12,
+    name: '网络安全工程师',
+    description: '保护网络安全'
+  },
+  {
+    id: 13,
+    name: '移动应用开发工程师',
+    description: '开发移动应用'
+  },
+  {
+    id: 14,
+    name: '嵌入式系统工程师',
+    description: '设计嵌入式系统'
+  },
+  {
+    id: 15,
+    name: '系统架构师',
+    description: '设计系统架构'
+  },
+  {
+    id: 16,
+    name: '数据库管理员',
+    description: '管理数据库系统'
+  },
+  {
+    id: 17,
+    name: '自动化测试工程师',
+    description: '开发测试流程'
+  },
+  {
+    id: 18,
+    name: '游戏开发工程师',
+    description: '设计和开发游戏'
+  },
+  {
+    id: 19,
+    name: 'AR/VR工程师',
+    description: '创建虚拟现实体验'
+  },
+  {
+    id: 20,
+    name: '物联网工程师',
+    description: '开发物联网系统'
+  },
+  {
+    id: 21,
+    name: '自然语言处理工程师',
+    description: '处理人机语言'
+  },
+  {
+    id: 22,
+    name: '机器人工程师',
+    description: '设计和开发机器人'
+  },
+  {
+    id: 23,
+    name: '区块链开发工程师',
+    description: '开发区块链应用'
+  },
+  {
+    id: 24,
+    name: '生物信息学工程师',
+    description: '分析生物数据'
+  },
+  {
+    id: 25,
+    name: '电商开发工程师',
+    description: '开发电商平台'
+  },
+  {
+    id: 26,
+    name: '计算机视觉工程师',
+    description: '图像识别与处理'
+  },
+  {
+    id: 27,
+    name: '深度学习工程师',
+    description: '构建深度学习模型'
+  },
+  {
+    id: 28,
+    name: '技术支持工程师',
+    description: '提供技术支持'
+  },
+  {
+    id: 29,
+    name: '产品经理',
+    description: '管理产品开发'
+  }
+]
+
+let formData = ref({
+  job_name: '',
+  job_salary: '',
+  job_advantage: null,
+  job_location: '',
+  job_day: days[3],
+  job_month: months[3],
+  enterprise: 0,
+  created_at: '',
+  job_needed_people: 0,
+  job_interested_id: [],
+  job_request: null,
+  job_content: null,
+  enterprise_name: '',
+  enterprise_field: '',
+  enterprise_icon: ''
+})
 
 async function fetchData() {
   userProfile.value = await getUserProfile()
@@ -644,5 +1204,54 @@ function getFirstNumberFromString(str) {
   return match ? match[0] : null
 }
 
+const submit = async () => {
+  isOpen.value = false
+
+  formData.value.job_month = formData.value.job_month.id
+  formData.value.job_day = formData.value.job_day.id
+
+  if (typeof formData.value.job_needed_people === 'string') {
+    formData.value.job_needed_people = parseInt(formData.value.job_needed_people)
+  }
+
+  let temp = {}
+  if (formData.value.job_advantage) {
+    formData.value.job_advantage = formData.value.job_advantage?.split(' ')
+    for (let i = 1; i <= formData.value.job_advantage.length; i++) {
+      temp['优势' + i] = formData.value.job_advantage[i - 1]
+    }
+    formData.value.job_advantage = temp
+  }
+
+  if (formData.value.job_content) {
+    formData.value.job_content = formData.value.job_content.split(' ')
+    temp = {}
+    for (let i = 1; i <= formData.value.job_content.length; i++) {
+      temp['内容' + i] = formData.value.job_content[i - 1]
+    }
+    formData.value.job_content = temp
+  }
+
+  if (formData.value.job_request) {
+    formData.value.job_request = formData.value.job_request.split(' ')
+    temp = {}
+    for (let i = 1; i <= formData.value.job_request.length; i++) {
+      temp['需求' + i] = formData.value.job_request[i - 1]
+    }
+    formData.value.job_request = temp
+  }
+
+  formData.value.created_at = new Date().toISOString()
+  formData.value.enterprise = enterpriseInfo.value.enterprise_id
+  formData.value.enterprise_name = enterpriseInfo.value.name
+  formData.value.enterprise_field = enterpriseInfo.value.field
+  formData.value.enterprise_icon = enterpriseInfo.value.icon
+
+  console.log(formData.value)
+
+  await axios.post('/api/recruit/recruit_create', formData.value)
+}
+
+const isOpen = ref(false)
 const open = ref(false)
 </script>

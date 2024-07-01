@@ -111,7 +111,7 @@
                               >
                                 <span
                                   class="flex select-none items-center pl-3 text-gray-500 sm:text-sm"
-                                  >workcation.com/</span
+                                  >Company Name/</span
                                 >
                                 <input
                                   type="text"
@@ -138,13 +138,13 @@
                                 id="about"
                                 name="about"
                                 rows="3"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-2"
                                 v-model="formData.introduction"
                                 required
                               />
                             </div>
                             <p class="mt-3 text-sm leading-6 text-gray-600">
-                              Write a few sentences about your company.
+                              介绍一下你的公司，比如公司的业务范围、公司的使命、愿景等等
                             </p>
                           </div>
 
@@ -152,7 +152,7 @@
                             <label
                               for="cover-photo"
                               class="block text-sm font-medium leading-6 text-gray-900"
-                              >Cover photo</label
+                              >企业头像</label
                             >
                             <div
                               class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
@@ -167,7 +167,7 @@
                                     for="file-upload"
                                     class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                   >
-                                    <span>Upload a file</span>
+                                    <span>上传一个文件</span>
                                     <input
                                       id="file-upload"
                                       name="file-upload"
@@ -186,364 +186,6 @@
                           </div>
                         </div>
                       </div>
-
-                      <!-- <div class="border-b border-gray-900/10 pb-12">
-                        <h2 class="text-base font-semibold leading-7 text-gray-900">
-                          Personal Information
-                        </h2>
-                        <p class="mt-1 text-sm leading-6 text-gray-600">
-                          Use a permanent address where you can receive mail.
-                        </p>
-
-                        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                          <div class="sm:col-span-3">
-                            <label
-                              for="first-name"
-                              class="block text-sm font-medium leading-6 text-gray-900"
-                              >First name</label
-                            >
-                            <div class="mt-2">
-                              <input
-                                type="text"
-                                name="first-name"
-                                id="first-name"
-                                autocomplete="given-name"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              />
-                            </div>
-                          </div>
-
-                          <div class="sm:col-span-3">
-                            <label
-                              for="last-name"
-                              class="block text-sm font-medium leading-6 text-gray-900"
-                              >Last name</label
-                            >
-                            <div class="mt-2">
-                              <input
-                                type="text"
-                                name="last-name"
-                                id="last-name"
-                                autocomplete="family-name"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              />
-                            </div>
-                          </div>
-
-                          <div class="sm:col-span-4">
-                            <label
-                              for="email"
-                              class="block text-sm font-medium leading-6 text-gray-900"
-                              >Email address</label
-                            >
-                            <div class="mt-2">
-                              <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autocomplete="email"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              />
-                            </div>
-                          </div>
-
-                          <div class="sm:col-span-3">
-                            <label
-                              for="country"
-                              class="block text-sm font-medium leading-6 text-gray-900"
-                              >Country</label
-                            >
-                            <div class="mt-2">
-                              <select
-                                id="country"
-                                name="country"
-                                autocomplete="country-name"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                              >
-                                <option>United States</option>
-                                <option>Canada</option>
-                                <option>Mexico</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="col-span-full">
-                            <label
-                              for="street-address"
-                              class="block text-sm font-medium leading-6 text-gray-900"
-                              >Street address</label
-                            >
-                            <div class="mt-2">
-                              <input
-                                type="text"
-                                name="street-address"
-                                id="street-address"
-                                autocomplete="street-address"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              />
-                            </div>
-                          </div>
-
-                          <div class="sm:col-span-2 sm:col-start-1">
-                            <label
-                              for="city"
-                              class="block text-sm font-medium leading-6 text-gray-900"
-                              >City</label
-                            >
-                            <div class="mt-2">
-                              <input
-                                type="text"
-                                name="city"
-                                id="city"
-                                autocomplete="address-level2"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              />
-                            </div>
-                          </div>
-
-                          <div class="sm:col-span-2">
-                            <label
-                              for="region"
-                              class="block text-sm font-medium leading-6 text-gray-900"
-                              >State / Province</label
-                            >
-                            <div class="mt-2">
-                              <input
-                                type="text"
-                                name="region"
-                                id="region"
-                                autocomplete="address-level1"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              />
-                            </div>
-                          </div>
-
-                          <div class="sm:col-span-2">
-                            <label
-                              for="postal-code"
-                              class="block text-sm font-medium leading-6 text-gray-900"
-                              >ZIP / Postal code</label
-                            >
-                            <div class="mt-2">
-                              <input
-                                type="text"
-                                name="postal-code"
-                                id="postal-code"
-                                autocomplete="postal-code"
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div> -->
-
-                      <div class="border-b border-gray-900/10 pb-12">
-                        <h2 class="text-base font-semibold leading-7 text-gray-900">次要信息</h2>
-                        <p class="mt-1 text-sm leading-6 text-gray-600">
-                          以下是一些企业感兴趣的行业信息选择👇🏻
-                        </p>
-
-                        <div class="mt-10 space-y-10">
-                          <fieldset>
-                            <legend class="text-sm font-semibold leading-6 text-gray-900">
-                              业务领域选择
-                            </legend>
-                            <div class="mt-6 space-y-6">
-                              <div class="relative flex gap-x-3">
-                                <div class="flex h-6 items-center">
-                                  <input
-                                    id="comments"
-                                    name="comments"
-                                    type="checkbox"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                  />
-                                </div>
-                                <div class="text-sm leading-6">
-                                  <label for="comments" class="font-medium text-gray-900"
-                                    >前端开发</label
-                                  >
-                                  <p class="text-gray-500">
-                                    使用HTML、CSS和JavaScript创建网页应用的用户界面和用户体验
-                                  </p>
-                                </div>
-                              </div>
-                              <div class="relative flex gap-x-3">
-                                <div class="flex h-6 items-center">
-                                  <input
-                                    id="candidates"
-                                    name="candidates"
-                                    type="checkbox"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                  />
-                                </div>
-                                <div class="text-sm leading-6">
-                                  <label for="candidates" class="font-medium text-gray-900"
-                                    >后端开发
-                                  </label>
-                                  <p class="text-gray-500">
-                                    涉及服务器端开发、管理数据库并确保网页应用的顺利运行
-                                  </p>
-                                </div>
-                              </div>
-                              <div class="relative flex gap-x-3">
-                                <div class="flex h-6 items-center">
-                                  <input
-                                    id="offers"
-                                    name="offers"
-                                    type="checkbox"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                  />
-                                </div>
-                                <div class="text-sm leading-6">
-                                  <label for="offers" class="font-medium text-gray-900"
-                                    >数据分析</label
-                                  >
-                                  <p class="text-gray-500">
-                                    检查、清理和建模数据以发现有用信息并支持决策
-                                  </p>
-                                </div>
-                              </div>
-                              <div class="relative flex gap-x-3">
-                                <div class="flex h-6 items-center">
-                                  <input
-                                    id="offers"
-                                    name="offers"
-                                    type="checkbox"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                  />
-                                </div>
-                                <div class="text-sm leading-6">
-                                  <label for="offers" class="font-medium text-gray-900"
-                                    >机器学习</label
-                                  >
-                                  <p class="text-gray-500">
-                                    人工智能的一个子集，涉及训练算法以根据数据做出预测或决策
-                                  </p>
-                                </div>
-                              </div>
-                              <div class="relative flex gap-x-3">
-                                <div class="flex h-6 items-center">
-                                  <input
-                                    id="offers"
-                                    name="offers"
-                                    type="checkbox"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                  />
-                                </div>
-                                <div class="text-sm leading-6">
-                                  <label for="offers" class="font-medium text-gray-900"
-                                    >网络安全</label
-                                  >
-                                  <p class="text-gray-500">保护系统、网络和程序免受数字攻击</p>
-                                </div>
-                              </div>
-                              <div class="relative flex gap-x-3">
-                                <div class="flex h-6 items-center">
-                                  <input
-                                    id="offers"
-                                    name="offers"
-                                    type="checkbox"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                  />
-                                </div>
-                                <div class="text-sm leading-6">
-                                  <label for="offers" class="font-medium text-gray-900"
-                                    >云计算</label
-                                  >
-                                  <p class="text-gray-500">
-                                    通过互联网提供计算服务，包括存储、处理和网络
-                                  </p>
-                                </div>
-                              </div>
-                              <div class="relative flex gap-x-3">
-                                <div class="flex h-6 items-center">
-                                  <input
-                                    id="offers"
-                                    name="offers"
-                                    type="checkbox"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                  />
-                                </div>
-                                <div class="text-sm leading-6">
-                                  <label for="offers" class="font-medium text-gray-900"
-                                    >DevOps</label
-                                  >
-                                  <p class="text-gray-500">
-                                    将软件开发（Dev）和IT运维（Ops）结合起来的一套实践，以缩短开发生命周期
-                                  </p>
-                                </div>
-                              </div>
-                              <div class="relative flex gap-x-3">
-                                <div class="flex h-6 items-center">
-                                  <input
-                                    id="offers"
-                                    name="offers"
-                                    type="checkbox"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                  />
-                                </div>
-                                <div class="text-sm leading-6">
-                                  <label for="offers" class="font-medium text-gray-900"
-                                    >用户体验设计</label
-                                  >
-                                  <p class="text-gray-500">
-                                    通过改善产品交互的可用性、可访问性和愉悦性来增强用户满意度
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </fieldset>
-                          <!-- <fieldset>
-                            <legend class="text-sm font-semibold leading-6 text-gray-900">
-                              Push Notifications
-                            </legend>
-                            <p class="mt-1 text-sm leading-6 text-gray-600">
-                              These are delivered via SMS to your mobile phone.
-                            </p>
-                            <div class="mt-6 space-y-6">
-                              <div class="flex items-center gap-x-3">
-                                <input
-                                  id="push-everything"
-                                  name="push-notifications"
-                                  type="radio"
-                                  class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                />
-                                <label
-                                  for="push-everything"
-                                  class="block text-sm font-medium leading-6 text-gray-900"
-                                  >Everything</label
-                                >
-                              </div>
-                              <div class="flex items-center gap-x-3">
-                                <input
-                                  id="push-email"
-                                  name="push-notifications"
-                                  type="radio"
-                                  class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                />
-                                <label
-                                  for="push-email"
-                                  class="block text-sm font-medium leading-6 text-gray-900"
-                                  >Same as email</label
-                                >
-                              </div>
-                              <div class="flex items-center gap-x-3">
-                                <input
-                                  id="push-nothing"
-                                  name="push-notifications"
-                                  type="radio"
-                                  class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                />
-                                <label
-                                  for="push-nothing"
-                                  class="block text-sm font-medium leading-6 text-gray-900"
-                                  >No push notifications</label
-                                >
-                              </div>
-                            </div>
-                          </fieldset> -->
-                        </div>
-                      </div>
                     </div>
 
                     <div class="mt-6 flex items-center justify-end gap-x-6">
@@ -552,14 +194,14 @@
                         class="text-sm font-semibold leading-6 text-gray-900"
                         @click="closeModal"
                       >
-                        Cancel
+                        取消
                       </button>
                       <button
                         type="submit"
                         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         @click="submit"
                       >
-                        Save
+                        创建
                       </button>
                     </div>
                   </form>
@@ -576,12 +218,9 @@
 <script setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { ref } from 'vue'
-import useTokenStore from '@/stores/useTokenStore'
 
 import axios from '@/utils/request'
 import { useRouter } from 'vue-router'
-
-const tokenStore = useTokenStore()
 
 const router = useRouter()
 
@@ -660,7 +299,7 @@ const submit = async () => {
 
   setTimeout(() => {
     router.push('/CorporationInfo/')
-  }, 3000)
+  }, 2000)
 }
 
 function handleFileUpload(e) {

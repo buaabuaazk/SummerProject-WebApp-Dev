@@ -82,7 +82,7 @@
                             />
                           </div>
                           <p class="mt-3 text-sm leading-6 text-gray-600">
-                            Write a few sentences about your company.
+                            介绍一下你的公司，比如公司的业务范围、公司的使命、愿景等等
                           </p>
                         </div>
 
