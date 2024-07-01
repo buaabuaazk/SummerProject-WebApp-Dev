@@ -38,7 +38,7 @@
                   职权
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                  <span class="sr-only">Edit</span>
+                  <span class="text-black">管理</span>
                 </th>
               </tr>
             </thead>
@@ -68,12 +68,13 @@
                   <UserPlusIcon v-if="person.is_admin" class="h-6 w-6 text-red-500" />
                   <UserMinusIcon v-else class="h-6 w-6 text-gray-500" />
                 </td>
-                <td
-                  class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
-                >
-                  <a href="#" class="text-indigo-600 hover:text-indigo-900"
-                    >Edit<span class="sr-only">, {{ person.content.username }}</span></a
+                <td class="relative whitespace-nowrap py-5 text-sm font-medium sm:pr-0 mx-auto">
+                  <a href="#" class="text-red-600 hover:text-red-900" v-if="!person.is_admin"
+                    >Delete</a
                   >
+                  <a href="#" class="text-red-600 hover:text-red-900 cursor-not-allowed" v-else
+                    ><NoSymbolIcon class="h-7 w-7 text-gray-500"
+                  /></a>
                 </td>
               </tr>
             </tbody>
@@ -86,6 +87,7 @@
 
 <script setup>
 import { UserPlusIcon, UserMinusIcon } from '@heroicons/vue/24/outline'
+import { NoSymbolIcon } from '@heroicons/vue/24/outline'
 
 import { getEnterpriseUserInfoProfile } from '@/stores/useCorporationStore'
 import { onMounted, ref } from 'vue'
