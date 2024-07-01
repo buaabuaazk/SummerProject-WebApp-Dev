@@ -21,7 +21,7 @@
             <a id="link4" href="/CorporationInfo" class="mouse-not-on">企业</a>
           </div>
         </div>
-        <!--
+        
           <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
             <div class="w-full max-w-lg lg:max-w-xs">
               <label for="search" class="sr-only">Search</label>
@@ -39,7 +39,7 @@
               </div>
             </div>
           </div>
-        -->
+        
         <div class="flex items-center lg:hidden">
           <!-- Mobile menu button -->
           <DisclosureButton
@@ -192,8 +192,8 @@
             />
           </div>
           <div class="ml-3">
-            <div class="text-base font-medium text-gray-800">Tom Cook</div>
-            <div class="text-sm font-medium text-gray-500">tom@example.com</div>
+            <div class="text-base font-medium text-gray-800">{{ username }}</div>
+            <div class="text-sm font-medium text-gray-500">{{ email }}</div>
           </div>
           <button
             type="button"
@@ -234,7 +234,9 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
 import router from '@/router'
+import axios from '@/utils/request'
 import {
   Disclosure,
   DisclosureButton,
@@ -252,6 +254,9 @@ import avatar_default from '@/assets/userDefaultAvatar.png'
 import { onMounted } from 'vue'
 import useTokenStore from '@/stores/useTokenStore'
 const tokenStore = useTokenStore()
+const avatar = ref()
+const email = ref()
+const username =ref()
 const isLogined = () => {
   if (tokenStore.getToken) {
     return true
@@ -302,8 +307,22 @@ function getAvatar() {
     //console.log('a1aa')
     return avatar_default
   } else {
-    // console.log(tokenStore.getToken)
-    return avatar1
+    axios
+      .get('/api/user/detail')
+      .then((response) => {
+        console.log('获取用户信息成功')
+        console.log(response)
+        console.log(response.data)
+        avatar.value=response.data.icon
+        email.value=response.data.email
+        username.value=response.data.username
+        console.log(avatar.value)
+        //console.log(profile.value.detailedInformation.user_id)
+      })
+      .catch((error) => {
+        console.error('获取用户信息失败', error)
+      })
+    return avatar.value
   }
 }
 function cancelAccount() {

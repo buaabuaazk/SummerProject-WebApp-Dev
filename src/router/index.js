@@ -236,14 +236,14 @@ const router = createRouter({
       component: () => import('@/views/Test.vue')
     },
     {
-      path: '/test2',
-      name: 'test2',
-      component: () => import('@/views/Test2.vue')
-    },
-    {
-      path: '/test3',
-      name: 'test3',
-      component: () => import('@/views/Test3.vue')
+      path: '/personalInfo/:id',
+      name: 'personalInfo',
+      component: () => import('@/views/OtherInfo.vue'),
+      meta: {
+        requireAuth: false,
+        title: '其他人个人主页'
+      },
+      props: true
     },
     //404页面，需要放在最后
     {

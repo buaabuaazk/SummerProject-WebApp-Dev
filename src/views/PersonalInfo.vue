@@ -124,6 +124,35 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="我的动态" name="second1" class="larger-tab"></el-tab-pane>
+          <el-tab-pane label="我的投递" name="second2" class="larger-tab">
+            <a-list class="demo-loadmore-list" item-layout="horizontal">
+              <a-list-item v-for="(offer, index) in profile.offerList" :key="index">
+                <template #actions>
+                  <a key="list-loadmore-edit" @click="handleOffer(offer.has_offer)">处理</a>
+                  <a :href="`/JobInfo/${offer.recruit_id}`" key="list-loadmore-more">岗位信息</a>
+                  <a-modal v-model:open="open1" title="offer处理" @ok="agree(offer.recruit_id)" @cancel="refuse(offer.recruit_id)" :mask-Style="{ 'background-color': 'rgba(0, 0, 0, 0.5)' }">
+                    <p>你确定要接受这份offer吗？</p>
+                    <p>点击OK接受，点击Cancel拒绝</p>
+                  </a-modal>
+                  <a-modal v-model:open="open2" title="offer处理" @ok="handleOk2" :mask-Style="{ 'background-color': 'rgba(0, 0, 0, 0.5)' }">
+                    <p>很遗憾，您的岗位申请暂未通过。</p>
+                    <p>北海虽赊，扶摇可接；东隅已逝；桑榆非晚！</p>
+                  </a-modal>
+                </template>
+                <a-skeleton :loading="initLoading" avatar :title="false" active>
+                  <a-list-item-meta :description="offer.job_name">
+                    <template #title>
+                      <a :href="`/CorporationInfo/${offer.enterprise_id}`">{{ offer.enterprise_name }}</a>
+                    </template>
+                    <template #avatar>
+                      <a-avatar :src="offer.enterprise_icon" />
+                    </template>
+                  </a-list-item-meta>
+                  <div>{{ offer.has_offer === true ? '已通过' : '未通过' }}</div>
+                </a-skeleton>
+              </a-list-item>
+            </a-list>
+          </el-tab-pane>
           <el-tab-pane label="我的简历" name="third" class="larger-tab">
             <!--在这里写-->
             <!--在这里写-->
@@ -151,9 +180,7 @@
                     上传简历
                   </button>
                   <p>简历上传情况：</p>
-                  <a :href="profile.detailedInformation.resume">{{
-                    profile.detailedInformation.resume
-                  }}</a>
+                  <a :href="profile.detailedInformation.resume" class="blog-link">{{ profile.detailedInformation.resume }}</a>
                 </div>
               </div>
               <div style="flex: 1; padding: 20px; background-color: #f5f5f5; border-radius: 8px">
@@ -280,6 +307,8 @@ import axios from '@/utils/request'
 import { onMounted } from 'vue'
 
 import useTokenStore from '@/stores/useTokenStore'
+import useCurrentUserStore from '@/stores/useCurrentUserStore'
+const currentUserStore = useCurrentUserStore()
 const tokenStore = useTokenStore()
 const profile = ref({
   username: '',
@@ -316,9 +345,12 @@ const profile = ref({
       icon: 'https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/icon/enterprise/1.png',
       field: '国产OS'
     }
-  ]
+  ],
+  offerList: []
 })
 const open = ref(false)
+const open1 = ref(false);
+const open2 = ref(false);
 //const format = ref('我建议对简历进行如下优化：\n姓名：魏浩哲\n联系方式');
 const rawResumeText = ref('这是默认数据')
 const format = computed(() => {
@@ -356,6 +388,9 @@ const interestOptions = [
   '技术支持工程师',
   '产品经理'
 ]
+const initLoading = ref(true);
+  const data = ref([]);
+  const list = ref([]);
 onMounted(() => {
   //获取用户详细信息
   axios
@@ -407,6 +442,27 @@ onMounted(() => {
         .catch((error) => {
           console.error('获取用户关注企业列表失败', error)
         })
+      const count = 7;
+      const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
+      fetch(fakeDataUrl)
+      .then(res => res.json())
+      .then(res => {
+        initLoading.value = false;
+        data.value = res.results;
+        list.value = res.results;
+      });
+      axios
+        .get('/api/recruit/list_user_recruit')
+        .then((response) => {
+          console.log('获取用户offer列表成功');
+          console.log(response);
+          console.log(response.data);
+          profile.value.offerList = response.data;
+          console.log(profile.value.offerList[1]);
+        })
+        .catch((error) => {
+          console.error('获取用户offer列表失败', error);
+        });
     })
     .catch((error) => {
       console.error('获取用户信息失败', error)
@@ -422,8 +478,7 @@ const handleFileUpload = (event) => {
 const uploadResume = () => {
   // 创建一个 FormData 对象
   const formData = new FormData()
-  const fileInput = document.querySelector('input[type=file]') // 通过选择器获取文件上传 input
-
+  //const fileInput = document.querySelector('input[type=file]') // 通过选择器获取文件上传 input
   // 将文件添加到 FormData 中
   formData.append('file', profile.value.file)
 
@@ -490,16 +545,16 @@ const submit = () => {
   if (profile.value.repo) {
     formData.append('repo', profile.value.repo)
   }
-  //if (profile.value.tag) {formData.append('tag_id',profile.value.tag)}
   console.log(profile.value.tag)
+  //if (profile.value.tag) {formData.append('tag_id',profile.value.tag)}
+  console.log(formData.get('tag_id'))
   test()
   //if (profile.value.tag) {formData.append('tag',profile.value.tag)}
+  
   axios
-    .patch('/api/user/detail', formData, {
-      headers: {
-        Authorization: tokenStore.getToken
-      }
-    })
+    .patch('/api/user/detail', {
+
+    }, )
     .then((response) => {
       console.log('修改用户信息成功')
       console.log(response)
@@ -568,9 +623,14 @@ const showModal = () => {
   open.value = true
   console.log('showmodal called')
 }
+
 const handleOk = (e) => {
   console.log(e)
   open.value = false
+}
+const handleOk2 = (e) => {
+  console.log(e)
+  open2.value = false
 }
 const replaceNewlinesWithBreaks = (str) => {
   return str.replace(/\\n/g, '<br>')
@@ -579,7 +639,6 @@ const boldTextBetweenStars = (str) => {
   // 使用正则表达式捕获两个星号中间的内容
   return str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
 }
-
 const optimizeResume = () => {
   console.log('optimizeResume called')
   axios
@@ -609,6 +668,65 @@ const getBlog = (str) => {
   } else {
     return '暂无博客'
   }
+}
+const handleOffer = (flag) => {
+  console.log('handleoffer called')
+  if(flag){
+    open1.value = true
+  }
+  else {
+    open2.value = true
+  }
+  /*
+  const formData = new FormData()
+  formData.append('id', id)
+  axios
+    .post(
+      '/api/profile',
+      formData,
+    )
+    .then((response) => {
+      console.log('1111111')
+      
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  */
+}
+const agree = (id) => {
+  console.log('agree called')
+  const formData = new FormData()
+  formData.append('recruit_id', id)
+  axios
+    .post(
+      '/api/profile',
+      formData,
+    )
+    .then((response) => {
+      console.log('1111111')
+      
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+const refuse = (id) => {
+  console.log('agree and refuse called')
+  const formData = new FormData()
+  formData.append('recruit_id', id)
+  axios
+    .post(
+      '/api/profile',
+      formData,
+    )
+    .then((response) => {
+      console.log('1111111')
+      
+    })
+    .catch((error) => {
+      console.log(error)
+    })
 }
 </script>
 
