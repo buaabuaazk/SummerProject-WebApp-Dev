@@ -838,6 +838,15 @@ const getEnterpriseUserPost = async (enterprise_id) => {
   }
 }
 
+const getUserPosts = async (user_id) => {
+  try {
+    const res = await axios_instance.get('/api/tweet/get_tweet?user_id=' + user_id)
+    return res.data
+  } catch (error) {
+    return null
+  }
+}
+
 const getEnterpriseUserInfoProfile = async () => {
   try {
     // 获取了企业员工列表
@@ -903,5 +912,6 @@ export {
   getEnterpriseRecruit,
   getUserTransferLogs,
   getUserSimpleProfile,
-  getEnterprisePosts
+  getEnterprisePosts,
+  getUserPosts
 }

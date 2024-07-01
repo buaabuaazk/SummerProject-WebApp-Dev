@@ -86,7 +86,7 @@
                             alt="Image"
                             style="width: 30px; height: 30px; margin-right: 10px"
                           />
-                          <h3 style="margin: 0">{{ profile.username }}</h3>
+                          <a :href="`/personalInfo/${profile.user_id}`" style="margin: 0">{{ profile.username }}</a>
                         </div>
                       </template>
                       <a :href="getBlog(profile.blog)" target="_blank" class="blog-link">{{
@@ -125,36 +125,51 @@
                 </a-row>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="我的动态" name="second1" class="larger-tab"></el-tab-pane>
+            <el-tab-pane label="我的动态" name="second1" class="larger-tab">
+              <div style="background-color: #f5f5f5; padding: 20px; height: 400px; width: 930px; overflow: auto">
+                <ul role="list" class="divide-y divide-gray-100 mx-8">
+                  <div
+                    v-for="id in userPosts"
+                    :key="id"
+                    class="overflow-hidden bg-white shadow sm:rounded-lg"
+                  >
+                    <div class="px-4 py-5 sm:p-6">
+                      <!-- Content goes here -->
+                      <PostCard :post_id="id" class="mx-auto max-w-80%" />
+                    </div>
+                  </div>
+                </ul>
+              </div>
+            </el-tab-pane>
           </el-tabs>
         </div>
         <div style="flex: 90; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100px">
-          <p style="font-size: 2rem; margin: 0">我的公司</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p v-if="profile.enterprise==0" style="font-size: 1.8rem; margin: 0">暂未加入公司</p>
         </div>
       </div>
     </div>
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue'
-  import axios from '@/utils/request'
-  // import axios from '../utils/request';
-  import { onMounted } from 'vue'
-  
-  import useTokenStore from '@/stores/useTokenStore'
-  import useCurrentUserStore from '@/stores/useCurrentUserStore'
-  const props = defineProps({
+import PostCard from '@/components/Post/PostCard.vue'
+import { ChatBubbleLeftIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
+import { getUserProfile, getEnterprisePosts, getUserPosts } from '@/stores/useCorporationStore'
+import { ref, computed } from 'vue'
+import axios from '@/utils/request'
+// import axios from '../utils/request';
+import { onMounted } from 'vue'
+import {useRouter} from 'vue-router'
+import useTokenStore from '@/stores/useTokenStore'
+import useCurrentUserStore from '@/stores/useCurrentUserStore'
+const currentUserStore = useCurrentUserStore()
+const tokenStore = useTokenStore()
+const router = useRouter()
+const route = useRoute()
+const props = defineProps({
   id: {
     type: [String, Number],
     required: true
   }
 })
-  const currentUserStore = useCurrentUserStore()
-  const tokenStore = useTokenStore()
 const profile = ref({
   username: '',
   first_name: '',
@@ -192,53 +207,68 @@ const profile = ref({
     }
   ],
   offerList: [],
-  work_age: '',
-  position: '',
+  work_age: 0,
+  position: '数据分析师',
   enterprise: '',//这是用户所属企业id
+  e_icon: '',
+  e_name: '',
+  currentRid: 0,
 })
-  const open = ref(false)
-  const open1 = ref(false);
-  //const format = ref('我建议对简历进行如下优化：\n姓名：魏浩哲\n联系方式');
-  const rawResumeText = ref('这是默认数据')
-  const format = computed(() => {
-    return rawResumeText.value.replace(/\n/g, '<br>')
-  })
-  const interestOptions = [
-    '前端工程师',
-    '后端工程师',
-    '全栈工程师',
-    '数据科学家',
-    '数据分析师',
-    '机器学习工程师',
-    '人工智能工程师',
-    '算法工程师',
-    '大数据工程师',
-    '云计算工程师',
-    'DevOps工程师',
-    '网络安全工程师',
-    '移动应用开发工程师',
-    '嵌入式系统工程师',
-    '系统架构师',
-    '数据库管理员',
-    '自动化测试工程师',
-    '游戏开发工程师',
-    'AR/VR工程师',
-    '物联网工程师',
-    '自然语言处理工程师',
-    '机器人工程师',
-    '区块链开发工程师',
-    '生物信息学工程师',
-    '电商开发工程师',
-    '计算机视觉工程师',
-    '强化学习工程师',
-    'NLP工程师',
-    '技术支持工程师',
-    '产品经理'
-  ]
+const open = ref(false)
+const open1 = ref(false);
+const open2 = ref(false);
+//const format = ref('我建议对简历进行如下优化：\n姓名：魏浩哲\n联系方式');
+const rawResumeText = ref('正在调用大语言模型接口，请耐心等待......')
+const format = computed(() => {
+  return rawResumeText.value.replace(/\n/g, '<br>')
+})
+const interestOptions = [
+  '前端工程师',
+  '后端工程师',
+  '全栈工程师',
+  '数据科学家',
+  '数据分析师',
+  '机器学习工程师',
+  '人工智能工程师',
+  '算法工程师',
+  '大数据工程师',
+  '云计算工程师',
+  'DevOps工程师',
+  '网络安全工程师',
+  '移动应用开发工程师',
+  '嵌入式系统工程师',
+  '系统架构师',
+  '数据库管理员',
+  '自动化测试工程师',
+  '游戏开发工程师',
+  'AR/VR工程师',
+  '物联网工程师',
+  '自然语言处理工程师',
+  '机器人工程师',
+  '区块链开发工程师',
+  '生物信息学工程师',
+  '电商开发工程师',
+  '计算机视觉工程师',
+  '强化学习工程师',
+  'NLP工程师',
+  '技术支持工程师',
+  '产品经理'
+]
 const initLoading = ref(true);
 const data = ref([]);
 const list = ref([]);
-  onMounted(() => {
+let userProfile = ref(null)
+let userPosts = ref([])
+
+async function fetchData() {
+  userProfile.value = await getUserProfile()
+  if (route.params.id) {
+    userPosts.value = await getUserPosts(route.params.id)
+  } else {
+    userPosts.value = await getUserPosts(profile.value.detailedInformation.user_id)
+  }
+}
+  onMounted(async() => {
     //获取用户详细信息
     axios
       .get('/api/user/info',
@@ -301,27 +331,49 @@ const list = ref([]);
             console.error('获取用户关注与否失败', error)
           })
          //获取当前履历（有无企业，在哪个企业，工龄，职位...）
-      axios
-        .get('/api/profile', {
-          params: {
-            user_id: profile.value.detailedInformation.user_id
-          }
-        })
-        .then((response) => {
-          console.log('获取用户履历成功');
-          profile.value.work_age=response.data.work_age
-          profile.value.enterprise=response.data.enterprise
-          profile.value.position=interestOptions[response.data.recruit-1] 
-        })
-        .catch((error) => {
-          console.error('获取用户履历失败', error);
-        });
+         if(profile.value.detailedInformation.user_id){
+          console.log(profile.value.detailedInformation.user_id)
+          axios
+          .get('/api/profile', {
+            params: {
+              user_id: profile.value.detailedInformation.user_id
+            }
+          })
+          .then((response) => {
+            console.log('获取用户履历成功');
+            console.log(response.data)
+            //profile.value.position=interestOptions[response.data.recruit-1] 
+            profile.value.work_age=response.data.work_age
+            profile.value.enterprise=response.data.enterprise
+            console.log(profile.value.position)
+            //根据获取到的企业id拿企业相关信息
+            axios
+              .get('/api/enterprise/info', {
+                params: {
+                  enterprise_id: profile.value.enterprise
+                }
+              })
+              .then((response) => {
+                console.log('获取用户所属企业信息成功：'+response.data.name);
+                profile.value.e_icon=response.data.icon
+                profile.value.e_name=response.data.name
+                //profile.value.position=interestOptions[response.data.recruit-1] 
+              })
+              .catch((error) => {
+                console.error('获取用户所属企业信息失败', error);
+              });
+          })
+          .catch((error) => {
+            console.error('获取用户履历失败', error);
+          });
+        }
       })
       .catch((error) => {
         console.error('获取用户信息失败', error)
       })
     //获取用户关注列表
-    console.log('user_id:' + profile.value.detailedInformation.user_id)
+    //console.log('user_id:' + profile.value.detailedInformation.user_id)
+    await fetchData()
   })
   const storeimg = (file) => {
     profile.value.icon = file
