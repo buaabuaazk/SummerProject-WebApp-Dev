@@ -273,6 +273,7 @@
           v-for="recruit in page_data"
           :key="recruit.recruit_id"
           class="shadow-2xl rounded-lg m-1"
+          @click="() => router.push(`/jobinfo/${recruit.recruit_id}`)"
         >
           <a href="#" class="block hover:bg-gray-50">
             <div class="px-4 py-4 sm:px-6">
@@ -467,6 +468,10 @@ import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from '@heroicons/v
 import { computed, onMounted, ref } from 'vue'
 
 import { MapPinIcon, UsersIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 import {
   Dialog,

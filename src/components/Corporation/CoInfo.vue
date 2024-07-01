@@ -167,6 +167,10 @@ import { UserPlusIcon, UserMinusIcon } from '@heroicons/vue/24/outline'
 
 import { onMounted, ref, watch } from 'vue'
 
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 import axios from '@/utils/request'
 
 import {
