@@ -84,7 +84,7 @@
                           alt="Image"
                           style="width: 30px; height: 30px; margin-right: 10px"
                         />
-                        <h3 style="margin: 0" @click="goTo('/personalInfo/'+profile.user_id)">{{ profile.username }}</h3>
+                        <a :href="`/personalInfo/${profile.user_id}`" style="margin: 0">{{ profile.username }}</a>
                       </div>
                     </template>
                     <a :href="getBlog(profile.blog)" target="_blank" class="blog-link1">{{
@@ -113,7 +113,7 @@
                           alt="Image"
                           style="width: 30px; height: 30px; margin-right: 10px"
                         />
-                        <h3 style="margin: 0" @click="goTo('/personalInfo/'+profile.user_id)">{{ profile.name }}</h3>
+                        <a :href="`/corporationInfo/${profile.enterprise_id}`" style="margin: 0">{{ profile.name }}</a>
                       </div>
                     </template>
                     <p>{{ profile.introduction }}</p>
@@ -122,15 +122,30 @@
               </a-row>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="我的动态" name="second1" class="larger-tab"></el-tab-pane>
+          <el-tab-pane label="我的动态" name="second1" class="larger-tab">
+            <div style="background-color: #f5f5f5; padding: 20px; height: 400px; width: 930px; overflow: auto">
+              <ul role="list" class="divide-y divide-gray-100 mx-8">
+                <div
+                  v-for="id in userPosts"
+                  :key="id"
+                  class="overflow-hidden bg-white shadow sm:rounded-lg"
+                >
+                  <div class="px-4 py-5 sm:p-6">
+                    <!-- Content goes here -->
+                    <PostCard :post_id="id" class="mx-auto max-w-80%" />
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </el-tab-pane>
           <el-tab-pane label="我的投递" name="second2" class="larger-tab">
             <div style="background-color: #f5f5f5; padding: 20px; height: 400px; overflow: auto">
               <a-list class="demo-loadmore-list" item-layout="horizontal">
                 <a-list-item v-for="(offer, index) in profile.offerList" :key="index">
                   <template #actions>
-                    <a key="list-loadmore-edit" @click="handleOffer(offer.has_offer)">处理</a>
+                    <a key="list-loadmore-edit" @click="handleOffer(offer.has_offer,offer.recruit_id)">处理</a>
                     <a :href="`/JobInfo/${offer.recruit_id}`" key="list-loadmore-more">岗位信息</a>
-                    <a-modal v-model:open="open1" title="offer处理" @ok="agree(offer.recruit_id)" @cancel="refuse(offer.recruit_id)" :mask-Style="{ 'background-color': 'rgba(0, 0, 0, 0.5)' }">
+                    <a-modal v-model:open="open1" title="offer处理" @ok="agree(offer.recruit_id)" :mask-Style="{ 'background-color': 'rgba(0, 0, 0, 0.5)' }">
                       <p>你确定要接受这份offer吗？</p>
                       <p>点击OK接受，点击Cancel拒绝</p>
                     </a-modal>
@@ -292,17 +307,22 @@
         </el-tabs>
       </div>
       <div style="flex: 90; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100px">
+        <!--
           <p style="font-size: 2rem; margin: 0">我的公司</p>
           <p>&nbsp;</p>
           <p>&nbsp;</p>
           <p>&nbsp;</p>
           <p v-if="profile.enterprise==0" style="font-size: 1.8rem; margin: 0">暂未加入公司</p>
+        -->
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import PostCard from '@/components/Post/PostCard.vue'
+import { ChatBubbleLeftIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
+import { getUserProfile, getEnterprisePosts, getUserPosts } from '@/stores/useCorporationStore'
 import { ref, computed } from 'vue'
 import axios from '@/utils/request'
 // import axios from '../utils/request';
@@ -312,6 +332,9 @@ import useTokenStore from '@/stores/useTokenStore'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
 const currentUserStore = useCurrentUserStore()
 const tokenStore = useTokenStore()
+
+const router = useRouter()
+const route = useRoute()
 const profile = ref({
   username: '',
   first_name: '',
@@ -354,6 +377,7 @@ const profile = ref({
   enterprise: '',//这是用户所属企业id
   e_icon: '',
   e_name: '',
+  currentRid: 0,
 })
 const open = ref(false)
 const open1 = ref(false);
@@ -398,7 +422,20 @@ const interestOptions = [
 const initLoading = ref(true);
 const data = ref([]);
 const list = ref([]);
-onMounted(() => {
+let userProfile = ref(null)
+let userPosts = ref([])
+
+async function fetchData() {
+  userProfile.value = await getUserProfile()
+  if (route.params.id) {
+    userPosts.value = await getUserPosts(route.params.id)
+  } else {
+    console.log(profile.value.detailedInformation)
+    console.log(profile.value.detailedInformation.user_id)
+    userPosts.value = await getUserPosts(profile.value.detailedInformation.user_id)
+  }
+}
+onMounted(async() => {
   //获取用户详细信息
   axios
     .get('/api/user/detail', {
@@ -464,13 +501,14 @@ onMounted(() => {
           console.log(response);
           console.log(response.data);
           profile.value.offerList = response.data;
-          console.log(profile.value.offerList[1]);
+          //console.log(profile.value.offerList[1]);
         })
         .catch((error) => {
           console.error('获取用户offer列表失败', error);
         });
       //获取当前履历（有无企业，在哪个企业，工龄，职位...）
-      axios
+      if(profile.value.detailedInformation.user_id){
+        axios
         .get('/api/profile', {
           params: {
             user_id: profile.value.detailedInformation.user_id
@@ -478,12 +516,10 @@ onMounted(() => {
         })
         .then((response) => {
           console.log('获取用户履历成功');
-          profile.value.position=interestOptions[response.data.recruit-1] 
+          console.log(response.data)
+          //profile.value.position=interestOptions[response.data.recruit-1] 
           profile.value.work_age=response.data.work_age
           profile.value.enterprise=response.data.enterprise
-          //console.log(response.data.recruit)
-          //profile.value.position=interestOptions[response.data.recruit-1] 
-          //profile.value.position=1
           console.log(profile.value.position)
           //根据获取到的企业id拿企业相关信息
           axios
@@ -493,7 +529,41 @@ onMounted(() => {
               }
             })
             .then((response) => {
-              console.log('获取用户所属企业信息成功');
+              console.log('获取用户所属企业信息成功：'+response.data.name);
+              profile.value.e_icon=response.data.icon
+              profile.value.e_name=response.data.name
+              //profile.value.position=interestOptions[response.data.recruit-1] 
+            })
+            .catch((error) => {
+              console.error('获取用户所属企业信息失败', error);
+            });
+        })
+        .catch((error) => {
+          console.error('获取用户履历失败', error);
+        });
+      }
+      axios
+        .get('/api/profile', {
+          params: {
+            user_id: profile.value.detailedInformation.user_id
+          }
+        })
+        .then((response) => {
+          console.log('获取用户履历成功');
+          console.log(response.data)
+          //profile.value.position=interestOptions[response.data.recruit-1] 
+          profile.value.work_age=response.data.work_age
+          profile.value.enterprise=response.data.enterprise
+          console.log(profile.value.position)
+          //根据获取到的企业id拿企业相关信息
+          axios
+            .get('/api/enterprise/info', {
+              params: {
+                enterprise_id: profile.value.enterprise
+              }
+            })
+            .then((response) => {
+              console.log('获取用户所属企业信息成功：'+response.data.name);
               profile.value.e_icon=response.data.icon
               profile.value.e_name=response.data.name
               //profile.value.position=interestOptions[response.data.recruit-1] 
@@ -509,8 +579,8 @@ onMounted(() => {
     .catch((error) => {
       console.error('获取用户信息失败', error)
     })
-  //获取用户关注列表
-  console.log('user_id:' + profile.value.detailedInformation.user_id)
+  await fetchData()
+  //console.log('CoRecruit_ID', route.params.id)
 })
 const goTo = (where) => {
   router.push(where)
@@ -526,7 +596,6 @@ const uploadResume = () => {
   //const fileInput = document.querySelector('input[type=file]') // 通过选择器获取文件上传 input
   // 将文件添加到 FormData 中
   formData.append('file', profile.value.file)
-
   axios
     .post(
       '/api/user/resume',
@@ -714,7 +783,8 @@ const getBlog = (str) => {
     return '暂无博客'
   }
 }
-const handleOffer = (flag) => {
+const handleOffer = (flag,id) => {
+  profile.value.currentRid=id
   console.log('handleoffer called')
   if(flag){
     open1.value = true
@@ -740,38 +810,38 @@ const handleOffer = (flag) => {
   */
 }
 const agree = (id) => {
-  console.log('agree called')
+  console.log('agree called,id is '+profile.value.currentRid)
   const formData = new FormData()
-  formData.append('recruit_id', id)
+  formData.append('recruit_id', profile.value.currentRid)
   axios
     .post(
-      '/api/profile',
+      '/api/profile/',
       formData,
     )
     .then((response) => {
-      console.log('1111111')
-      
+      console.log('接受offer成功')
     })
     .catch((error) => {
       console.log(error)
     })
 }
 const refuse = (id) => {
+  /*
   console.log('agree and refuse called')
   const formData = new FormData()
   formData.append('recruit_id', id)
   axios
     .post(
-      '/api/profile',
+      '/api/profile/',
       formData,
     )
     .then((response) => {
       console.log('1111111')
-      
     })
     .catch((error) => {
       console.log(error)
     })
+  */
 }
 </script>
 
