@@ -42,15 +42,15 @@
             }}
           </p>
           <p>学历：{{ profile.detailedInformation.degree }}</p>
-          <p>岗位：项目经理</p>
-          <p>工龄：1年</p>
+          <p>岗位：{{ profile.position }}</p>
+          <p>工龄：{{ profile.work_age }}年</p>
         </div>
         <div style="flex: 140; padding: 20px">
           <p>&nbsp;</p>
           <p>&nbsp;</p>
           <p>邮箱：{{ profile.detailedInformation.email }}</p>
           <p>
-            仓库：<a :href="profile.detailedInformation.repo" target="_blank">{{
+            仓库：<a :href="profile.detailedInformation.repo" target="_blank" >{{
               profile.detailedInformation.repo
             }}</a>
           </p>
@@ -67,7 +67,7 @@
       <div style="flex: 180; padding: 0px">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="关注用户" name="first" class="larger-tab">
-            <div style="background-color: #ececec; padding: 20px; height: 400px; overflow: auto">
+            <div style="background-color: #f5f5f5; padding: 20px; height: 400px; overflow: auto">
               <a-row :gutter="16">
                 <!--下面的a-col是一个卡片-->
                 <a-col
@@ -84,10 +84,10 @@
                           alt="Image"
                           style="width: 30px; height: 30px; margin-right: 10px"
                         />
-                        <h3 style="margin: 0">{{ profile.username }}</h3>
+                        <h3 style="margin: 0" @click="goTo('/personalInfo/'+profile.user_id)">{{ profile.username }}</h3>
                       </div>
                     </template>
-                    <a :href="getBlog(profile.blog)" target="_blank" class="blog-link">{{
+                    <a :href="getBlog(profile.blog)" target="_blank" class="blog-link1">{{
                       getBlog(profile.blog)
                     }}</a>
                   </a-card>
@@ -96,10 +96,9 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="关注企业" name="second" class="larger-tab">
-            <div style="background-color: #ececec; padding: 20px">
+            <div style="background-color: #f5f5f5; padding: 20px; height: 400px; overflow: auto">
               <a-row :gutter="12">
                 <!--下面的a-col是一个卡片-->
-
                 <a-col
                   v-for="(profile, index) in profile.briefCorList"
                   :key="index"
@@ -114,7 +113,7 @@
                           alt="Image"
                           style="width: 30px; height: 30px; margin-right: 10px"
                         />
-                        <h3 style="margin: 0">{{ profile.name }}</h3>
+                        <h3 style="margin: 0" @click="goTo('/personalInfo/'+profile.user_id)">{{ profile.name }}</h3>
                       </div>
                     </template>
                     <p>{{ profile.introduction }}</p>
@@ -125,33 +124,35 @@
           </el-tab-pane>
           <el-tab-pane label="我的动态" name="second1" class="larger-tab"></el-tab-pane>
           <el-tab-pane label="我的投递" name="second2" class="larger-tab">
-            <a-list class="demo-loadmore-list" item-layout="horizontal">
-              <a-list-item v-for="(offer, index) in profile.offerList" :key="index">
-                <template #actions>
-                  <a key="list-loadmore-edit" @click="handleOffer(offer.has_offer)">处理</a>
-                  <a :href="`/JobInfo/${offer.recruit_id}`" key="list-loadmore-more">岗位信息</a>
-                  <a-modal v-model:open="open1" title="offer处理" @ok="agree(offer.recruit_id)" @cancel="refuse(offer.recruit_id)" :mask-Style="{ 'background-color': 'rgba(0, 0, 0, 0.5)' }">
-                    <p>你确定要接受这份offer吗？</p>
-                    <p>点击OK接受，点击Cancel拒绝</p>
-                  </a-modal>
-                  <a-modal v-model:open="open2" title="offer处理" @ok="handleOk2" :mask-Style="{ 'background-color': 'rgba(0, 0, 0, 0.5)' }">
-                    <p>很遗憾，您的岗位申请暂未通过。</p>
-                    <p>北海虽赊，扶摇可接；东隅已逝；桑榆非晚！</p>
-                  </a-modal>
-                </template>
-                <a-skeleton :loading="initLoading" avatar :title="false" active>
-                  <a-list-item-meta :description="offer.job_name">
-                    <template #title>
-                      <a :href="`/CorporationInfo/${offer.enterprise_id}`">{{ offer.enterprise_name }}</a>
-                    </template>
-                    <template #avatar>
-                      <a-avatar :src="offer.enterprise_icon" />
-                    </template>
-                  </a-list-item-meta>
-                  <div>{{ offer.has_offer === true ? '已通过' : '未通过' }}</div>
-                </a-skeleton>
-              </a-list-item>
-            </a-list>
+            <div style="background-color: #f5f5f5; padding: 20px; height: 400px; overflow: auto">
+              <a-list class="demo-loadmore-list" item-layout="horizontal">
+                <a-list-item v-for="(offer, index) in profile.offerList" :key="index">
+                  <template #actions>
+                    <a key="list-loadmore-edit" @click="handleOffer(offer.has_offer)">处理</a>
+                    <a :href="`/JobInfo/${offer.recruit_id}`" key="list-loadmore-more">岗位信息</a>
+                    <a-modal v-model:open="open1" title="offer处理" @ok="agree(offer.recruit_id)" @cancel="refuse(offer.recruit_id)" :mask-Style="{ 'background-color': 'rgba(0, 0, 0, 0.5)' }">
+                      <p>你确定要接受这份offer吗？</p>
+                      <p>点击OK接受，点击Cancel拒绝</p>
+                    </a-modal>
+                    <a-modal v-model:open="open2" title="offer处理" @ok="handleOk2" :mask-Style="{ 'background-color': 'rgba(0, 0, 0, 0.5)' }">
+                      <p>很遗憾，您的岗位申请暂未通过。</p>
+                      <p>北海虽赊，扶摇可接；东隅已逝；桑榆非晚！</p>
+                    </a-modal>
+                  </template>
+                  <a-skeleton :loading="initLoading" avatar :title="false" active>
+                    <a-list-item-meta :description="offer.job_name">
+                      <template #title>
+                        <a :href="`/CorporationInfo/${offer.enterprise_id}`">{{ offer.enterprise_name }}</a>
+                      </template>
+                      <template #avatar>
+                        <a-avatar :src="offer.enterprise_icon" />
+                      </template>
+                    </a-list-item-meta>
+                    <div>{{ offer.has_offer === true ? '已通过' : '未通过' }}</div>
+                  </a-skeleton>
+                </a-list-item>
+              </a-list>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="我的简历" name="third" class="larger-tab">
             <!--在这里写-->
@@ -189,9 +190,8 @@
                   <el-button size="small" type="primary" @click="optimizeResume">优化简历</el-button>
                 -->
                 <div>
-                  <a-button type="primary" @click="optimizeResume" class="deep-blue-button"
-                    >点击优化简历</a-button
-                  >
+                  <button type="primary" @click="optimizeResume" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >点击优化简历</button>
                   <a-modal v-model:open="open" title="简历优化建议" @ok="handleOk" :width="800">
                     <div v-html="format"></div>
                   </a-modal>
@@ -263,7 +263,7 @@
                 <a-form-item label="兴趣岗位" style="width: 20rem">
                   <a-select
                     v-model:value="profile.interestJob"
-                    :placeholder="profile.detailedInformation.tag"
+                    :placeholder=null
                     mode="multiple"
                     style="width: 100%"
                     :options="interestOptions.map((option) => ({ value: option }))"
@@ -291,10 +291,12 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div
-        style="flex: 90; display: flex; justify-content: center; align-items: center; height: 100px"
-      >
-        <p style="font-size: 24px; margin: 0">我的公司</p>
+      <div style="flex: 90; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100px">
+          <p style="font-size: 2rem; margin: 0">我的公司</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p v-if="profile.enterprise==0" style="font-size: 1.8rem; margin: 0">暂未加入公司</p>
       </div>
     </div>
   </div>
@@ -305,7 +307,7 @@ import { ref, computed } from 'vue'
 import axios from '@/utils/request'
 // import axios from '../utils/request';
 import { onMounted } from 'vue'
-
+import {useRouter} from 'vue-router'
 import useTokenStore from '@/stores/useTokenStore'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
 const currentUserStore = useCurrentUserStore()
@@ -346,13 +348,18 @@ const profile = ref({
       field: '国产OS'
     }
   ],
-  offerList: []
+  offerList: [],
+  work_age: 0,
+  position: '数据分析师',
+  enterprise: '',//这是用户所属企业id
+  e_icon: '',
+  e_name: '',
 })
 const open = ref(false)
 const open1 = ref(false);
 const open2 = ref(false);
 //const format = ref('我建议对简历进行如下优化：\n姓名：魏浩哲\n联系方式');
-const rawResumeText = ref('这是默认数据')
+const rawResumeText = ref('正在调用大语言模型接口，请耐心等待......')
 const format = computed(() => {
   return rawResumeText.value.replace(/\n/g, '<br>')
 })
@@ -389,8 +396,8 @@ const interestOptions = [
   '产品经理'
 ]
 const initLoading = ref(true);
-  const data = ref([]);
-  const list = ref([]);
+const data = ref([]);
+const list = ref([]);
 onMounted(() => {
   //获取用户详细信息
   axios
@@ -408,7 +415,6 @@ onMounted(() => {
       //console.log(profile.detailedInformation.username) profile.value.detailedInformation.username
       profile.value.detailedInformation = response.data
       console.log(profile.value.detailedInformation.user_id)
-
       axios
         .get('/api/user/subscribe_list', {
           params: {
@@ -463,6 +469,42 @@ onMounted(() => {
         .catch((error) => {
           console.error('获取用户offer列表失败', error);
         });
+      //获取当前履历（有无企业，在哪个企业，工龄，职位...）
+      axios
+        .get('/api/profile', {
+          params: {
+            user_id: profile.value.detailedInformation.user_id
+          }
+        })
+        .then((response) => {
+          console.log('获取用户履历成功');
+          profile.value.position=interestOptions[response.data.recruit-1] 
+          profile.value.work_age=response.data.work_age
+          profile.value.enterprise=response.data.enterprise
+          //console.log(response.data.recruit)
+          //profile.value.position=interestOptions[response.data.recruit-1] 
+          //profile.value.position=1
+          console.log(profile.value.position)
+          //根据获取到的企业id拿企业相关信息
+          axios
+            .get('/api/enterprise/info', {
+              params: {
+                enterprise_id: profile.value.enterprise
+              }
+            })
+            .then((response) => {
+              console.log('获取用户所属企业信息成功');
+              profile.value.e_icon=response.data.icon
+              profile.value.e_name=response.data.name
+              //profile.value.position=interestOptions[response.data.recruit-1] 
+            })
+            .catch((error) => {
+              console.error('获取用户所属企业信息失败', error);
+            });
+        })
+        .catch((error) => {
+          console.error('获取用户履历失败', error);
+        });
     })
     .catch((error) => {
       console.error('获取用户信息失败', error)
@@ -470,6 +512,9 @@ onMounted(() => {
   //获取用户关注列表
   console.log('user_id:' + profile.value.detailedInformation.user_id)
 })
+const goTo = (where) => {
+  router.push(where)
+}
 const handleFileUpload = (event) => {
   profile.value.file = event.target.files[0]
   console.log('Uploaded file:', profile.value.file)
@@ -783,6 +828,17 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: lighter; /* 设置为细体 */
+}
+.blog-link1 {
+  display: block;
+  width: 200px; /* 设置适当的宽度 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.blog-link:hover {
+  color: blue; /* 鼠标悬停时字体颜色变为蓝色 */
 }
 .deep-blue-button {
   background-color: rgb(#2563eb) !important; /* DeepBlue */

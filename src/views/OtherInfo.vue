@@ -41,8 +41,8 @@
               姓名：***
             </p>
             <p>学历：{{ profile.detailedInformation.degree }}</p>
-            <p>岗位：项目经理</p>
-            <p>工龄：1年</p>
+            <p>岗位：{{ profile.position }}</p>
+            <p>工龄：{{ profile.work_age }}年</p>
           </div>
           <div style="flex: 140; padding: 20px">
             <p>&nbsp;</p>
@@ -50,7 +50,7 @@
             :style="{ width: '200px', height: '50px', backgroundColor: 'light-blue', border: '1px solid', borderColor: 'white', color: 'black' }">
             {{ profile.isFollowed ? '取消关注' : '关注' }}
             </a-button>
-            <p>邮箱：{{ profile.detailedInformation.email }}</p>
+            
             <p>
               仓库：<a :href="profile.detailedInformation.repo" target="_blank">{{
                 profile.detailedInformation.repo
@@ -128,15 +128,17 @@
             <el-tab-pane label="我的动态" name="second1" class="larger-tab"></el-tab-pane>
           </el-tabs>
         </div>
-        <div
-          style="flex: 90; display: flex; justify-content: center; align-items: center; height: 100px"
-        >
-          <p style="font-size: 24px; margin: 0">我的公司</p>
+        <div style="flex: 90; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100px">
+          <p style="font-size: 2rem; margin: 0">我的公司</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p v-if="profile.enterprise==0" style="font-size: 1.8rem; margin: 0">暂未加入公司</p>
         </div>
       </div>
     </div>
 </template>
-  
+
 <script setup>
   import { ref, computed } from 'vue'
   import axios from '@/utils/request'
@@ -153,45 +155,47 @@
 })
   const currentUserStore = useCurrentUserStore()
   const tokenStore = useTokenStore()
-  const profile = ref({
-    username: '',
-    first_name: '',
-    last_name: '',
-    name: '',
-    email: '',
-    degree: '',
-    interestJob: [],
-    tag: [],
-    blog: '',
-    repo: '',
-    avatar: '',
-    file: null,
-    icon: null,
-    detailedInformation: '', //放获取到的当前用户的信息
-    briefUserList: [
-      {
-        username: '用户一',
-        user_id: '1',
-        blog: '这是用户一的简介。'
-      },
-      {
-        username: '用户2',
-        user_id: '2',
-        blog: '这是用户一的简介。'
-      }
-    ],
-    briefCorList: [
-      {
-        enterprise_id: 1,
-        name: '麒麟软件有限公司',
-        introduction: '专注于国产OS设计与制造',
-        icon: 'https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/icon/enterprise/1.png',
-        field: '国产OS'
-      }
-    ],
-    offerList: [],
-    isFollowed: false,
-  })
+const profile = ref({
+  username: '',
+  first_name: '',
+  last_name: '',
+  name: '',
+  email: '',
+  degree: '',
+  interestJob: [],
+  tag: [],
+  blog: '',
+  repo: '',
+  avatar: '',
+  file: null,
+  icon: null,
+  detailedInformation: '', //放获取到的当前用户的信息
+  briefUserList: [
+    {
+      username: '用户一',
+      user_id: '1',
+      blog: '这是用户一的简介。'
+    },
+    {
+      username: '用户2',
+      user_id: '2',
+      blog: '这是用户一的简介。'
+    }
+  ],
+  briefCorList: [
+    {
+      enterprise_id: 1,
+      name: '麒麟软件有限公司',
+      introduction: '专注于国产OS设计与制造',
+      icon: 'https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/icon/enterprise/1.png',
+      field: '国产OS'
+    }
+  ],
+  offerList: [],
+  work_age: '',
+  position: '',
+  enterprise: '',//这是用户所属企业id
+})
   const open = ref(false)
   const open1 = ref(false);
   //const format = ref('我建议对简历进行如下优化：\n姓名：魏浩哲\n联系方式');
@@ -296,6 +300,22 @@ const list = ref([]);
           .catch((error) => {
             console.error('获取用户关注与否失败', error)
           })
+         //获取当前履历（有无企业，在哪个企业，工龄，职位...）
+      axios
+        .get('/api/profile', {
+          params: {
+            user_id: profile.value.detailedInformation.user_id
+          }
+        })
+        .then((response) => {
+          console.log('获取用户履历成功');
+          profile.value.work_age=response.data.work_age
+          profile.value.enterprise=response.data.enterprise
+          profile.value.position=interestOptions[response.data.recruit-1] 
+        })
+        .catch((error) => {
+          console.error('获取用户履历失败', error);
+        });
       })
       .catch((error) => {
         console.error('获取用户信息失败', error)
@@ -334,7 +354,7 @@ const follow = () => {
       )
       .then((response) => {
         console.log('1111111')
-        alert('关注成功！')
+        alert('操作成功！')
       })
       .catch((error) => {
         console.log(error)
