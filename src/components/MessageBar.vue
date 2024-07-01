@@ -51,13 +51,14 @@ import { NaiveChat } from 'naive-chat'
 import { onBeforeUnmount } from 'vue';
 import useTokenStore from '@/stores/useTokenStore';
 import { useMessageStore } from '@/stores/useMessageStore';
-import { useCurrentUserStore } from '@/stores/useCurrentUserStore'
+import useCurrentUserStore  from '@/stores/useCurrentUserStore'
 import { message } from 'ant-design-vue';
 
 const tokenStore = useTokenStore()
 const token = tokenStore.getToken
 const messageStore = useMessageStore()
 const currentUserStore = useCurrentUserStore()
+const currentUser = currentUserStore.getCurrentUser
 
 const naiveChatRef = ref()
 
@@ -120,11 +121,11 @@ const stopDrag = () => {
   document.body.style.cursor = 'default';
 }
 
-console.log(currentUserStore.getCurrentUser)
+console.log(currentUser)
 const userInfo = {
-  id: currentUserStore.getCurrentUser.user_id,
-  nickname: currentUserStore.getCurrentUser.username,
-  avatar: currentUserStore.getCurrentUser.icon,
+  id: currentUser.user_id,
+  nickname: currentUser.username,
+  avatar: currentUser.icon,
 }
 console.log(userInfo)
 const contacts = ref([]) //联系人信息{id, avatar, nickname, lastmessage}

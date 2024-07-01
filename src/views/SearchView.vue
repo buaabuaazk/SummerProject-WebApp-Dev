@@ -261,6 +261,7 @@ const goTo = (where) => {
 
 onMounted(() => {
   //startFlowingText();
+  console.log('wrong')
   const searchStore = useSearchStore();
   input.value = searchStore.getContent
   if( input.value !== '') {
