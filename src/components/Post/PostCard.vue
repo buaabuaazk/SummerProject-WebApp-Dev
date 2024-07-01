@@ -13,6 +13,7 @@
         header-style="padding: 0.5rem; margin-bottom: 0;"
         embedded
         hoverable
+        @click.stop="showModal()"
       >
         <template #header>
           <div class="flex items-center justify-start my-0">
@@ -24,9 +25,9 @@
           </div>
         </template>
         <div class="text-xl font-bold my-1" v-html="data.title"></div>
-        <MdPreview v-model="text" @click.stop="showModal()" />
+        <MdPreview v-model="text" />
         <template #action>
-          <n-button @click="changleLiked()">
+          <n-button @click="showModal()">
             <template #icon>
               <n-icon>
                 <MessageOutlined />
@@ -34,15 +35,23 @@
             </template>
             评论
           </n-button>
-          <n-button @click="showModal()">
+          <n-button @click="changleLiked">
             <template #icon>
               <n-icon>
-                <ThumbUpOffAltFilled v-if="hasLiked" />
-                <ThumbUpFilled v-else />
+                <ThumbUpFilled v-if="hasLiked" />
+                <ThumbUpOffAltFilled v-else />
               </n-icon>
             </template>
+            <span>{{ data.likes }}</span>
           </n-button>
-          <n-button @click="transferPost()">转发</n-button>
+          <n-button @click="transferPost()">
+            <template #icon>
+              <n-icon>
+                <ArrowForward16Regular />
+              </n-icon>
+            </template>
+            转发
+          </n-button>
         </template>
       </n-card>
     </template>
@@ -62,9 +71,23 @@
           </div>
         </div>
         <MdPreview v-model="data.content"></MdPreview>
-        <n-button @click="changleLiked()">点赞</n-button>
-        <n-button @click="showModal()">评论</n-button>
-        <n-button @click="transferPost()">转发</n-button>
+        <n-button @click="changleLiked">
+          <template #icon>
+            <n-icon>
+              <ThumbUpFilled v-if="hasLiked" />
+              <ThumbUpOffAltFilled v-else />
+            </n-icon>
+          </template>
+          <span>{{ data.likes }}</span>
+        </n-button>
+        <n-button @click="transferPost()">
+          <template #icon>
+            <n-icon>
+              <ArrowForward16Regular />
+            </n-icon>
+          </template>
+          转发
+        </n-button>
         <t-comment :avatar="currentUser.icon">
           <template #content>
             <div class="flex flex-col items-end">
@@ -98,7 +121,6 @@
 </template>
 
 <script setup>
-import { GameControllerOutline, GameController } from '@vicons/ionicons5'
 import axios from '@/utils/request'
 import { debug } from '@/config'
 import UserAvatar from './UserAvatar.vue'
@@ -109,6 +131,7 @@ import { MdPreview } from 'md-editor-v3'
 import { useNotification } from 'naive-ui'
 import { MessageOutlined } from '@vicons/antd'
 import { ThumbUpFilled, ThumbUpOffAltFilled } from '@vicons/material'
+import { ArrowForward16Regular } from '@vicons/fluent'
 
 import { ref, onMounted, onBeforeMount } from 'vue'
 
@@ -190,7 +213,7 @@ const renderContent = (content) => {
     }
     return item
   })
-  return arr.join('')
+  return arr.join('\n')
 }
 
 const renderTitle = (content) => {
@@ -257,6 +280,11 @@ const changleLiked = async () => {
   })
   console.log(res.data)
   hasLiked.value = !hasLiked.value
+  if (hasLiked.value) {
+    data.value.likes += 1
+  } else {
+    data.value.likes -= 1
+  }
 }
 
 const likeComment = async (index) => {
