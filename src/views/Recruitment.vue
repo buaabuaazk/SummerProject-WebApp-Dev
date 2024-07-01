@@ -151,7 +151,7 @@ onMounted(async () => {
       let id=Number(str)
       form.value.enterprise=Number(str)
       console.log(form.value.enterprise)
-      let res=await axios.get('http://8.130.25.189:8000/api/recruit/'+useRoute().params.id)
+      let res=await axios.get('http://8.130.25.189:8000/api/recruit/'+id)
       for(let i=0;i<res.data.length;i++){
         tableData.push({
         "recruit_id": res.data[i].recruit_id,
