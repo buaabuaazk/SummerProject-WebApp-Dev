@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-07-01 10:51:50
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-07-01 16:24:52
+ * @LastEditTime: 2024-07-02 00:18:27
  * @FilePath: /frontend2/src/views/ApplymentAction.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -166,7 +166,7 @@ onMounted(async ()=>{
     //console.log(typeof(useRoute().params.id))
     //sendmessage(4)
     let str=useRoute().params.id
-    //console.log(str)
+    console.log(str)
     let id=Number(str)
     enterpriseid.value=Number(str)
     var config = {
@@ -184,8 +184,12 @@ onMounted(async ()=>{
     //console.log(workerList)
     for(let i=0;i<res1.data.length;i++){
         for(let j=0;j<res1.data[i].received_resumes.length;j++){
+        let x='未录用'
+        if(res1.data[i].received_resumes[j].has_offer==true){
+            x='已录用'
+        }
         workerList.push({
-            status:'',
+            status:x,
             name:'小'+i,
             degree:'博士',
             job_name:res1.data[i].job_name,
@@ -196,6 +200,7 @@ onMounted(async ()=>{
         })
     }
     }
+    console.log(workerList)
     /*for(let i=0;i<res1.data.length;i++){
         for(let j=0;j<res1.data[i].received_resumes.length;j++){
         let x=await axios.get('/api/user/info?user_id='+res1.data[i].received_resume[j].user_id,)

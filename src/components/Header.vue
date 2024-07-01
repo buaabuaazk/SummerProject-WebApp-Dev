@@ -297,18 +297,24 @@ function logout() {
   router.push('/sos/login')
   //待实现，清空当前登录的token和userid等
   // console.log(tokenStore.getToken)
-  localStorage.setItem('token', null)
-  // console.log(tokenStore.getToken)
+  //localStorage.setItem('token', null)
+  tokenStore.setToken(null)
+  // localStorage.removeItem('token')
   router.push('/sos/login')
 }
 function getAvatar() {
   // console.log('11111ew' + tokenStore.getToken)
-  if (tokenStore.getToken == null || tokenStore.getToken == '') {
+  if (!tokenStore.getToken) {
     //console.log('a1aa')
     return avatar_default
   } else {
+    console.log(tokenStore.getToken)
     axios
-      .get('/api/user/detail')
+      .get('/api/user/detail', {
+      headers: {
+        Authorization: tokenStore.getToken
+      }
+    })
       .then((response) => {
         console.log('获取用户信息成功')
         console.log(response)
