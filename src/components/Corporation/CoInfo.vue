@@ -1,5 +1,43 @@
 <template>
   <div class="flex h-full">
+    <ConfirmAlert
+      :show="showConfirm"
+      :closeModal="
+        () => {
+          showConfirm = false
+          confirm = false
+        }
+      "
+      :confirmModal="
+        () => {
+          showConfirm = false
+          confirm = true
+          showSuccess = true
+        }
+      "
+      class="z-50"
+    >
+      <template v-slot:title>‼️‼️‼️管理员权限转移‼️‼️‼️</template>
+      <template v-slot:content
+        >管理员<i class="underline font-bold decoration-sky-500 decoration-4">{{
+          sender.username
+        }}</i
+        >正在向您转移管理员权限，
+        如果您接收管理员权限，您将成为新的管理员。可以管理企业信息、员工信息、发布招聘信息等。如果您拒绝管理员权限，您将保持普通员工身份，可以退出企业、投递简历、加入其他企业等
+      </template>
+    </ConfirmAlert>
+    <SuccessAlert
+      :show="showSuccess"
+      :closeModal="
+        () => {
+          showSuccess = false
+        }
+      "
+      class="z-50"
+    >
+      <template v-slot:title>您已成为企业管理员!!!</template>
+      <template v-slot:content>请查看企业管理页面确认您的相关权限</template>
+    </SuccessAlert>
     <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
       <div class="relative z-0 flex flex-1 overflow-hidden">
         <main class="relative z-0 flex-1 overflow-y-auto focus:outline-none xl:order-last">
@@ -127,17 +165,31 @@ import { EnvelopeIcon, PhoneIcon } from '@heroicons/vue/20/solid'
 
 import { UserPlusIcon, UserMinusIcon } from '@heroicons/vue/24/outline'
 
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+
+import axios from '@/utils/request'
 
 import {
   getEnterpriseInfo,
   getUserProfile,
-  getEnterpriseUserInfoProfile
+  getEnterpriseUserInfoProfile,
+  getUserTransferLogs,
+  getUserSimpleProfile
 } from '@/stores/useCorporationStore'
 
 let userProfile = ref(null)
 let enterpriseInfo = ref(null)
 let enterpriseUserInfoProfile = ref(null)
+
+let transferLogs = ref(null)
+
+let transferLog = ref(null)
+
+let sender = ref(null)
+
+let showConfirm = ref(false)
+let showSuccess = ref(false)
+let confirm = ref(false)
 
 const props = defineProps({
   id: {
@@ -162,6 +214,8 @@ async function fetchData() {
   console.log(enterpriseInfo.value)
   enterpriseUserInfoProfile.value = await getEnterpriseUserInfoProfile()
   console.log(enterpriseUserInfoProfile.value)
+  transferLogs.value = await getUserTransferLogs()
+  console.log(transferLogs.value)
 }
 
 onMounted(async () => {
@@ -175,6 +229,22 @@ onMounted(async () => {
   info.value.introduction = enterpriseInfo.value.introduction
   info.value.icon = enterpriseInfo.value.icon
   info.value.is_admin = userProfile.value.is_admin
+
+  if (transferLogs.value.data?.length > 0) {
+    transferLog.value = transferLogs.value.data[0]
+    sender.value = await getUserSimpleProfile(transferLog.value.sender)
+    console.log(sender.value)
+    showConfirm.value = true
+  }
+})
+
+watch(confirm, async (value) => {
+  if (value) {
+    const res = await axios.post('/api/profile/answer_log', {
+      log_id: transferLog.value.log_id
+    })
+    console.log(res)
+  }
 })
 
 const profile = {

@@ -803,6 +803,16 @@ const getUserProfile = async () => {
     return staticUserProfile
   }
 }
+
+const getUserSimpleProfile = async (user_id) => {
+  try {
+    const res = await axios_instance.get('/api/user/info?user_id=' + user_id)
+    return res.data
+  } catch (error) {
+    return null
+  }
+}
+
 const getEnterpriseInfo = async (enterprise_id) => {
   try {
     const res = await axios_instance.get('/api/enterprise/info?enterprise_id=' + enterprise_id)
@@ -858,6 +868,15 @@ const getEnterpriseRecruit = async (enterprise_id) => {
   }
 }
 
+const getUserTransferLogs = async () => {
+  try {
+    const res = await axios_instance.get('/api/profile/answer_log')
+    return res.data
+  } catch (error) {
+    return null
+  }
+}
+
 function enterpriseRecruitObject2Array(data) {
   for (let i = 0; i < data.length; i++) {
     data[i].job_advantage = Object.values(data[i].job_advantage)
@@ -874,5 +893,7 @@ export {
   getEnterpriseUserInfo,
   getEnterpriseUserPost,
   getEnterpriseUserInfoProfile,
-  getEnterpriseRecruit
+  getEnterpriseRecruit,
+  getUserTransferLogs,
+  getUserSimpleProfile
 }
