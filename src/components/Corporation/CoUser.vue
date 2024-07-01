@@ -1,35 +1,102 @@
 <template>
-  <div class="bg-white py-24 sm:py-32">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl lg:mx-0">
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">GG team</h2>
-        <p class="mt-6 text-lg leading-8 text-gray-600">
-          猪猪侠，中国3D动画《猪猪侠》系列中的男主角，不同的版本有不同设定的猪猪侠。不变的是猪猪侠性格个性调皮、乐观，富有好奇心，爱打抱不平。最喜欢吃棒棒糖。
+  <div class="px-4 sm:px-6 lg:px-8 mt-8">
+    <div class="sm:flex sm:items-center">
+      <div class="sm:flex-auto">
+        <h1 class="text-base font-semibold leading-6 text-gray-900">企业员工</h1>
+        <p class="mt-2 text-sm text-gray-700">
+          企业用户管理页面，可以查看企业用户的信息，添加新用户，修改用户信息等。
         </p>
       </div>
-      <ul
-        role="list"
-        class="mx-auto mt-20 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-16 text-center sm:grid-cols-3 md:grid-cols-4 lg:mx-0 lg:max-w-none lg:grid-cols-5 xl:grid-cols-6"
-      >
-        <li v-for="person in people" :key="person.name">
-          <img class="mx-auto h-24 w-24 rounded-full" :src="person.imageUrl" alt="" />
-          <h3 class="mt-6 text-base font-semibold leading-7 tracking-tight text-gray-900">
-            {{ person.name }}
-          </h3>
-          <p class="text-sm leading-6 text-gray-600">{{ person.role }}</p>
-        </li>
-      </ul>
+      <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+        <button
+          type="button"
+          class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          添加员工
+        </button>
+      </div>
+    </div>
+    <div class="mt-8 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead>
+              <tr>
+                <th
+                  scope="col"
+                  class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+                >
+                  姓名
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  职位
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  工时
+                </th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  职权
+                </th>
+                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                  <span class="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <tr v-for="person in people" :key="person.user_id">
+                <td class="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
+                  <div class="flex items-center">
+                    <div class="h-11 w-11 flex-shrink-0">
+                      <img class="h-11 w-11 rounded-full" :src="person.icon" alt="" />
+                    </div>
+                    <div class="ml-4">
+                      <div class="font-medium text-gray-900">
+                        {{ person.first_name }}_{{ person.last_name }}
+                      </div>
+                      <div class="mt-1 text-gray-500">{{ person.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                  <div class="text-gray-900">{{ person.job }}</div>
+                  <div class="mt-1 text-gray-500">{{ person.repo }}</div>
+                </td>
+                <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                  {{ person.work_age + '年' }}
+                </td>
+                <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                  <UserPlusIcon v-if="person.is_admin" class="h-6 w-6 text-red-500" />
+                  <UserMinusIcon v-else class="h-6 w-6 text-gray-500" />
+                </td>
+                <td
+                  class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
+                >
+                  <a href="#" class="text-indigo-600 hover:text-indigo-900"
+                    >Edit<span class="sr-only">, {{ person.name }}</span></a
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-const people = [
-  {
-    name: 'GGbond',
-    role: '董事长 / CEO',
-    imageUrl: 'https://pic.imgdb.cn/item/66811af1d9c307b7e9e8a87e.jpg'
-  }
-  // More people...
-]
+import { UserPlusIcon, UserMinusIcon } from '@heroicons/vue/24/outline'
+
+import { getEnterpriseUserInfoProfile } from '@/stores/useCorporationStore'
+import { onMounted, ref } from 'vue'
+
+let people = ref([])
+
+async function fetchData() {
+  people.value = await getEnterpriseUserInfoProfile()
+}
+
+onMounted(async () => {
+  await fetchData()
+})
 </script>

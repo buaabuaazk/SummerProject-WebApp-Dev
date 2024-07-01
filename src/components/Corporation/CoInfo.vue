@@ -52,29 +52,6 @@
               </div>
             </div>
 
-            <!-- Tabs -->
-            <div class="mt-6 sm:mt-2 2xl:mt-5">
-              <div class="border-b border-gray-200">
-                <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-                  <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <a
-                      v-for="tab in tabs"
-                      :key="tab.name"
-                      :href="tab.href"
-                      :class="[
-                        tab.current
-                          ? 'border-pink-500 text-gray-900'
-                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
-                        'whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium'
-                      ]"
-                      :aria-current="tab.current ? 'page' : undefined"
-                      >{{ tab.name }}</a
-                    >
-                  </nav>
-                </div>
-              </div>
-            </div>
-
             <!-- Description list -->
             <div class="mx-auto mt-6 max-w-5xl px-4 sm:px-6 lg:px-8">
               <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
@@ -96,24 +73,44 @@
               </dl>
             </div>
 
+            <div class="relative mt-6 mx-10">
+              <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-gray-300" />
+              </div>
+              <div class="relative flex justify-center">
+                <span class="bg-white px-3 text-base font-semibold leading-6 text-gray-900"
+                  >企业核心成员</span
+                >
+              </div>
+            </div>
+
             <!-- Team member list -->
-            <div class="mx-auto mt-8 max-w-5xl px-4 pb-12 sm:px-6 lg:px-8">
-              <h2 class="text-sm font-medium text-gray-500">Team members</h2>
+            <div class="mx-auto mt-4 max-w-5xl px-4 pb-12 sm:px-6 lg:px-8">
               <div class="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div
-                  v-for="person in team"
-                  :key="person.handle"
+                  v-for="user in enterpriseUserInfoProfile"
+                  :key="user.user_id"
                   class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-pink-500 focus-within:ring-offset-2 hover:border-gray-400"
                 >
                   <div class="flex-shrink-0">
-                    <img class="h-10 w-10 rounded-full" :src="person.imageUrl" alt="" />
+                    <img class="h-10 w-10 rounded-full" :src="user.icon" alt="" />
                   </div>
                   <div class="min-w-0 flex-1">
                     <a href="#" class="focus:outline-none">
                       <span class="absolute inset-0" aria-hidden="true" />
-                      <p class="text-sm font-medium text-gray-900">{{ person.name }}</p>
-                      <p class="truncate text-sm text-gray-500">{{ person.role }}</p>
+                      <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
+                      <p class="truncate text-sm text-gray-500">{{ user.job }}</p>
                     </a>
+                  </div>
+                  <div v-if="user.is_admin" class="flex flex-col items-center">
+                    <UserPlusIcon class="h-6 w-6 text-red-500" />
+                    <i class="text-xs font-bold underline decoration-pink-500 decoration-2"
+                      >admin</i
+                    >
+                  </div>
+                  <div v-else class="flex flex-col items-center">
+                    <UserMinusIcon class="h-6 w-6 text-gray-500" />
+                    <i class="text-xs font-bold decoration-gray-500 underline">normal</i>
                   </div>
                 </div>
               </div>
@@ -128,13 +125,21 @@
 <script setup>
 import { EnvelopeIcon, FunnelIcon, MagnifyingGlassIcon, PhoneIcon } from '@heroicons/vue/20/solid'
 
+import { UserPlusIcon, UserMinusIcon } from '@heroicons/vue/24/outline'
+
 import { onMounted, ref } from 'vue'
 
-import { getUserInfo, getEnterpriseInfo, getUserProfile } from '@/stores/useCorporationStore'
+import {
+  getUserInfo,
+  getEnterpriseInfo,
+  getUserProfile,
+  getEnterpriseUserInfoProfile
+} from '@/stores/useCorporationStore'
 
 let userInfo = ref(null)
 let userProfile = ref(null)
 let enterpriseInfo = ref(null)
+let enterpriseUserInfoProfile = ref(null)
 
 const props = defineProps({
   id: {
@@ -142,16 +147,6 @@ const props = defineProps({
     required: true
   }
 })
-
-let isOpen = ref(false)
-
-function closeModal() {
-  isOpen.value = false
-}
-function openModal() {
-  // router.push('/Recruitment')
-  isOpen.value = true
-}
 
 const info = ref({
   name: 'Google',
@@ -169,6 +164,8 @@ async function fetchData() {
   console.log(userProfile.value)
   enterpriseInfo.value = await getEnterpriseInfo(userProfile.value.enterprise)
   console.log(enterpriseInfo.value)
+  enterpriseUserInfoProfile.value = await getEnterpriseUserInfoProfile(userProfile.value.enterprise)
+  console.log(enterpriseUserInfoProfile.value)
 }
 
 async function updateData() {
@@ -192,11 +189,6 @@ onMounted(async () => {
   info.value.is_admin = userProfile.value.is_admin
 })
 
-const tabs = [
-  { name: 'Profile', href: '#', current: true },
-  { name: 'Calendar', href: '#', current: false },
-  { name: 'Recognition', href: '#', current: false }
-]
 const profile = {
   name: 'Ricardo Cooper',
   imageUrl:
@@ -422,11 +414,13 @@ const directory = {
     }
   ]
 }
+
 const team = [
   {
     name: 'Leslie Alexander',
     handle: 'lesliealexander',
     role: 'Co-Founder / CEO',
+    is_admin: true,
     imageUrl:
       'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
   },
@@ -441,6 +435,7 @@ const team = [
     name: 'Dries Vincent',
     handle: 'driesvincent',
     role: 'Business Relations',
+    is_admin: true,
     imageUrl:
       'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
   },
