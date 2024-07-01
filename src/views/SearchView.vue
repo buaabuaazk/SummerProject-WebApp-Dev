@@ -6,9 +6,6 @@
         placeholder="input search text"
         enter-button="Search"
         size="large"
-        @input="handleInput"
-        @focus="handleFocus"
-        @blur="handleBlur"
         @search="search"
         style="
           background-color: #1890ff;
@@ -37,10 +34,12 @@
           <a-card
             v-for="item in jobInfo"
             :key="item.id"
-            :title="item.job_name"
             @click="goTo(`/jobInfo/${item.recruit_id}`)"
             style="width: 23rem; margin-right: 1.5rem"
           >
+            <template #title>
+              <span v-html="item.job_name"></span>
+            </template>
             <template #extra
               ><a href="#" style="color: red">{{ item.job_salary }}</a></template
             >
@@ -75,19 +74,27 @@
               <div class="enterprise-info" style="display: flex; margin-bottom: 0">
                 <img :src="item.enterprise_icon" style="width: 8rem; object-fit: fill" />
                 <div style="margin-top: 1rem; margin-left: 2rem">
-                  <p>{{ item.enterprise_name }}</p>
-                  <p style="margin-top: 1rem">{{ item.enterprise_field }}</p>
+                  <p v-html="item.enterprise_name"></p>
+                  <p v-html="item.enterprise_field" style="margin-top: 1rem"></p>
                 </div>
               </div>
             </div>
           </a-card>
         </div>
+        <div v-else>
+          <p style="margin-left: 30rem;">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
+        </div>
       </div>
       <div v-if="showTweetInfo">
-        <a-card title="公司" style="width: 40rem; margin-left: 20rem">
-          <template #extra><a href="#">more</a></template>
-          <p>公司简介</p>
-        </a-card>
+        <div v-if="tweetInfo && tweetInfo.length > 0">
+          <a-card title="公司" style="width: 40rem; margin-left: 20rem">
+            <template #extra><a href="#">more</a></template>
+            <p>公司简介</p>
+          </a-card>
+        </div>
+        <div v-else>
+          <p style="margin-left: 30rem;">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
+        </div>
       </div>
       <div v-if="showEnterPrise">
         <div class="enterprise-list" v-if="enterpriseInfo && enterpriseInfo.length > 0">
@@ -100,92 +107,62 @@
             <div style="display: flex;" @click="goTo(`/CorporationInfo/${item.enterprise_id}`)">
               <img :src="item.icon" style="height: 4rem;object-fit: fill;"/> 
               <div style="align-content: center;">
-                <p>{{ item.name }}</p>
-                <p>{{ item.field }} </p>
+                <p v-html="item.name"></p>
+                <p v-html="item.field"></p>
               </div>
             </div>
           </template>
-          <template #extra><a href="#">more</a></template>
-            <p>{{item.introduction}}</p>
+          <template #extra><a :href="`/CorporationInfo/${item.enterprise_id}`">more</a></template>
+            <p v-html="item.introduction"></p>
           </a-card>
+        </div>
+        <div v-else>
+          <p style="margin-left: 30rem;">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
         </div>
       </div>
       <div v-if="showUserInfo" >
-        <a-card 
-          v-for="item in userInfo"
-          :key="item.id"
-          style="width: 40rem; margin-left: 20rem; border-color: #6caeec;"
-        >
-          <div style="display: flex; height: 1rem; align-items: center;">
-            <img :src="item.icon" style="height: 3rem;"/>
-            <div>
-              <p>{{ item.username }}</p>
-              <p> {{ item.email }}</p>
+        <div v-if="userInfo && userInfo.length > 0">
+          <a-card 
+            v-for="item in userInfo"
+            :key="item.id"
+            style="width: 40rem; margin-left: 20rem; border-color: #6caeec;"
+          >
+            <div style="display: flex; height: 1rem; align-items: center;">
+              <img :src="item.icon" style="height: 3rem;"/>
+              <div>
+                <p :innerHTML="item.username"></p>
+                <p > {{ item.email }}</p>
+              </div>
+              <div style="margin-left: 17rem; display: flex;">
+                <el-button type="primary" style="display: ;">+关注</el-button>
+                <el-button @click="messageStore.sendMessage(item.user_id)" type="primary">私信</el-button>
+              </div>
             </div>
-            <div style="margin-left: 17rem; display: flex;">
-              <el-button type="primary" style="display: ;">+关注</el-button>
-              <el-button @click="messageStore.sendMessage(item.user_id)" type="primary">私信</el-button>
-            </div>
-          </div>
-        </a-card>
+          </a-card>
+        </div>
+        <div v-else>
+          <p style="margin-left: 30rem;">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
+      </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import axios from 'axios'
+import axios from '@/utils/request'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMessageStore } from '@/stores/useMessageStore'
 import { useSearchStore } from '@/stores/useSearchStore'
 
 const messageStore = useMessageStore()
-console.log(messageStore.openMessageBox)
 
 const router = useRouter()
 const input = ref('')
 const page = ref(1)
 const enterpriseInfo = ref([])
 const jobInfo = ref([])
-const userInfo = ref([
-{
-            "password": "pbkdf2_sha256$720000$gk9i7bHUrnZ1XgDkQUEdU7$tQlTozdS8INZ8To4Jhqo0x6LtW4h4GPlnmQlaYprY4E=",
-            "last_login": "",
-            "is_superuser": "",
-            "first_name": "",
-            "last_name": "",
-            "email": "21371578@buaa.edu.cn",
-            "is_staff": "",
-            "is_active": "True",
-            "date_joined": "2024-06-27 03:47:42.212831+00:00",
-            "user_id": "12",
-            "username": "<em>马</em>化腾",
-            "degree": "中专",
-            "blog": "https://git.code.tencent.com/",
-            "repo": "http://www.4399.com/flash/210650.htm",
-            "resume": "",
-            "icon": "https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/icon/enterprise/default.png"
-        },
-        {
-            "password": "pbkdf2_sha256$720000$gk9i7bHUrnZ1XgDkQUEdU7$tQlTozdS8INZ8To4Jhqo0x6LtW4h4GPlnmQlaYprY4E=",
-            "last_login": "",
-            "is_superuser": "",
-            "first_name": "",
-            "last_name": "",
-            "email": "21371781@buaa.edu.cn",
-            "is_staff": "",
-            "is_active": "True",
-            "date_joined": "2024-06-27 03:47:50.635313+00:00",
-            "user_id": "13",
-            "username": "<em>马</em>云",
-            "degree": "大专",
-            "blog": "https://git.code.tencent.com/",
-            "repo": "http://www.4399.com/flash/210650.htm",
-            "resume": "",
-            "icon": "https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/icon/enterprise/default.png"
-        }
-])
+const userInfo = ref([])
 const tweetInfo = ref([])
 
 const showEnterPrise = ref(false)
@@ -195,24 +172,32 @@ const showTweetInfo = ref(false)
 
 const search = async () => {
   try {
-    const response = await axios.get('http://100.98.24.78:8000//api/recruit/highsearch', {
+    const response = await axios.get('/api/recruit/highsearch', {
       params: {
         input: input.value,
         page: page.value
       }
     })
+    console.log(response.data)
     enterpriseInfo.value = response.data.enterprise_info
     jobInfo.value = response.data.job_info
     userInfo.value = response.data.user_info
     tweetInfo.value = response.data.tweet_info
-    console.log(userInfo.value)
+    if(jobInfo.value) {
+      for(const item of jobInfo.value) {
+        item.job_name = item.job_name.replace(/<em>/g, '<em style="color:red;">');
+        item.enterprise_name = item.enterprise_name.replace(/<em>/g, '<em style="color:red;">');
+        item.enterprise_field = item.enterprise_field.replace(/<em>/g, '<em style="color:red;">');
+      }
+    }
+    for (const item of enterpriseInfo.value) {
+      item.name = item.name.replace(/<em>/g, '<em style="color:red;">');
+      item.field = item.field.replace(/<em>/g, '<em style="color: red;">');
+      item.introduction = item.introduction.replace(/<em>/g, '<em style="color:red;">');
+    }
   } catch (err) {
     console.log(err)
   }
-}
-
-const sendMessage = (userId) => {
-  console.log('sendMessage called with userId:', userId);
 }
 
 const increasePage = () => {
@@ -277,9 +262,7 @@ const goTo = (where) => {
 onMounted(() => {
   //startFlowingText();
   const searchStore = useSearchStore();
-  console.log(searchStore.getContent)
   input.value = searchStore.getContent
-  console.log(input.value)
   if( input.value !== '') {
     search();
   }

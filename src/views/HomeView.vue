@@ -70,8 +70,8 @@
   <!-- 岗位列表 -->
   <div class="job-list-container">
     <div class="job-nav">
-      <a-button type="primary" @clock="changeType" style="margin-right: 0.5rem">热门岗位</a-button>
-      <a-button type="primary" @clock="changeType">最新招聘</a-button>
+      <el-button type="primary" @click="changeType" style="margin-right: 0.5rem">热门岗位</el-button>
+      <el-button type="primary" @click="changeType">最新招聘</el-button>
       <a-button type="link" class="link-button">
         <span style="margin-right: 0">更多职业</span>
         <RightOutlined style="margin-left: 0; padding: 0; font-size: 1rem"></RightOutlined>
@@ -218,10 +218,8 @@ const fetchData = async (way) => {
     })
     if (page.value === 1) {
       data.value = response.data
-      console.log(data.value[1].job_advantage)
     } else {
       data.value = data.value.concat(response.data)
-      console.log(response.data.length)
     }
   } catch (err) {
     error.value = err.message
@@ -229,13 +227,14 @@ const fetchData = async (way) => {
 }
 
 // 更改搜索岗位类型
-const changeType = async () => {
+const changeType = () => {
   try {
     if (type.value === 1) {
       type.value = 2
     } else {
       type.value = 1
     }
+    console.log(type.value)
     page.value = 1
     fetchData(type.value, page.value)
   } catch (err) {
@@ -270,8 +269,6 @@ const searchJob = async (cityName) => {
 const handleSearchButtonClick = () => {
   const searchStore = useSearchStore()
   searchStore.setContent(inputCotent.value)
-  console.log(inputCotent.value)
-  console.log(searchStore.getContent)
   router.push('/search')
 }
 
