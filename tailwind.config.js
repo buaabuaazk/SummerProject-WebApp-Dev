@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 const animate = require('tailwindcss-animate')
 
 /** @type {import('tailwindcss').Config} */
@@ -6,7 +5,9 @@ module.exports = {
   darkMode: ['class'],
   safelist: ['dark'],
   prefix: '',
-
+  // corePlugins: {
+  //   preflight: false
+  // },
   content: [
     './pages/**/*.{js,jsx,vue}',
     './components/**/*.{js,jsx,vue}',

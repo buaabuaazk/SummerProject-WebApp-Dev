@@ -8,7 +8,6 @@ import Components from 'unplugin-vue-components/vite'
 import {
   NaiveUiResolver,
   ElementPlusResolver,
-  PrimeVueResolver,
   TDesignResolver
 } from 'unplugin-vue-components/resolvers'
 
@@ -21,7 +20,6 @@ export default defineConfig({
       resolvers: [
         NaiveUiResolver(),
         ElementPlusResolver(),
-        PrimeVueResolver(),
         TDesignResolver({
           library: ['vue-next']
         })
@@ -38,7 +36,6 @@ export default defineConfig({
       resolvers: [
         NaiveUiResolver(),
         ElementPlusResolver(),
-        PrimeVueResolver(),
         TDesignResolver({
           library: ['vue-next']
         })

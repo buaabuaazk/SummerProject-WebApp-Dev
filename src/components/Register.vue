@@ -51,7 +51,9 @@
               </Button>
             </div>
           </div>
-          <Button type="submit" class="w-full" @click="myRegister()"> Create an account </Button>
+          <Button class="w-full" @click="myRegister()" @keyup.enter="myRegister()">
+            Create an account
+          </Button>
         </div>
         <div class="mt-4 text-center text-sm">
           Already have an account?
@@ -66,7 +68,7 @@
           <AlertDialogTitle>Hello!</AlertDialogTitle>
           <AlertDialogDescription> 请填写你的兴趣方向： </AlertDialogDescription>
         </AlertDialogHeader>
-        <TagsInput v-model="interests" class="h-8">
+        <TagsInput v-model="interests" class="min-h-8">
           <TagsInputItem v-for="(interest, index) in interests" :key="index" :value="interest">
             <TagsInputItemText />
             <TagsInputItemDelete />
@@ -115,7 +117,7 @@
           </PopoverContent>
         </Popover>
         <AlertDialogFooter>
-          <AlertDialogAction @click="submitInterests()">Submit</AlertDialogAction>
+          <Button @click="submitInterests()">Submit</Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -123,6 +125,7 @@
 </template>
 
 <script setup>
+import { debug } from '@/config'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -154,20 +157,22 @@ import {
 } from '@/components/ui/alert-dialog'
 import { CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
 import { ref, computed, onMounted } from 'vue'
-import commonToast from '@/utils/commonToast'
+import { useNotification } from 'naive-ui'
+
+const notification = useNotification()
 const router = useRouter()
 const data = ref({
-  name: 'q9kkk',
-  email: '21373443@buaa.edu.cn',
-  password: 'testfor1',
-  password2: 'testfor1',
-  vcode: '123456'
+  name: '',
+  email: '',
+  password: '',
+  password2: '',
+  vcode: ''
 })
 
 onMounted(async () => {
   let res = await axios.get('/api/tag')
   const data = res.data
-  console.log('🚀 ~ file: Register.vue:173 ~ onMounted ~ data:', data)
+  debug.log('🚀 ~ file: Register.vue:173 ~ onMounted ~ data:', data)
   interestList = data
 })
 const vcodeStatus = ref(false)
@@ -184,11 +189,11 @@ const filteredInterestList = computed(() =>
 
 const checkPassword = (password, password2) => {
   if (password !== password2) {
-    console.log('🚀 ~ file: Register.vue:57 ~ checkPassword ~ password: password != password2')
+    debug.log('🚀 ~ file: Register.vue:57 ~ checkPassword ~ password: password != password2')
   }
 }
 const getVcode = async (email) => {
-  console.log('🚀 ~ file: Register.vue:87 ~ getVcode ~ email:', email)
+  debug.log('🚀 ~ file: Register.vue:87 ~ getVcode ~ email:', email)
 
   await getVerificationCode(email)
   vcodeStatus.value = true
@@ -212,26 +217,27 @@ const myRegister = async () => {
     const res = await login(data.value.email, data.value.password)
     if (res === true) {
       openButton.value.click()
+      notification.success({
+        title: 'Success',
+        content: '注册成功'
+      })
     }
   }
   // openButton.value.click()
 }
 
 const submitInterests = async () => {
-  console.log('🚀 ~ file: Register.vue:246 ~ submitInterests ~ interest:', interest_ids)
-  try{
+  debug.log('🚀 ~ file: Register.vue:246 ~ submitInterests ~ interest:', interest_ids)
+  let res = await axios.patch('/api/user/detail', {
+    tag_id: interest_ids
+  })
 
-    let res = await axios.patch('/api/user/detail', {
-      tag_id: interest_ids
-    })
-    
-    console.log('🚀 ~ file: Register.vue:246 ~ submitInterests ~ res:', res.data)
-      commonToast('success', 'Interests submitted successfully')
-      router.push('/')
-  }catch(error){
-
-    console.log("🚀 ~ file: Register.vue:235 ~ submitInterests ~ error:", error)
-  }
+  debug.log('🚀 ~ file: Register.vue:246 ~ submitInterests ~ res:', res.data)
+  notification.success({
+    title: 'Success',
+    content: '兴趣方向提交成功'
+  })
+  router.push('/')
 }
 const gotoLogin = () => {
   router.push('/sos/login')
