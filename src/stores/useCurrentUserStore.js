@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export default defineStore({
+export const useCurrentUserStore =  defineStore({
   id: 'currentUser',
   state: () => ({
     currentUser: null
