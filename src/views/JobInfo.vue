@@ -132,13 +132,31 @@ const goToEnterprise = () => {
   router.push(`/CorporationInfo/${data.value.enterprise}`)
 }
 
-onMounted(async () => {})
+onMounted(async () => {
+  const res = await axios.get(`/api/recruit/jobinfo/${props.id}`)
+  data.value = res.data
+  data.value.created_at = data.value.created_at.substring(0, 10)
+  debug.log('🚀 ~ file: JobInfo.vue:139 ~ getInfo ~ data:', data.value)
+  const response = await axios.get('/api/enterprise/subscribe', {
+    params: {
+      enterprise_id: data.value.enterprise
+    }
+  })
+  hasSubscribed.value = response.data.isSubscribed
+})
 
 watch(recruitment_id, async (oldval, newval) => {
   const res = await axios.get(`/api/recruit/jobinfo/${newval}`)
   data.value = res.data
   data.value.created_at = data.value.created_at.substring(0, 10)
-  debug.log('🚀 ~ file: JobInfo.vue:65 ~ getInfo ~ data:', data.value)
+  debug.log('🚀 ~ file: JobInfo.vue:146 ~ getInfo ~ data:', data.value)
+  const response = await axios.get('/api/enterprise/subscribe', {
+    params: {
+      enterprise_id: newval
+    }
+  })
+  debug.log('111', response.data)
+  hasSubscribed.value = response.data.isSubscribed
 })
 
 const submitResume = async (job_id) => {

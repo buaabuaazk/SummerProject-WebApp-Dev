@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CoSideBar />
+    <CoSideBar :enterprise_id="props.enterprise_id" />
     <div class="mr-16">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
@@ -13,6 +13,10 @@
 
 <script setup>
 import CoSideBar from '@/components/Corporation/CoSideBar.vue'
+
+const props = defineProps({
+  enterprise_id: String || Number
+})
 </script>
 
 <style scoped>

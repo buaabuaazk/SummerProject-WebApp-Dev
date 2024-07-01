@@ -18,12 +18,15 @@
             <MessageBar />
           </div>
         </div>
-        <button
-          @click="messageStore.openMessageBox"
-          style="position: absolute; margin-top: 90vh; margin-left: 90vw; background-color: blue"
-        >
-          CHAT
-        </button>
+        <div class="h-screen fixed left-4 flex flex-col-reverse">
+          <button @click="messageStore.openMessageBox" class="mb-2">
+            <div class="sidebar-icon group h-14 w-14 hover:rounded-xl hover:bg-green-500">
+              <ChatBubbleLeftRightIcon class="h-10 w-10 text-green-700" />
+
+              <span class="sidebar-tooltip group-hover:scale-100 origin-left left-14">Chat</span>
+            </div>
+          </button>
+        </div>
       </div>
     </n-notification-provider>
   </n-config-provider>
@@ -35,6 +38,8 @@ import Header from '@/components/Header.vue'
 // import { Toaster } from '@/components/ui/toast'
 import MessageBar from '@/components/MessageBar.vue'
 import { useMessageStore } from '@/stores/useMessageStore'
+import { ChatBubbleLeftRightIcon } from '@heroicons/vue/24/outline'
+
 const messageStore = useMessageStore()
 </script>
 

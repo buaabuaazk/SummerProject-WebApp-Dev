@@ -56,6 +56,10 @@ import {
 import { onMounted } from 'vue'
 import { getUserProfile } from '@/stores/useCorporationStore'
 
+const props = defineProps({
+  enterprise_id: String || Number
+})
+
 const route = useRoute()
 
 function childName(path) {
@@ -80,5 +84,9 @@ async function fetchData() {
 onMounted(async () => {
   await fetchData()
   is_admin.value = currentUser.value.is_admin
+  if (props.enterprise_id && props.enterprise_id != currentUser.value.enterprise) {
+    console.log('企业ID不匹配')
+    is_admin.value = false
+  }
 })
 </script>
