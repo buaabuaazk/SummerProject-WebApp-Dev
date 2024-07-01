@@ -1,82 +1,170 @@
 <template>
   <div>
-    <div style="height: 60px; background-color: lightblue; position: fixed; top: 0; width: 100%;">
-    </div>
-    <div style="height: 200px; position: fixed; top: 60px; width: 100%; background-image: linear-gradient(to bottom, lightblue, white);">
+    <div
+      style="height: 60px; background-color: lightblue; position: fixed; top: 0; width: 100%"
+    ></div>
+    <div
+      style="
+        height: 200px;
+        position: fixed;
+        top: 60px;
+        width: 100%;
+        background-image: linear-gradient(to bottom, lightblue, white);
+      "
+    >
       <!-- 这个 div 放个人信息 -->
-        <div style="height: 200px; position: fixed; top: 60px; width: 100%; background-image: linear-gradient(to bottom, lightblue, white); display: flex;">
-          <!--这个是占位的-->
-          <div style="flex: 0; padding: 20px;">
-          </div>
-          <div style="flex: 40; padding: 20px;">
-            <img src="@/assets/avatar1.png" alt="头像" style="width: 150px; height: 150px; border-radius: 50%;">
-          </div>
-          <div style="flex: 80; padding: 20px;">
-            <h2 style="font-size: 30px; font-weight: bold;">{{ profile.detailedInformation.username }}</h2>
-            <p>姓名：{{ profile.detailedInformation.first_name+profile.detailedInformation.last_name }}</p>
-            <p>学历：{{ profile.detailedInformation.degree }}</p>
-            <p>岗位：项目经理</p>
-            <p>工龄：1年</p>
-          </div>
-          <div style="flex: 140; padding: 20px;">
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>邮箱：{{ profile.detailedInformation.email }}</p>
-            <p>仓库：<a :href="profile.detailedInformation.repo" target="_blank">{{ profile.detailedInformation.repo }}</a></p>
-            <p>博客：<a :href="profile.detailedInformation.blog" target="_blank">{{ profile.detailedInformation.blog }}</a></p>
-          </div>
+      <div
+        style="
+          height: 200px;
+          position: fixed;
+          top: 60px;
+          width: 100%;
+          background-image: linear-gradient(to bottom, lightblue, white);
+          display: flex;
+        "
+      >
+        <!--这个是占位的-->
+        <div style="flex: 0; padding: 20px"></div>
+        <div style="flex: 40; padding: 20px">
+          <img
+            :src="profile.detailedInformation.icon"
+            alt="头像"
+            style="width: 150px; height: 150px; border-radius: 50%"
+          />
         </div>
-    </div>
-    <div style="height: 260px; display: flex; top: 0;">
-      <div style="flex: 10; padding: 0px;">
+        <div style="flex: 80; padding: 20px">
+          <h2 style="font-size: 30px; font-weight: bold">
+            {{ profile.detailedInformation.username }}
+          </h2>
+          <p>
+            姓名：{{
+              profile.detailedInformation.first_name + profile.detailedInformation.last_name
+            }}
+          </p>
+          <p>学历：{{ profile.detailedInformation.degree }}</p>
+          <p>岗位：项目经理</p>
+          <p>工龄：1年</p>
+        </div>
+        <div style="flex: 140; padding: 20px">
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p>邮箱：{{ profile.detailedInformation.email }}</p>
+          <p>
+            仓库：<a :href="profile.detailedInformation.repo" target="_blank">{{
+              profile.detailedInformation.repo
+            }}</a>
+          </p>
+          <p>
+            博客：<a :href="profile.detailedInformation.blog" target="_blank">{{
+              profile.detailedInformation.blog
+            }}</a>
+          </p>
+        </div>
       </div>
-      <div style="flex: 180; padding: 20px;">
+    </div>
+    <div style="height: 260px; position: fixed; display: flex; top: 250px; width: 100%">
+      <div style="flex: 10; padding: 0px"></div>
+      <div style="flex: 180; padding: 0px">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="关注" name="first" class="larger-tab">
-            <div style="background-color: #ececec; padding: 20px">
+          <el-tab-pane label="关注用户" name="first" class="larger-tab">
+            <div style="background-color: #ececec; padding: 20px; height: 400px; overflow: auto">
               <a-row :gutter="16">
-                <a-col :span="8">
-                  <a-card :title="profile.detailedInformation.username" :bordered="false">
-                    <p>card content</p>
+                <!--下面的a-col是一个卡片-->
+                <a-col
+                  v-for="(profile, index) in profile.briefUserList"
+                  :key="index"
+                  :span="8"
+                  style="margin-bottom: 16px"
+                >
+                  <a-card :bordered="false">
+                    <template #title>
+                      <div style="display: flex; align-items: center">
+                        <img
+                          :src="profile.icon"
+                          alt="Image"
+                          style="width: 30px; height: 30px; margin-right: 10px"
+                        />
+                        <h3 style="margin: 0">{{ profile.username }}</h3>
+                      </div>
+                    </template>
+                    <a :href="getBlog(profile.blog)" target="_blank" class="blog-link">{{
+                      getBlog(profile.blog)
+                    }}</a>
                   </a-card>
                 </a-col>
-                <a-col :span="8">
-                  <a-card title="Card title" :bordered="false">
-                    <p>card content</p>
-                  </a-card>
-                </a-col>
-                <a-col :span="8">
-                  <a-card title="Card title" :bordered="false">
-                    <p>card content</p>
-                  </a-card>
-                </a-col>
-                
               </a-row>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="动态" name="second" class="larger-tab">这是二轮的关注</el-tab-pane>
-          <el-tab-pane label="简历" name="third" class="larger-tab">
+          <el-tab-pane label="关注企业" name="second" class="larger-tab">
+            <div style="background-color: #ececec; padding: 20px">
+              <a-row :gutter="12">
+                <!--下面的a-col是一个卡片-->
+
+                <a-col
+                  v-for="(profile, index) in profile.briefCorList"
+                  :key="index"
+                  :span="8"
+                  style="margin-bottom: 16px"
+                >
+                  <a-card :bordered="false">
+                    <template #title>
+                      <div style="display: flex; align-items: center">
+                        <img
+                          :src="profile.icon"
+                          alt="Image"
+                          style="width: 30px; height: 30px; margin-right: 10px"
+                        />
+                        <h3 style="margin: 0">{{ profile.name }}</h3>
+                      </div>
+                    </template>
+                    <p>{{ profile.introduction }}</p>
+                  </a-card>
+                </a-col>
+              </a-row>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="我的动态" name="second1" class="larger-tab"></el-tab-pane>
+          <el-tab-pane label="我的简历" name="third" class="larger-tab">
             <!--在这里写-->
             <!--在这里写-->
-            <div style="display: flex; justify-content: space-between;">
-              <div style="flex: 1; margin-right: 20px; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between">
+              <div
+                style="
+                  flex: 1;
+                  margin-right: 20px;
+                  padding: 20px;
+                  background-color: #f5f5f5;
+                  border-radius: 8px;
+                "
+              >
                 <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
                   <label class="block text-sm font-medium text-gray-700">上传简历</label>
-                  <input type="file" @change="handleFileUpload" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
-                  <button @click="uploadResume" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  <input
+                    type="file"
+                    @change="handleFileUpload"
+                    class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                  />
+                  <button
+                    @click="uploadResume"
+                    class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
                     上传简历
                   </button>
                   <p>简历上传情况：</p>
-                  <a :href="profile.detailedInformation.resume">{{ profile.detailedInformation.resume }}</a>
+                  <a :href="profile.detailedInformation.resume">{{
+                    profile.detailedInformation.resume
+                  }}</a>
                 </div>
               </div>
-              <div style="flex: 1; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
+              <div style="flex: 1; padding: 20px; background-color: #f5f5f5; border-radius: 8px">
                 <h3>大模型优化简历</h3>
                 <!--
                   <el-button size="small" type="primary" @click="optimizeResume">优化简历</el-button>
                 -->
                 <div>
-                  <a-button type="primary" @click="optimizeResume">点击优化简历</a-button>
+                  <a-button type="primary" @click="optimizeResume" class="deep-blue-button"
+                    >点击优化简历</a-button
+                  >
                   <a-modal v-model:open="open" title="简历优化建议" @ok="handleOk" :width="800">
                     <div v-html="format"></div>
                   </a-modal>
@@ -91,19 +179,31 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="修改信息" name="fourth">
-            <div style="display: flex;">
-              <div style="width: 50%;">
+            <div style="display: flex">
+              <div style="width: 50%">
                 <a-form-item label="姓" style="width: 20rem">
-                  <a-input v-model:value="profile.first_name" :placeholder="profile.detailedInformation.first_name"/>
+                  <a-input
+                    v-model:value="profile.first_name"
+                    :placeholder="profile.detailedInformation.first_name"
+                  />
                 </a-form-item>
                 <a-form-item label="名" style="width: 20rem">
-                  <a-input v-model:value="profile.last_name" :placeholder="profile.detailedInformation.last_name"/>
+                  <a-input
+                    v-model:value="profile.last_name"
+                    :placeholder="profile.detailedInformation.last_name"
+                  />
                 </a-form-item>
                 <a-form-item label="用户名" style="width: 20rem">
-                  <a-input v-model:value="profile.username" :placeholder="profile.detailedInformation.username"/>
+                  <a-input
+                    v-model:value="profile.username"
+                    :placeholder="profile.detailedInformation.username"
+                  />
                 </a-form-item>
                 <a-form-item label="学历" style="width: 10rem">
-                  <a-select v-model:value="profile.degree" :placeholder="profile.detailedInformation.degree">
+                  <a-select
+                    v-model:value="profile.degree"
+                    :placeholder="profile.detailedInformation.degree"
+                  >
                     <a-select-option value="高中">高中</a-select-option>
                     <a-select-option value="本科">本科</a-select-option>
                     <a-select-option value="硕士">硕士</a-select-option>
@@ -111,10 +211,28 @@
                   </a-select>
                 </a-form-item>
                 <a-form-item label="邮箱" style="width: 20rem">
-                  <a-input v-model:value="profile.email" :placeholder="profile.detailedInformation.email"/>
+                  <a-input
+                    v-model:value="profile.email"
+                    :placeholder="profile.detailedInformation.email"
+                  />
+                </a-form-item>
+                <a-form-item label="头像" style="width: 20rem">
+                  <div>
+                    <a-upload
+                      v-model:file-list="fileList"
+                      :beforeUpload="storeimg"
+                      list-type="picture"
+                      class="upload-list-inline"
+                    >
+                      <a-button>
+                        <upload-outlined></upload-outlined>
+                        upload
+                      </a-button>
+                    </a-upload>
+                  </div>
                 </a-form-item>
               </div>
-              <div style="width: 50%;">
+              <div style="width: 50%">
                 <a-form-item label="兴趣岗位" style="width: 20rem">
                   <a-select
                     v-model:value="profile.interestJob"
@@ -126,12 +244,19 @@
                   ></a-select>
                 </a-form-item>
                 <a-form-item label="博客" style="width: 20rem">
-                  <a-input v-model:value="profile.blog" :placeholder="profile.detailedInformation.blog"/>
+                  <a-input
+                    v-model:value="profile.blog"
+                    :placeholder="profile.detailedInformation.blog"
+                  />
                 </a-form-item>
                 <a-form-item label="仓库" style="width: 20rem">
-                  <a-input v-model:value="profile.repo" :placeholder="profile.detailedInformation.repo"/>
+                  <a-input
+                    v-model:value="profile.repo"
+                    :placeholder="profile.detailedInformation.repo"
+                  />
                 </a-form-item>
-                <a-form-item style="color: deepskyblue;">
+
+                <a-form-item style="color: deepskyblue">
                   <a-button @click="submit">提交修改</a-button>
                 </a-form-item>
               </div>
@@ -139,19 +264,20 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div style="flex: 90; display: flex; justify-content: center; align-items: center; height: 100px;">
-        <p style="font-size: 24px; margin: 0;">我的公司</p>
-
+      <div
+        style="flex: 90; display: flex; justify-content: center; align-items: center; height: 100px"
+      >
+        <p style="font-size: 24px; margin: 0">我的公司</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref , computed } from 'vue';
-//import axios from '@/utils/request'
-import axios from '../utils/request';
-import { onMounted } from 'vue';
+import { ref, computed } from 'vue'
+import axios from '@/utils/request'
+// import axios from '../utils/request';
+import { onMounted } from 'vue'
 
 import useTokenStore from '@/stores/useTokenStore'
 const tokenStore = useTokenStore()
@@ -160,7 +286,7 @@ const profile = ref({
   first_name: '',
   last_name: '',
   name: '',
-  email:'',
+  email: '',
   degree: '',
   interestJob: [],
   tag: [],
@@ -168,90 +294,152 @@ const profile = ref({
   repo: '',
   avatar: '',
   file: null,
-  detailedInformation:'',//放获取到的信息
-});
-const open = ref(false);
+  icon: null,
+  detailedInformation: '', //放获取到的当前用户的信息
+  briefUserList: [
+    {
+      username: '用户一',
+      user_id: '1',
+      blog: '这是用户一的简介。'
+    },
+    {
+      username: '用户2',
+      user_id: '2',
+      blog: '这是用户一的简介。'
+    }
+  ],
+  briefCorList: [
+    {
+      enterprise_id: 1,
+      name: '麒麟软件有限公司',
+      introduction: '专注于国产OS设计与制造',
+      icon: 'https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/icon/enterprise/1.png',
+      field: '国产OS'
+    }
+  ]
+})
+const open = ref(false)
 //const format = ref('我建议对简历进行如下优化：\n姓名：魏浩哲\n联系方式');
-const rawResumeText = ref(
-    '这是默认数据'
-  );
+const rawResumeText = ref('这是默认数据')
 const format = computed(() => {
-  return rawResumeText.value.replace(/\n/g, '<br>');
-});
+  return rawResumeText.value.replace(/\n/g, '<br>')
+})
 const interestOptions = [
-    "前端工程师",
-    "后端工程师",
-    "全栈工程师",
-    "数据科学家",
-    "数据分析师",
-    "机器学习工程师",
-    "人工智能工程师",
-    "算法工程师",
-    "大数据工程师",
-    "云计算工程师",
-    "DevOps工程师",
-    "网络安全工程师",
-    "移动应用开发工程师",
-    "嵌入式系统工程师",
-    "系统架构师",
-    "数据库管理员",
-    "自动化测试工程师",
-    "游戏开发工程师",
-    "AR/VR工程师",
-    "物联网工程师",
-    "自然语言处理工程师",
-    "机器人工程师",
-    "区块链开发工程师",
-    "生物信息学工程师",
-    "电商开发工程师",
-    "计算机视觉工程师",
-    "强化学习工程师",
-    "NLP工程师",
-    "技术支持工程师",
-    "产品经理"
-  ];
+  '前端工程师',
+  '后端工程师',
+  '全栈工程师',
+  '数据科学家',
+  '数据分析师',
+  '机器学习工程师',
+  '人工智能工程师',
+  '算法工程师',
+  '大数据工程师',
+  '云计算工程师',
+  'DevOps工程师',
+  '网络安全工程师',
+  '移动应用开发工程师',
+  '嵌入式系统工程师',
+  '系统架构师',
+  '数据库管理员',
+  '自动化测试工程师',
+  '游戏开发工程师',
+  'AR/VR工程师',
+  '物联网工程师',
+  '自然语言处理工程师',
+  '机器人工程师',
+  '区块链开发工程师',
+  '生物信息学工程师',
+  '电商开发工程师',
+  '计算机视觉工程师',
+  '强化学习工程师',
+  'NLP工程师',
+  '技术支持工程师',
+  '产品经理'
+]
 onMounted(() => {
-  console.log('组件已挂载');
-  axios.get('/api/user/detail', {
-      
-  })
-  .then(response => {
-    console.log('获取用户信息成功');
-    console.log(response);
-    console.log(response.data);
-    console.log(tokenStore.getToken)
-    console.log(response.data.tag)
-    //console.log(profile.detailedInformation.username) profile.value.detailedInformation.username
-    profile.value.detailedInformation=response.data;
-    console.log('111'+profile.value.detailedInformation.username)
-  })
-  .catch(error => {
-    console.error('获取用户信息失败', error);
-    // 可以在界面上显示错误信息或者其他处理
-  });
-});
+  //获取用户详细信息
+  axios
+    .get('/api/user/detail', {
+      headers: {
+        Authorization: tokenStore.getToken
+      }
+    })
+    .then((response) => {
+      console.log('获取用户信息成功')
+      console.log(response)
+      console.log(response.data)
+      console.log(tokenStore.getToken)
+      console.log(response.data.tag)
+      //console.log(profile.detailedInformation.username) profile.value.detailedInformation.username
+      profile.value.detailedInformation = response.data
+      console.log(profile.value.detailedInformation.user_id)
+
+      axios
+        .get('/api/user/subscribe_list', {
+          params: {
+            user_id: profile.value.detailedInformation.user_id
+          }
+        })
+        .then((response) => {
+          console.log('获取用户关注列表成功')
+          console.log(response)
+          console.log(response.data)
+          profile.value.briefUserList = response.data
+          console.log(profile.value.briefUserList[1])
+        })
+        .catch((error) => {
+          console.error('获取用户关注列表失败', error)
+        })
+
+      axios
+        .get('/api/enterprise/subscribe_list', {
+          params: {
+            user_id: profile.value.detailedInformation.user_id
+          }
+        })
+        .then((response) => {
+          console.log('获取用户关注企业列表成功')
+          console.log(response)
+          console.log(response.data)
+          profile.value.briefCorList = response.data
+          //console.log(profile.value.briefUserList[1])
+        })
+        .catch((error) => {
+          console.error('获取用户关注企业列表失败', error)
+        })
+    })
+    .catch((error) => {
+      console.error('获取用户信息失败', error)
+    })
+  //获取用户关注列表
+  console.log('user_id:' + profile.value.detailedInformation.user_id)
+})
 const handleFileUpload = (event) => {
-  profile.value.file = event.target.files[0];
-  console.log('Uploaded file:', profile.value.file);
+  profile.value.file = event.target.files[0]
+  console.log('Uploaded file:', profile.value.file)
   // Handle file upload logic here
-};
+}
 const uploadResume = () => {
   // 创建一个 FormData 对象
-  const formData = new FormData();
-  const fileInput = document.querySelector('input[type=file]'); // 通过选择器获取文件上传 input
+  const formData = new FormData()
+  const fileInput = document.querySelector('input[type=file]') // 通过选择器获取文件上传 input
 
   // 将文件添加到 FormData 中
-  formData.append('file', profile.value.file); // 使用 Composition API 中的 file 属性
+  formData.append('file', profile.value.file)
 
-  axios.post('/api/user/resume', formData, )
-	  .then(response => {
-	    console.log('1111111')
-	    alert('简历上传成功！')
-	  })
-	  .catch(error => {
-	    console.log(error)
-	  })
-};
+  axios
+    .post(
+      '/api/user/resume',
+      formData,
+    )
+    .then((response) => {
+      console.log('1111111')
+      alert('简历上传成功！')
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
 /*
 const downloadResume = () => {
   const link = document.createElement('a');
@@ -269,121 +457,158 @@ const confirmEdit = () => {
   // 可以使用fetch, axios等第三方库来发送请求
 };
 */
+const storeimg = (file) => {
+  profile.value.icon = file
+  return false
+}
 const submit = () => {
   console.log('11111')
   console.log(profile.value)
-  console.log('传过去的新数据是'+profile.value.degree)
+  console.log('传过去的新数据是' + profile.value.degree)
   profile.value.tag = interestToNumList(profile.value.interestJob)
   console.log(profile.value.tag)
-  const formData = new FormData();
+  const formData = new FormData()
   //formData.append('user_id', 3);
   if (profile.value.username) {
-    formData.append('username',profile.value.username)
+    formData.append('username', profile.value.username)
   }
   if (profile.value.degree) {
-    formData.append('degree',profile.value.degree)
+    formData.append('degree', profile.value.degree)
   }
   if (profile.value.email) {
-    formData.append('email',profile.value.email)
+    formData.append('email', profile.value.email)
   }
   if (profile.value.first_name) {
-    formData.append('first_name',profile.value.first_name)
+    formData.append('first_name', profile.value.first_name)
   }
   if (profile.value.last_name) {
-    formData.append('last_name',profile.value.last_name)
+    formData.append('last_name', profile.value.last_name)
   }
   if (profile.value.blog) {
-    formData.append('blog',profile.value.blog)
+    formData.append('blog', profile.value.blog)
   }
   if (profile.value.repo) {
-    formData.append('repo',profile.value.repo)
+    formData.append('repo', profile.value.repo)
   }
   //if (profile.value.tag) {formData.append('tag_id',profile.value.tag)}
   console.log(profile.value.tag)
-  test();
+  test()
   //if (profile.value.tag) {formData.append('tag',profile.value.tag)}
-  axios.patch('/api/user/detail', formData,{
+  axios
+    .patch('/api/user/detail', formData, {
       headers: {
         Authorization: tokenStore.getToken
-      },
+      }
     })
-  .then(response => {
-    console.log('修改用户信息成功');
-    console.log(response);
-    console.log(response.data);
-    //console.log(profile.detailedInformation.username) profile.value.detailedInformation.username
-    profile.value.detailedInformation=response.data;
-    console.log('111'+profile.value.detailedInformation.username)
-  })
-  .catch(error => {
-    console.error('修改用户信息失败', error);
-    // 可以在界面上显示错误信息或者其他处理
-  });
-};
+    .then((response) => {
+      console.log('修改用户信息成功')
+      console.log(response)
+      console.log(response.data)
+      //console.log(profile.detailedInformation.username) profile.value.detailedInformation.username
+      profile.value.detailedInformation = response.data
+      console.log('111' + profile.value.detailedInformation.username)
+    })
+    .catch((error) => {
+      console.error('修改用户信息失败', error)
+      // 可以在界面上显示错误信息或者其他处理
+    })
+  if (profile.value.icon) {
+    const formData = new FormData()
+    formData.append('file', profile.value.icon)
+    //console.log(formData.get('file'));
+
+    axios
+      .post('/api/user/icon', formData, {
+        headers: {
+          Authorization: tokenStore.getToken
+        }
+      })
+      .then((response) => {
+        console.log('修改用户信息成功')
+        console.log(response)
+        console.log(response.data)
+        alert('头像上传成功')
+      })
+      .catch((error) => {
+        console.error('修改用户信息失败', error)
+        // 可以在界面上显示错误信息或者其他处理
+      })
+  }
+}
 const mapNumbersToInterests = (numbers) => {
-  return numbers.map(number => {
+  return numbers.map((number) => {
     if (number >= 1 && number <= 30) {
       return interestOptions[number - 1]
     } else {
-      return "错误岗位"; // 或者可以抛出错误
+      return '错误岗位' // 或者可以抛出错误
     }
-  });
-};
+  })
+}
 const numToInterest = (num) => {
   return interestOptions[num - 1]
 }
 const numlistToInterest = (numList) => {
   console.log(numlist)
   //let interestList = numList.map(num => {return interestOptions[num - 1];});
-  return numList;
+  return numList
 }
 const interestToNumList = (interestList) => {
-  console.log(interestList);
-  let numList = interestList.map(interest => {return interestOptions.indexOf(interest) + 1;});
-  return numList;
-};
-const test = ()=> {
-  console.log('原始的tag：'+profile.value.detailedInformation.tag)
-  console.log('用户输入的interest：'+profile.interestJob)
-  console.log('要传给后端的tag：'+profile.value.tag)
+  console.log(interestList)
+  let numList = interestList.map((interest) => {
+    return interestOptions.indexOf(interest) + 1
+  })
+  return numList
+}
+const test = () => {
+  console.log('原始的tag：' + profile.value.detailedInformation.tag)
+  console.log('用户输入的interest：' + profile.interestJob)
+  console.log('要传给后端的tag：' + profile.value.tag)
 }
 const showModal = () => {
-  open.value = true;
+  open.value = true
   console.log('showmodal called')
-};
-const handleOk = e => {
-  console.log(e);
-  open.value = false;
-};
-const replaceNewlinesWithBreaks=(str) => {
-  return str.replace(/\\n/g, '<br>');
+}
+const handleOk = (e) => {
+  console.log(e)
+  open.value = false
+}
+const replaceNewlinesWithBreaks = (str) => {
+  return str.replace(/\\n/g, '<br>')
 }
 const boldTextBetweenStars = (str) => {
   // 使用正则表达式捕获两个星号中间的内容
-  return str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-};
+  return str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+}
 
-const optimizeResume = ()=> {
+const optimizeResume = () => {
   console.log('optimizeResume called')
-  axios.post('/api/tweet/optimize_resume',)
-	  .then(response => {
-	    //
+  axios
+    .post('/api/tweet/optimize_resume')
+    .then((response) => {
+      //
       //format.value=response.data.suggestions;
-      console.log('返回的建议是'+response.data.suggestions)
+      console.log('返回的建议是' + response.data.suggestions)
       //format.value=replaceNewlinesWithBreaks(response.data.suggestions)
-      rawResumeText.value=replaceNewlinesWithBreaks(response.data.suggestions)
-      rawResumeText.value=boldTextBetweenStars(response.data.suggestions)
+      rawResumeText.value = replaceNewlinesWithBreaks(response.data.suggestions)
+      rawResumeText.value = boldTextBetweenStars(response.data.suggestions)
       console.log(rawResumeText.value)
       console.log(format.value)
-	  })
-	  .catch(error => {
-	    console.log(error)
-	  })
+    })
+    .catch((error) => {
+      console.log(error)
+    })
   console.log('显示简历优化信息 called')
-  showModal();
+  showModal()
   //这个是处理后的字符串（简历优化建议）
   //format.value = rawResumeText.value.replace(/\n/g, '<br>');
   //console.log(format.value)
+}
+const getBlog = (str) => {
+  if (str) {
+    return str
+  } else {
+    return '暂无博客'
+  }
 }
 </script>
 
@@ -424,5 +649,25 @@ body {
 .larger-tab {
   font-size: 18px; /* 设置字体大小为 18 像素 */
   padding: 10px 20px; /* 设置内边距为 10px 上下，20px 左右 */
+}
+/* tile uploaded pictures */
+.upload-list-inline :deep(.ant-upload-list-item) {
+  float: left;
+  width: 200px;
+  margin-right: 8px;
+}
+.upload-list-inline [class*='-upload-list-rtl'] :deep(.ant-upload-list-item) {
+  float: right;
+}
+.blog-link {
+  display: block;
+  width: 200px; /* 设置适当的宽度 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.deep-blue-button {
+  background-color: rgb(#2563eb) !important; /* DeepBlue */
+  border-color: rgb(#2563eb) !important; /* DeepBlue */
 }
 </style>
