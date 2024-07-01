@@ -169,8 +169,6 @@ import { onMounted, ref, watch } from 'vue'
 
 import { useRouter } from 'vue-router'
 
-const router = useRouter()
-
 import axios from '@/utils/request'
 
 import {
@@ -201,6 +199,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const pri = () => {}
 
 const info = ref({
   name: 'Google',
