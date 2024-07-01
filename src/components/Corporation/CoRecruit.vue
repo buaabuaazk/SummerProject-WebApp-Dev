@@ -253,7 +253,7 @@
       </section>
     </div>
     <div>
-      <div class="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
+      <div class="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 max-w-[95%] mx-auto">
         <div class="-ml-4 -mt-2 flex flex-wrap items-center justify-between sm:flex-nowrap">
           <div class="ml-4 mt-2">
             <h3 class="text-base font-semibold leading-6 text-gray-900">目前正在招聘的岗位👇🏻</h3>
@@ -268,7 +268,7 @@
           </div>
         </div>
       </div>
-      <ul role="list" class="divide-y divide-gray-200">
+      <ul role="list" class="divide-y divide-gray-200 max-w-[90%] mx-auto">
         <li v-for="recruit in page_data" :key="recruit.recruit_id">
           <a href="#" class="block hover:bg-gray-50">
             <div class="px-4 py-4 sm:px-6">
@@ -482,14 +482,22 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { getEnterpriseRecruit } from '@/stores/useCorporationStore'
+import {
+  getUserProfile,
+  getEnterpriseInfo,
+  getEnterpriseRecruit
+} from '@/stores/useCorporationStore'
 
 let index = ref(0)
 
+let userProfile = ref(null)
+let enterpriseInfo = ref(null)
 let enterpriseRecruit = ref(null)
 
 async function fetchData() {
-  enterpriseRecruit.value = await getEnterpriseRecruit()
+  userProfile.value = await getUserProfile()
+  enterpriseInfo.value = await getEnterpriseInfo(userProfile.value.enterprise)
+  enterpriseRecruit.value = await getEnterpriseRecruit(userProfile.value.enterprise)
 }
 
 function createFilter(form) {

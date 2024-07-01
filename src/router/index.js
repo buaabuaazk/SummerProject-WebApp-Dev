@@ -243,9 +243,10 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (to.meta.requireAuth && !localStorage.getItem('token')) {
-    next({ name: 'Login' })
-  } else if (to.meta.requireEnterprise) {
+  // if (to.meta.requireAuth && !localStorage.getItem('token')) {
+  //   next({ name: 'Login' })
+  // } else
+  if (to.meta.requireEnterprise) {
     const userProfile = await getUserProfile()
     console.log(userProfile)
     if (userProfile?.enterprise == null) {

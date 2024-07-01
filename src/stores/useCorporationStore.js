@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const token = JSON.parse(localStorage.getItem('token'))?.token
+const token =
+  JSON.parse(localStorage.getItem('token'))?.token ||
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIyMzE5ODQyLCJpYXQiOjE3MTkyOTU4NDIsImp0aSI6Ijk0ZDBmMTVkMTU2OTRiMWVhNjUzY2E4NTFiMWE1ZTlmIiwidXNlcl9pZCI6NX0.SpFaH9BdaJ2aRvqATpc0MgIS7Ixswr0nac9X9oqEKho'
 
 // console.log(token)
 
@@ -45,283 +47,29 @@ const staticEnterpriseUserInfoPre = {
       id: 1,
       is_admin: true,
       work_age: 0,
-      job: '',
       user: 5,
-      enterprise: 1
+      enterprise: 1,
+      recruit: 5
     }
   ]
 }
 
-const staticEnterpriseUserInfoPre2 = [
-  {
-    user_id: 5,
-    last_login: '2024-06-30T15:23:01.480044+08:00',
-    first_name: '1',
-    last_name: '凯',
-    email: '21373078@buaa.edu.cn',
-    date_joined: '2024-06-25T14:09:56.940082+08:00',
-    username: '网民',
-    degree: '高中',
-    blog: 'https://git.code.tencent.com/',
-    repo: 'https://git.code.tencent.com/',
-    resume: 'https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/resume/5-Resume.pdf',
-    icon: 'https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/icon/enterprise/default.png',
-    tag: [4]
-  },
-  {
-    user_id: 1,
-    last_login: '2024-07-01T10:20:30.123456+08:00',
-    first_name: '2',
-    last_name: '李',
-    email: 'user1@example.com',
-    date_joined: '2024-06-26T11:12:13.789012+08:00',
-    username: '用户A',
-    degree: '本科',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userA',
-    resume: 'https://example.com/resume/1-Resume.pdf',
-    icon: 'https://pic.imgdb.cn/item/668156d1d9c307b7e934a8c7.jpg',
-    tag: [1, 2]
-  },
-  {
-    user_id: 2,
-    last_login: '2024-07-02T11:22:33.444555+08:00',
-    first_name: '3',
-    last_name: '王',
-    email: 'user2@example.com',
-    date_joined: '2024-06-27T12:13:14.567890+08:00',
-    username: '用户B',
-    degree: '硕士',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userB',
-    resume: 'https://example.com/resume/2-Resume.pdf',
-    icon: 'https://pic.imgdb.cn/item/668156d0d9c307b7e934a891.jpg',
-    tag: [2, 3]
-  },
-  {
-    user_id: 3,
-    last_login: '2024-07-03T12:34:56.789012+08:00',
-    first_name: '4',
-    last_name: '赵',
-    email: 'user3@example.com',
-    date_joined: '2024-06-28T13:14:15.890123+08:00',
-    username: '用户C',
-    degree: '博士',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userC',
-    resume: 'https://example.com/resume/3-Resume.pdf',
-    icon: 'https://pic.imgdb.cn/item/668156d0d9c307b7e934a87b.png',
-    tag: [3, 4]
-  },
-  {
-    user_id: 4,
-    last_login: '2024-07-04T13:45:67.012345+08:00',
-    first_name: '5',
-    last_name: '钱',
-    email: 'user4@example.com',
-    date_joined: '2024-06-29T14:15:16.123456+08:00',
-    username: '用户D',
-    degree: '高中',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userD',
-    resume: 'https://example.com/resume/4-Resume.pdf',
-    icon: 'https://c-ssl.dtstatic.com/uploads/blog/202402/24/ZOSlGldhmVNnw3.thumb.300_0.jpeg_webp',
-    tag: [1, 4]
-  },
-  {
-    user_id: 6,
-    last_login: '2024-07-06T15:67:89.345678+08:00',
-    first_name: '7',
-    last_name: '周',
-    email: 'user6@example.com',
-    date_joined: '2024-07-01T16:17:18.456789+08:00',
-    username: '用户F',
-    degree: '硕士',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userF',
-    resume: 'https://example.com/resume/6-Resume.pdf',
-    icon: 'https://pic.imgdb.cn/item/66815673d9c307b7e933478d.jpg',
-    tag: [1, 3]
-  }
-]
-
-const staticEnterpriseUserProfile = [
-  {
-    id: 1,
-    is_admin: true,
-    work_age: 0,
-    job: '',
-    user: 5,
-    enterprise: 1
-  },
-  {
-    id: 2,
-    is_admin: false,
-    work_age: 0,
-    job: '',
-    user: 1,
-    enterprise: 1
-  },
-  {
-    id: 3,
-    is_admin: true,
-    work_age: 0,
-    job: '',
-    user: 2,
-    enterprise: 1
-  },
-  {
-    id: 4,
-    is_admin: false,
-    work_age: 0,
-    job: '',
-    user: 3,
-    enterprise: 1
-  },
-  {
-    id: 5,
-    is_admin: true,
-    work_age: 0,
-    job: '',
-    user: 4,
-    enterprise: 1
-  },
-  {
-    id: 6,
-    is_admin: false,
-    work_age: 0,
-    job: '',
-    user: 6,
-    enterprise: 1
-  }
-]
-
 const staticEnterpriseUserInfoProfile = [
   {
-    user_id: 5,
-    last_login: '2024-06-30T15:23:01.480044+08:00',
-    first_name: '1',
-    last_name: '凯',
-    email: '21373078@buaa.edu.cn',
-    date_joined: '2024-06-25T14:09:56.940082+08:00',
-    username: '网民',
-    degree: '高中',
-    blog: 'https://git.code.tencent.com/',
-    repo: 'https://git.code.tencent.com/',
-    resume: 'https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/resume/5-Resume.pdf',
-    icon: 'https://2024summer-se-1316618142.cos.ap-beijing.myqcloud.com/icon/enterprise/default.png',
-    tag: [4],
     id: 1,
     is_admin: true,
     work_age: 0,
-    job: 'CEO',
     user: 5,
-    enterprise: 1
-  },
-  {
-    user_id: 1,
-    last_login: '2024-07-01T10:20:30.123456+08:00',
-    first_name: '2',
-    last_name: '李',
-    email: 'user1@example.com',
-    date_joined: '2024-06-26T11:12:13.789012+08:00',
-    username: '用户A',
-    degree: '本科',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userA',
-    resume: 'https://example.com/resume/1-Resume.pdf',
-    icon: 'https://pic.imgdb.cn/item/668156d1d9c307b7e934a8c7.jpg',
-    tag: [1, 2],
-    id: 2,
-    is_admin: false,
-    work_age: 0,
-    job: 'Backend Developer',
-    user: 1,
-    enterprise: 1
-  },
-  {
-    user_id: 2,
-    last_login: '2024-07-02T11:22:33.444555+08:00',
-    first_name: '3',
-    last_name: '王',
-    email: 'user2@example.com',
-    date_joined: '2024-06-27T12:13:14.567890+08:00',
-    username: '用户B',
-    degree: '硕士',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userB',
-    resume: 'https://example.com/resume/2-Resume.pdf',
-    icon: 'https://pic.imgdb.cn/item/668156d0d9c307b7e934a891.jpg',
-    tag: [2, 3],
-    id: 3,
-    is_admin: false,
-    work_age: 0,
-    job: 'Frontend Developer',
-    user: 2,
-    enterprise: 1
-  },
-  {
-    user_id: 3,
-    last_login: '2024-07-03T12:34:56.789012+08:00',
-    first_name: '4',
-    last_name: '赵',
-    email: 'user3@example.com',
-    date_joined: '2024-06-28T13:14:15.890123+08:00',
-    username: '用户C',
-    degree: '博士',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userC',
-    resume: 'https://example.com/resume/3-Resume.pdf',
-    icon: 'https://pic.imgdb.cn/item/668156d0d9c307b7e934a87b.png',
-    tag: [3, 4],
-    id: 4,
-    is_admin: false,
-    work_age: 0,
-    job: '扫地工',
-    user: 3,
-    enterprise: 1
-  },
-  {
-    user_id: 4,
-    last_login: '2024-07-04T13:45:67.012345+08:00',
-    first_name: '5',
-    last_name: '钱',
-    email: 'user4@example.com',
-    date_joined: '2024-06-29T14:15:16.123456+08:00',
-    username: '用户D',
-    degree: '高中',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userD',
-    resume: 'https://example.com/resume/4-Resume.pdf',
-    icon: 'https://pic.imgdb.cn/item/66815673d9c307b7e93347bd.jpg',
-    tag: [1, 4],
-    id: 5,
-    is_admin: false,
-    work_age: 0,
-    job: '零食吞噬者',
-    user: 4,
-    enterprise: 1
-  },
-  {
-    user_id: 6,
-    last_login: '2024-07-06T15:67:89.345678+08:00',
-    first_name: '7',
-    last_name: '周',
-    email: 'user6@example.com',
-    date_joined: '2024-07-01T16:17:18.456789+08:00',
-    username: '用户F',
-    degree: '硕士',
-    blog: 'https://example.com/',
-    repo: 'https://github.com/userF',
-    resume: 'https://example.com/resume/6-Resume.pdf',
-    icon: 'https://pic.imgdb.cn/item/66815673d9c307b7e933478d.jpg',
-    tag: [1, 3],
-    id: 6,
-    is_admin: false,
-    work_age: 0,
-    job: '小馋猫',
-    user: 6,
-    enterprise: 1
+    enterprise: 1,
+    recruit: 5,
+    content: {
+      user_id: 5,
+      username: '李雪松',
+      degree: '高中',
+      blog: 'https://git.code.tencent.com/',
+      repo: 'https://git.code.tencent.com/',
+      icon: 'https://img.zcool.cn/community/0188be5f51d85811013e318730c7d8.jpg?x-oss-process=image/auto-orient,1/resize,m_lfit,w_1280,limit_1/sharpen,100'
+    }
   }
 ]
 
@@ -1031,40 +779,93 @@ const staticEnterpriseRecruit = [
 
 const axios_instance = axios.create({
   baseURL: baseUrl,
-  timeout: 3000,
+  timeout: 500,
   headers: { Authorization: token }
 })
 
-const getUserInfo = async (user_id) => {
-  if (token == null) return null
-  const res = await axios_instance.get('/api/user/detail')
-  return res.data || staticUser
+const getUserInfo = async () => {
+  try {
+    const res = await axios_instance.get('/api/user/detail')
+    return res.data
+  } catch (error) {
+    return staticUser
+  }
 }
 const getUserProfile = async () => {
   // Code to handle successful API call
   const userInfo = await getUserInfo()
   const user_id = userInfo.user_id
-  const res = await axios_instance.get('/api/profile?user_id=' + user_id)
-  return res.data || staticUserProfile
+  console.log('user_id', user_id)
+  try {
+    const res = await axios_instance.get('/api/profile?user_id=' + user_id)
+    return res.data
+  } catch (error) {
+    return staticUserProfile
+  }
 }
 const getEnterpriseInfo = async (enterprise_id) => {
-  const res = await axios_instance.get('/api/enterprise/info?enterprise_id=' + enterprise_id)
-  return res.data || staticEnterpriseInfo
+  try {
+    const res = await axios_instance.get('/api/enterprise/info?enterprise_id=' + enterprise_id)
+    return res.data
+  } catch (error) {
+    return staticEnterpriseInfo
+  }
 }
 
 const getEnterpriseUserInfo = async () => {
-  const res = await axios_instance.get('/api/profile/list')
-  return res.data.data || staticEnterpriseUserInfoPre.data
+  try {
+    const res = await axios_instance.get('/api/profile/list')
+    return res.data.data
+  } catch (error) {
+    return staticEnterpriseUserInfoPre.data
+  }
 }
 
 const getEnterpriseUserPost = async (enterprise_id) => {
-  const res = await axios_instance.get('/api/tweet/get_enterprise?enterprise_id=' + enterprise_id)
-  return res.data || staticEnterprisePost
+  try {
+    const res = await axios_instance.get('/api/tweet/get_enterprise?enterprise_id=' + enterprise_id)
+    return res.data
+  } catch (error) {
+    return staticEnterprisePost
+  }
 }
 
-const getEnterpriseUserInfoProfile = async () => staticEnterpriseUserInfoProfile
+const getEnterpriseUserInfoProfile = async () => {
+  try {
+    // 获取了企业员工列表
+    const res = await axios_instance.get('/api/profile/list')
+    // 根据企业员工id，获取员工简要信息
+    const data = res.data.data
+    for (let i = 0; i < data.length; i++) {
+      const res = await axios_instance.get('/api/user/info?user_id=' + data[i].user)
+      data[i].content = res.data
+    }
+    return data
+  } catch (error) {
+    return staticEnterpriseUserInfoProfile
+  }
+}
 
-const getEnterpriseRecruit = async (enterprise_id) => staticEnterpriseRecruit
+const getEnterpriseRecruit = async (enterprise_id) => {
+  try {
+    console.log('try getEnterpriseRecruit enterprise_id', enterprise_id)
+    const res = await axios_instance.get('/api/recruit/' + enterprise_id)
+    console.log('res', res.data)
+    console.log('enterpriseRecruitObject2Array(res.data)', enterpriseRecruitObject2Array(res.data))
+    return enterpriseRecruitObject2Array(res.data)
+  } catch (error) {
+    return staticEnterpriseRecruit
+  }
+}
+
+function enterpriseRecruitObject2Array(data) {
+  for (let i = 0; i < data.length; i++) {
+    data[i].job_advantage = Object.values(data[i].job_advantage)
+    data[i].job_request = Object.values(data[i].job_advantage)
+    data[i].job_content = Object.values(data[i].job_advantage)
+  }
+  return data
+}
 
 export {
   getUserInfo,
