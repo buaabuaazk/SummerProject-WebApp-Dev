@@ -214,7 +214,11 @@ const info = ref({
 async function fetchData() {
   userProfile.value = await getUserProfile()
   console.log(userProfile.value)
-  enterpriseInfo.value = await getEnterpriseInfo(userProfile.value.enterprise)
+  if (props.id) {
+    enterpriseInfo.value = await getEnterpriseInfo(props.id)
+  } else {
+    enterpriseInfo.value = await getEnterpriseInfo(userProfile.value.enterprise)
+  }
   console.log(enterpriseInfo.value)
   enterpriseUserInfoProfile.value = await getEnterpriseUserInfoProfile()
   console.log(enterpriseUserInfoProfile.value)
