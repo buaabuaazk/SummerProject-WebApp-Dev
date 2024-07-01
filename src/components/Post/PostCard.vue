@@ -2,17 +2,17 @@
  * @Date: 2024-06-29 11:29:34
  * @Author: Q9K
  * @Description: 显示用户动态的卡片组件
- * @props: tweet_id
+ * @props: post_id, highlight, searchContent
 -->
 <template>
   <div>
     <template v-if="isLoaded">
       <n-card
-        embedded
-        class="w-fit min-w-[70%] max-h-96 cursor-pointer"
-        @click="showModal()"
+        class="min-w-fit cursor-pointer truncate"
         size="small"
-        header-style="padding: 0.5rem 1rem; margin-bottom: 0;"
+        header-style="padding: 0.5rem; margin-bottom: 0;"
+        embedded
+        hoverable
       >
         <template #header>
           <div class="flex items-center justify-start my-0">
@@ -23,22 +23,34 @@
             </div>
           </div>
         </template>
-        <div class="text-2xl my-1">{{ data.title }}</div>
-        <MdPreview v-model="text" />
+        <div class="text-xl font-bold my-1" v-html="data.title"></div>
+        <MdPreview v-model="text" @click.stop="showModal()" />
         <template #action>
-          <n-button @click="changleLiked()">点赞</n-button>
-          <n-button @click="showModal()">评论</n-button>
+          <n-button @click="changleLiked()">
+            <template #icon>
+              <n-icon>
+                <MessageOutlined />
+              </n-icon>
+            </template>
+            评论
+          </n-button>
+          <n-button @click="showModal()">
+            <template #icon>
+              <n-icon>
+                <ThumbUpOffAltFilled v-if="hasLiked" />
+                <ThumbUpFilled v-else />
+              </n-icon>
+            </template>
+          </n-button>
           <n-button @click="transferPost()">转发</n-button>
         </template>
       </n-card>
     </template>
     <n-modal
       v-model:show="visible"
-      class="w-[600px] min-w-[50%]"
-      :bordered="false"
-      size="huge"
-      role="dialog"
-      aria-modal="true"
+      class="w-[50rem] min-w-[50%]"
+      :bordered="true"
+      size="large"
       preset="card"
     >
       <div>
@@ -86,6 +98,7 @@
 </template>
 
 <script setup>
+import { GameControllerOutline, GameController } from '@vicons/ionicons5'
 import axios from '@/utils/request'
 import { debug } from '@/config'
 import UserAvatar from './UserAvatar.vue'
@@ -94,6 +107,8 @@ import { NotifyPlugin } from 'tdesign-vue-next'
 import { useRouter } from 'vue-router'
 import { MdPreview } from 'md-editor-v3'
 import { useNotification } from 'naive-ui'
+import { MessageOutlined } from '@vicons/antd'
+import { ThumbUpFilled, ThumbUpOffAltFilled } from '@vicons/material'
 
 import { ref, onMounted, onBeforeMount } from 'vue'
 
@@ -102,6 +117,14 @@ const props = defineProps({
   post_id: {
     type: [Number, String],
     required: true
+  },
+  highlight: {
+    type: Boolean,
+    default: false
+  },
+  searchContent: {
+    type: String,
+    default: ''
   }
 })
 
@@ -117,6 +140,70 @@ const text = ref('')
 const replyData = ref('')
 const hasLiked = ref(false)
 
+function extractImageUrl(markdownText) {
+  // 定义正则表达式模式以匹配 Markdown 图片格式
+  const pattern = /!\[.*?\]\((.*?)\)/
+
+  // 使用 match 方法找到匹配的路径
+  const match = markdownText.match(pattern)
+
+  // 提取并返回图片路径
+  return match ? match[1] : null
+}
+const renderContent = (content) => {
+  let arr = content.split('\n')
+  if (props.highlight && props.searchContent) {
+    let pos = 0
+    for (; pos < arr.length; pos++) {
+      if (arr[pos].indexOf(props.searchContent) !== -1) {
+        break
+      }
+    }
+    arr[pos] = arr[pos].replace(
+      props.searchContent,
+      `<font color=red>${props.searchContent}</font>`
+    )
+    // debug.log('pos:', pos, arr[pos])
+    if (arr.length > 3) {
+      let arr_copy = []
+      for (let i = 0; i < arr.length && i < pos; ++i) {
+        if (arr[i]) {
+          arr_copy.push(arr[i])
+          break
+        }
+      }
+      arr_copy.push('......')
+      arr_copy.push(arr[pos])
+      arr_copy.push('......')
+      arr = arr_copy
+    }
+  } else {
+    if (arr.length > 3) {
+      arr = arr.slice(0, 3)
+      arr.push('......')
+    }
+  }
+  arr = arr.map((item) => {
+    if (item.startsWith('![img]') || item.startsWith('![]')) {
+      const imgUrl = extractImageUrl(item)
+      item = `<img src="${imgUrl}" width="200" />`
+    }
+    return item
+  })
+  return arr.join('')
+}
+
+const renderTitle = (content) => {
+  if (props.highlight && props.searchContent) {
+    return content.replace(
+      props.searchContent,
+      `<span style="color: red;">${props.searchContent}</span>`
+    )
+  } else {
+    return content
+  }
+}
+
 onBeforeMount(async () => {
   const res = await axios.get('/api/tweet/get_tweet_by_id', {
     params: {
@@ -125,13 +212,9 @@ onBeforeMount(async () => {
   })
   debug.log(res)
   data.value = res.data
+  data.value.title = renderTitle(data.value.title)
   data.value.updated_at = data.value.updated_at.substring(0, 10)
-  let arr = data.value.content.split('\n')
-  if (arr.length > 3) {
-    arr = arr.slice(0, 3)
-    arr.push('......')
-  }
-  text.value = arr.join('\n')
+  text.value = renderContent(data.value.content)
 })
 onMounted(async () => {
   const res = await axios.get('/api/tweet/check_liked', {
@@ -205,3 +288,14 @@ const showModal = async () => {
   visible.value = true
 }
 </script>
+<style scoped>
+div :deep(ul) {
+  list-style-type: disc; /* 圆点 */
+  padding-left: 20px; /* 添加左侧内边距 */
+}
+
+div :deep(ol) {
+  list-style-type: decimal; /* 数字 */
+  padding-left: 20px; /* 添加左侧内边距 */
+}
+</style>

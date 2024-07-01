@@ -14,9 +14,9 @@ import ElementPlus from 'element-plus'
 import Antd from 'ant-design-vue'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import './assets/index.css'
+// import 'naive-chat/dist/style.css'
+import '@/assets/naive-chat.css'
 import 'element-plus/dist/index.css'
-import 'naive-chat/dist/style.css'
-import 'md-editor-v3/lib/style.css'
 import 'vfonts/Lato.css'
 
 //

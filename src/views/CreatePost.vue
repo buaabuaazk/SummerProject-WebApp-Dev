@@ -7,12 +7,19 @@
   <div class="m-10 flex flex-col justify-center items-center">
     <div class="w-9/12">
       <n-input v-model:value="title" placeholder="请输入标题" />
-      <MdEditor v-model="text" @onUploadImg="onUploadImg" />
+      <MdEditor
+        v-model="text"
+        @onUploadImg="onUploadImg"
+        showToolbarName
+        placeholder="Write something..."
+        autoDetectCode
+      ></MdEditor>
     </div>
     <n-button @click="createPost()">发布</n-button>
   </div>
 </template>
 <script setup>
+import 'md-editor-v3/lib/style.css'
 import { onMounted, ref } from 'vue'
 import axios from '@/utils/request'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
@@ -97,3 +104,15 @@ const onUploadImg = async (files, callback) => {
   callback(res.map((item) => item.data.url))
 }
 </script>
+
+<style scoped>
+div :deep(ul) {
+  list-style-type: disc; /* 圆点 */
+  padding-left: 20px; /* 添加左侧内边距 */
+}
+
+div :deep(ol) {
+  list-style-type: decimal; /* 数字 */
+  padding-left: 20px; /* 添加左侧内边距 */
+}
+</style>
