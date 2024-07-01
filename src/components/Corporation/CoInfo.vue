@@ -91,7 +91,7 @@
             </div>
 
             <!-- Description list -->
-            <div class="mx-auto mt-6 max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto mt-6 max-w-5xl px-4 sm:px-6 lg:px-8 mb-4">
               <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
                 <div
                   v-for="field in Object.keys(profile.fields)"
@@ -111,7 +111,7 @@
               </dl>
             </div>
 
-            <div class="relative mt-6 mx-10">
+            <div class="relative mt-6 mx-10" v-if="route.params.id == userProfile?.enterprise">
               <div class="absolute inset-0 flex items-center" aria-hidden="true">
                 <div class="w-full border-t border-gray-300" />
               </div>
@@ -123,7 +123,10 @@
             </div>
 
             <!-- Team member list -->
-            <div class="mx-auto mt-4 max-w-5xl px-4 pb-12 sm:px-6 lg:px-8">
+            <div
+              class="mx-auto mt-4 max-w-5xl px-4 pb-12 sm:px-6 lg:px-8"
+              v-if="route.params.id == userProfile?.enterprise"
+            >
               <div class="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div
                   v-for="user in enterpriseUserInfoProfile"
@@ -167,7 +170,7 @@ import { UserPlusIcon, UserMinusIcon } from '@heroicons/vue/24/outline'
 
 import { onMounted, ref, watch } from 'vue'
 
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 import axios from '@/utils/request'
 
@@ -178,6 +181,8 @@ import {
   getUserTransferLogs,
   getUserSimpleProfile
 } from '@/stores/useCorporationStore'
+
+const route = useRoute()
 
 let userProfile = ref(null)
 let enterpriseInfo = ref(null)
@@ -193,13 +198,6 @@ let showConfirm = ref(false)
 let showSuccess = ref(false)
 let confirm = ref(false)
 
-const props = defineProps({
-  id: {
-    type: [String, Number],
-    required: true
-  }
-})
-
 const pri = () => {}
 
 const info = ref({
@@ -214,8 +212,8 @@ const info = ref({
 async function fetchData() {
   userProfile.value = await getUserProfile()
   console.log(userProfile.value)
-  if (props.id) {
-    enterpriseInfo.value = await getEnterpriseInfo(props.id)
+  if (route.params.id) {
+    enterpriseInfo.value = await getEnterpriseInfo(route.params.id)
   } else {
     enterpriseInfo.value = await getEnterpriseInfo(userProfile.value.enterprise)
   }
@@ -228,11 +226,7 @@ async function fetchData() {
 
 onMounted(async () => {
   await fetchData()
-  info.value.id = userProfile.value.enterprise
-  if (props?.id) {
-    enterpriseInfo.value = await getEnterpriseInfo(props.id)
-    info.value.id = props.id
-  }
+  info.value.id = enterpriseInfo.value.enterprise_id
   info.value.name = enterpriseInfo.value.name
   info.value.introduction = enterpriseInfo.value.introduction
   info.value.icon = enterpriseInfo.value.icon

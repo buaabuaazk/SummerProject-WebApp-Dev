@@ -469,9 +469,10 @@ import { computed, onMounted, ref } from 'vue'
 
 import { MapPinIcon, UsersIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
 import {
   Dialog,
