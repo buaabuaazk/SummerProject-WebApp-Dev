@@ -29,7 +29,7 @@
                   姓名
                 </th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                  职位
+                  学历
                 </th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   工时
@@ -47,19 +47,19 @@
                 <td class="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
                   <div class="flex items-center">
                     <div class="h-11 w-11 flex-shrink-0">
-                      <img class="h-11 w-11 rounded-full" :src="person.icon" alt="" />
+                      <img class="h-11 w-11 rounded-full" :src="person.content.icon" alt="" />
                     </div>
                     <div class="ml-4">
                       <div class="font-medium text-gray-900">
-                        {{ person.first_name }}_{{ person.last_name }}
+                        {{ person.content.username }}
                       </div>
-                      <div class="mt-1 text-gray-500">{{ person.email }}</div>
+                      <div class="mt-1 text-gray-500">{{ person.user }}</div>
                     </div>
                   </div>
                 </td>
                 <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                  <div class="text-gray-900">{{ person.job }}</div>
-                  <div class="mt-1 text-gray-500">{{ person.repo }}</div>
+                  <div class="text-gray-900">{{ person.content.degree }}</div>
+                  <div class="mt-1 text-gray-500">{{ person.content.repo }}</div>
                 </td>
                 <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                   {{ person.work_age + '年' }}
@@ -72,7 +72,7 @@
                   class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
                 >
                   <a href="#" class="text-indigo-600 hover:text-indigo-900"
-                    >Edit<span class="sr-only">, {{ person.name }}</span></a
+                    >Edit<span class="sr-only">, {{ person.content.username }}</span></a
                   >
                 </td>
               </tr>

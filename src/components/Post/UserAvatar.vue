@@ -6,17 +6,22 @@
 -->
 <template>
   <div class="flex items-center">
-    <n-popover trigger="hover" :show-arrow="false">
-      <template #trigger>
-        <n-avatar round :src="props.avatar" size="large" lazy @click.stop="goToUserInfo()" />
-      </template>
-      <template v-if="!isCurrentUser">
-        <div class="flex flex-col justify-center">
-          <n-button @click="handleSubscribe()">关注</n-button>
-          <n-button @click="handleChat()">私信</n-button>
-        </div>
-      </template>
-    </n-popover>
+    <template v-if="isCurrentUser">
+      <n-avatar round :src="props.avatar" size="large" lazy @click.stop="goToUserInfo()" />
+    </template>
+    <template v-else>
+      <n-popover trigger="hover" :show-arrow="false">
+        <template #trigger>
+          <n-avatar round :src="props.avatar" size="large" lazy @click.stop="goToUserInfo()" />
+        </template>
+        <template v-if="!isCurrentUser">
+          <div class="flex flex-col justify-center">
+            <n-button @click="handleSubscribe()">关注</n-button>
+            <n-button @click="handleChat()">私信</n-button>
+          </div>
+        </template>
+      </n-popover>
+    </template>
   </div>
 </template>
 
@@ -29,8 +34,8 @@ import {
 } from '@vicons/ionicons5'
 import { NIcon } from 'naive-ui'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
-
-import { ref, computed, h, onMounted } from 'vue'
+import { debug } from '@/config'
+import { ref, computed, h, onMounted, watch } from 'vue'
 import axios from '@/utils/request'
 import { useRouter } from 'vue-router'
 import { useNotification } from 'naive-ui'
@@ -55,10 +60,13 @@ const isCurrentUser = computed(() => {
 })
 
 const hasSubscribed = ref(false)
-onMounted(async () => {
+const user_id = ref(props.user_id)
+onMounted(async () => {})
+//有props在onMounted中访问不到的bug，通过watch来解决
+watch(user_id, async (oldVal, newVal) => {
   const res = await axios.get('/api/user/subscribe', {
     params: {
-      user_id: props.user_id
+      user_id: newVal
     }
   })
 
@@ -74,7 +82,7 @@ const handleChat = async () => {
 }
 const handleSubscribe = async () => {
   const receiver = props.user_id
-  const res = axios.put('/api/user/subscribe', {
+  await axios.put('/api/user/subscribe', {
     user_id: receiver
   })
   if (hasSubscribed.value === false) {
