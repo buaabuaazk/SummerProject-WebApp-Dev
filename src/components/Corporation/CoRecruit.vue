@@ -433,7 +433,7 @@
       <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900">企业招聘</h1>
         <p class="mt-4 max-w-xl text-sm text-gray-700">
-          勾八招聘为求职者提供最新的北京企业招聘信息，北京招聘信息，海量公司在线招聘，直接开聊，在线约面试，找工作就上拉勾北京人才招聘网。
+          WorkNow招聘为求职者提供最新的北京企业招聘信息，北京招聘信息，海量公司在线招聘，直接开聊，在线约面试，找工作就上WorkNow北京人才招聘网。
         </p>
       </div>
 
@@ -633,7 +633,6 @@
           v-for="recruit in page_data"
           :key="recruit.recruit_id"
           class="shadow-2xl rounded-lg m-1"
-          @click="() => router.push(`/jobinfo/${recruit.recruit_id}`)"
         >
           <a href="#" class="block hover:bg-gray-50 hover:scale-105 transition-all ease-linear">
             <div class="px-4 py-4 sm:px-6">
@@ -650,6 +649,7 @@
               </div>
               <dl
                 class="mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-4"
+                @click="() => router.push(`/jobinfo/${recruit.recruit_id}`)"
               >
                 <div
                   class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1 bg-white px-2 py-2 sm:px-4 xl:px-6"
@@ -715,9 +715,17 @@
                   {{ recruit.job_location }}
                 </div>
               </div>
-              <p class="mt-1 text-sm italic text-gray-500">
-                {{ recruit.job_content['内容1'] }}........
-              </p>
+              <div class="flex items-center justify-start">
+                <p class="flex-1 mt-1 text-sm italic text-gray-500">
+                  {{ recruit.job_content['内容1'] }}........
+                </p>
+                <buton
+                  class="mt-1 text-sm text-red-600 bg-orange-300 rounded-lg shadow-lg p-2 hover:scale-110 ease-linear transition-all"
+                  @click="router.push('/ApplymentAction/' + recruit.recruit_id)"
+                >
+                  <i class="font-bold underline"> 招聘审核 </i>
+                </buton>
+              </div>
             </div>
           </a>
         </li>

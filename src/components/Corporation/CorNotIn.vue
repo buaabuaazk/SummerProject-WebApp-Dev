@@ -2,8 +2,8 @@
   <div>
     <main class="grid h-dvh place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div class="text-center">
-        <p class="text-base font-semibold text-indigo-600">404</p>
-        <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">页面不存在</h1>
+        <p class="text-base font-semibold text-indigo-600">Ooops</p>
+        <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">企业不存在</h1>
         <p class="mt-6 text-base leading-7 text-gray-600">
           对不起，您并没有加入任何企业，或许你可以尝试创建企业成为企业管理员👇🏻或者加入其他推荐的企业
         </p>

@@ -1,10 +1,6 @@
 import axios from '@/utils/request'
 
-const token = JSON.parse(localStorage.getItem('token'))?.token
-
 // console.log(token)
-
-const baseUrl = 'http://10.251.255.229'
 
 // const staticUser = {
 //   user_id: 5,
