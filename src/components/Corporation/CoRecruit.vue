@@ -269,7 +269,12 @@
         </div>
       </div>
       <ul role="list" class="divide-y divide-gray-200 max-w-[90%] mx-auto">
-        <li v-for="recruit in page_data" :key="recruit.recruit_id">
+        <li
+          v-for="recruit in page_data"
+          :key="recruit.recruit_id"
+          class="shadow-2xl rounded-lg m-1"
+          @click="() => router.push(`/jobinfo/${recruit.recruit_id}`)"
+        >
           <a href="#" class="block hover:bg-gray-50">
             <div class="px-4 py-4 sm:px-6">
               <div class="flex items-center justify-between">
@@ -464,6 +469,10 @@ import { computed, onMounted, ref } from 'vue'
 
 import { MapPinIcon, UsersIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 import {
   Dialog,
   DialogPanel,
@@ -482,14 +491,22 @@ import {
   TransitionRoot
 } from '@headlessui/vue'
 
-import { getEnterpriseRecruit } from '@/stores/useCorporationStore'
+import {
+  getUserProfile,
+  getEnterpriseInfo,
+  getEnterpriseRecruit
+} from '@/stores/useCorporationStore'
 
 let index = ref(0)
 
+let userProfile = ref(null)
+let enterpriseInfo = ref(null)
 let enterpriseRecruit = ref(null)
 
 async function fetchData() {
-  enterpriseRecruit.value = await getEnterpriseRecruit()
+  userProfile.value = await getUserProfile()
+  enterpriseInfo.value = await getEnterpriseInfo(userProfile.value.enterprise)
+  enterpriseRecruit.value = await getEnterpriseRecruit(userProfile.value.enterprise)
 }
 
 function createFilter(form) {

@@ -1,5 +1,48 @@
 <template>
   <div>
+    <ConfirmAlert
+      :show="showConfirm"
+      :closeModal="
+        () => {
+          showConfirm = false
+          confirm = false
+        }
+      "
+      :confirmModal="
+        () => {
+          showConfirm = false
+          confirm = true
+          showSuccess = true
+        }
+      "
+      class="z-50"
+    >
+      <template v-slot:title>‼️‼️‼️管理员权限转移‼️‼️‼️</template>
+      <template v-slot:content
+        >您正在选择员工
+        <i class="underline font-bold decoration-sky-500 decoration-4">{{ selectedUser.name }}</i>
+        转移管理员权限， 转移管理员权限，
+        <i class="underline font-bold decoration-sky-500 decoration-4">{{ selectedUser.name }}</i>
+        接受后成为新的管理员。而您将转为普通员工，可退出企业、投递简历、加入其他企业等</template
+      >
+    </ConfirmAlert>
+    <SuccessAlert
+      :show="showSuccess"
+      :closeModal="
+        () => {
+          showSuccess = false
+        }
+      "
+      class="z-50"
+    >
+      <template v-slot:title>Successfully saved!</template>
+      <template v-slot:content
+        >请等待员工<i class="underline font-bold decoration-sky-500 decoration-4">{{
+          selectedUser.name
+        }}</i
+        >接受您的权限转移申请</template
+      >
+    </SuccessAlert>
     <div class="xl:pl-72">
       <main>
         <h1 class="sr-only">Account Settings</h1>
@@ -95,24 +138,29 @@
               </p>
             </div>
 
-            <form class="flex items-start flex-col md:col-span-2 gap-2">
+            <form class="flex items-start flex-col md:col-span-2 gap-2" @submit.prevent>
               <label for="timezone" class="block text-sm font-medium leading-6 text-black"
                 >非管理员</label
               >
               <div class="my-2">
                 <select
+                  v-model="selectedUser"
                   id="timezone"
                   name="timezone"
                   class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-black shadow-lg ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 [&_*]:text-black"
                 >
-                  <option v-for="user in normalUserInfoProfile()" :key="user.user_id">
-                    {{ user.first_name }}_{{ user.last_name }}
+                  <option
+                    v-for="user in normalUserInfoProfile()"
+                    :key="user.user"
+                    :value="{ id: user.user, name: user.content.username }"
+                  >
+                    {{ user.content.username }}
                   </option>
                 </select>
               </div>
               <button
-                type="submit"
                 class="rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-red-400"
+                @click="transferPri"
               >
                 是的，转移我的管理员权限
               </button>
@@ -125,7 +173,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import {
   getEnterpriseInfo,
   getUserInfo,
@@ -133,12 +181,20 @@ import {
   getEnterpriseUserInfoProfile
 } from '@/stores/useCorporationStore'
 
+import ConfirmAlert from '@/components/Corporation/notifications/ConfirmAlert.vue'
+import SuccessAlert from '@/components/Corporation/notifications/SuccessAlert.vue'
+
 import axios from '@/utils/request'
 
 let userInfo = ref(null)
 let userProfile = ref(null)
 let enterpriseInfo = ref(null)
 let enterpriseUserInfoProfile = ref(null)
+
+let selectedUser = ref(null)
+let showConfirm = ref(false)
+let showSuccess = ref(false)
+let confirm = ref(false)
 
 let formData = ref({
   name: '',
@@ -195,4 +251,18 @@ let handleSubmit = async () => {
   )
   await refresh()
 }
+
+let transferPri = () => {
+  console.log(selectedUser.value)
+  showConfirm.value = true
+}
+// 监听是否确认，如果确认则发送log
+watch(confirm, async (value) => {
+  if (value) {
+    const res = await axios.post('/api/profile/log', {
+      user_id: selectedUser.value.id
+    })
+    console.log(res)
+  }
+})
 </script>

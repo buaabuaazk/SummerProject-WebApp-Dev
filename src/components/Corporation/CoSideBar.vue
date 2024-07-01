@@ -7,14 +7,14 @@
       </div>
     </router-link>
     <hr class="sidebar-hr" />
-    <router-link :to="{ name: childName('CoTest') }">
+    <router-link :to="{ name: childName('CoTest') }" v-if="is_admin">
       <div class="sidebar-icon group">
         <FireIcon class="h-7 w-7 text-red-400" />
         <span class="sidebar-tooltip group-hover:scale-100">测试页面</span>
       </div>
     </router-link>
     <hr class="sidebar-hr" />
-    <router-link :to="{ name: childName('CoRecruit') }">
+    <router-link :to="{ name: childName('CoRecruit') }" v-if="is_admin">
       <div class="sidebar-icon group">
         <BriefcaseIcon class="h-7 w-7" />
         <span class="sidebar-tooltip group-hover:scale-100">招聘管理</span>
@@ -26,14 +26,14 @@
         <span class="sidebar-tooltip group-hover:scale-100">企业动态</span>
       </div>
     </router-link>
-    <router-link :to="{ name: childName('CoUser') }">
+    <router-link :to="{ name: childName('CoUser') }" v-if="is_admin">
       <div class="sidebar-icon group">
         <UserIcon class="h-7 w-7" />
         <span class="sidebar-tooltip group-hover:scale-100">企业员工管理</span>
       </div>
     </router-link>
     <hr class="sidebar-hr" />
-    <router-link :to="{ name: childName('CoSettings') }">
+    <router-link :to="{ name: childName('CoSettings') }" v-if="is_admin">
       <div class="sidebar-icon group">
         <Cog8ToothIcon class="h-7 w-7" />
         <span class="sidebar-tooltip group-hover:scale-100">设置</span>
@@ -43,7 +43,8 @@
 </template>
 
 <script setup>
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 import {
   FireIcon,
   EyeIcon,
@@ -52,8 +53,9 @@ import {
   UserIcon,
   Cog8ToothIcon
 } from '@heroicons/vue/24/outline'
+import { onMounted } from 'vue'
+import { getUserProfile } from '@/stores/useCorporationStore'
 
-const router = useRouter()
 const route = useRoute()
 
 function childName(path) {
@@ -65,4 +67,18 @@ function childName(path) {
     return path
   }
 }
+
+const currentUser = ref(null)
+
+let is_admin = ref(false)
+
+async function fetchData() {
+  currentUser.value = await getUserProfile()
+  console.log(currentUser.value)
+}
+
+onMounted(async () => {
+  await fetchData()
+  is_admin.value = currentUser.value.is_admin
+})
 </script>
