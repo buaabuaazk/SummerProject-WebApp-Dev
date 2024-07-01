@@ -269,7 +269,11 @@
         </div>
       </div>
       <ul role="list" class="divide-y divide-gray-200 max-w-[90%] mx-auto">
-        <li v-for="recruit in page_data" :key="recruit.recruit_id">
+        <li
+          v-for="recruit in page_data"
+          :key="recruit.recruit_id"
+          class="shadow-2xl rounded-lg m-1"
+        >
           <a href="#" class="block hover:bg-gray-50">
             <div class="px-4 py-4 sm:px-6">
               <div class="flex items-center justify-between">
