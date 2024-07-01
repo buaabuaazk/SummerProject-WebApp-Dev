@@ -2,7 +2,7 @@
   <div>
     <CoSideBar />
     <div class="mr-16">
-      <router-view v-slot="{ Component, route }">
+      <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />
         </transition>

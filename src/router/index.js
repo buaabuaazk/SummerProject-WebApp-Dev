@@ -85,7 +85,12 @@ const router = createRouter({
       },
       children: [
         {
-          path: 'Info',
+          path: 'Test',
+          name: 'IdCoTest',
+          component: () => import('@/components/Corporation/CoTest.vue')
+        },
+        {
+          path: '',
           name: 'IdCoInfo',
           component: () => import('@/components/Corporation/CoInfo.vue')
         },
@@ -212,15 +217,6 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/job-detail/:id',
-      name: 'JobDetail',
-      component: () => import('@/components/Corporation/JobDetail.vue'),
-      meta: {
-        requireAuth: false,
-        title: '职位详情2'
-      }
-    },
-    {
       path: '/Corporation404',
       name: 'noCorporation',
       component: () => import('@/components/Corporation/CorNotIn.vue')
@@ -230,7 +226,7 @@ const router = createRouter({
       name: 'search',
       component: () => import('@/views/SearchView.vue')
     },
-    /*{
+    {
       path: '/test',
       name: 'Test',
       component: () => import('@/views/Test.vue')
@@ -244,7 +240,7 @@ const router = createRouter({
       path: '/test3',
       name: 'test3',
       component: () => import('@/views/Test3.vue')
-    },*/
+    },
     //404页面，需要放在最后
     {
       path: '/:pathMatch(.*)*' /*其他页面*/,
