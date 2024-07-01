@@ -111,7 +111,10 @@
               </dl>
             </div>
 
-            <div class="relative mt-6 mx-10" v-if="route.params.id == userProfile?.enterprise">
+            <div
+              class="relative mt-6 mx-10"
+              v-if="!route.params.id || route.params.id == userProfile?.enterprise"
+            >
               <div class="absolute inset-0 flex items-center" aria-hidden="true">
                 <div class="w-full border-t border-gray-300" />
               </div>
@@ -125,7 +128,7 @@
             <!-- Team member list -->
             <div
               class="mx-auto mt-4 max-w-5xl px-4 pb-12 sm:px-6 lg:px-8"
-              v-if="route.params.id == userProfile?.enterprise"
+              v-if="!route.params.id || route.params.id == userProfile?.enterprise"
             >
               <div class="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div
