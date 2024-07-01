@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-07-01 10:51:50
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-07-01 14:36:09
+ * @LastEditTime: 2024-07-01 16:24:52
  * @FilePath: /frontend2/src/views/ApplymentAction.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -149,7 +149,7 @@ const Download= async (x)=>{
 const Accept=(x,y)=>{
     //workerList.value[x-1].luyong=true
     console.log(x)
-    let res=axios.post('http://100.98.24.78:8000/api/recruit/send_offer/',{
+    let res=axios.post('/api/recruit/send_offer/',{
         enterprise_id:enterpriseid.value,
         recruit_id:y,
         user_id:x
@@ -171,7 +171,7 @@ onMounted(async ()=>{
     enterpriseid.value=Number(str)
     var config = {
     method: 'get',
-    url: 'http://100.98.24.78:8000/api/recruit/'+useRoute().params.id+'/applicants/',
+    url: '/api/recruit/'+useRoute().params.id+'/applicants/',
     headers: { 
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxOTQ5MzAwLCJpYXQiOjE3MTg5MjUzMDAsImp0aSI6IjM5NjAwMjI3ZGUzZDQ1YTY4MDYzZjFkYTg1ZGJjMGIwIiwidXNlcl9pZCI6MX0.Rm_tZnQ9zcg9qLwWtEAjdjIj0J6zo0SqFiWMdB5ntdQ', 
         },

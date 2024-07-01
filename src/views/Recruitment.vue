@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-24 14:29:21
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-07-01 10:08:21
+ * @LastEditTime: 2024-07-01 16:20:01
  * @FilePath: /frontend/src/views/Recruitment.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -151,7 +151,7 @@ onMounted(async () => {
       let id=Number(str)
       form.value.enterprise=Number(str)
       console.log(form.value.enterprise)
-      let res=await axios.get('http://8.130.25.189:8000/api/recruit/'+id)
+      let res=await axios.get('/api/recruit/'+id)
       for(let i=0;i<res.data.length;i++){
         tableData.push({
         "recruit_id": res.data[i].recruit_id,
@@ -279,7 +279,7 @@ const SubmitForm = async ()=>{
   dialogFormVisible.value=false
   //console.log(typeof(form.value.enterprise))
   //发送表单api
-  let response=await axios.get('http://8.130.25.189:8000/api/enterprise/info?enterprise_id='+form.value.enterprise)
+  let response=await axios.get('/api/enterprise/info?enterprise_id='+form.value.enterprise)
   //console.log(response)
   var data = JSON.stringify({
    "job_name":form.value.job_name ,
@@ -311,7 +311,7 @@ console.log(data)
 
 var config = {
    method: 'post',
-   url: 'http://8.130.25.189:8000/api/recruit/recruit_create',
+   url: '/api/recruit/recruit_create',
    headers: { 
     'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIyMTY4NjY0LCJpYXQiOjE3MTkxNDQ2NjQsImp0aSI6ImViYTk3OWM0YmQ4NzQ3MWQ4OWFhMTgzMjYyYjczZWY2IiwidXNlcl9pZCI6M30.9JXjllHVQ3sEl5-eO5YpUAAOojMSAXH9tAdsEX7N2Bc',   
     'Content-Type': 'application/json', 
