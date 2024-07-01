@@ -27,12 +27,6 @@
 
 <script setup>
 import { useMessageStore } from '@/stores/useMessageStore'
-import {
-  PersonCircleOutline as UserIcon,
-  Pencil as EditIcon,
-  LogOutOutline as LogoutIcon
-} from '@vicons/ionicons5'
-import { NIcon } from 'naive-ui'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
 import { debug } from '@/config'
 import { ref, computed, h, onMounted, watch } from 'vue'
@@ -61,7 +55,16 @@ const isCurrentUser = computed(() => {
 
 const hasSubscribed = ref(false)
 const user_id = ref(props.user_id)
-onMounted(async () => {})
+onMounted(async () => {
+  const res = await axios.get('/api/user/subscribe', {
+    params: {
+      user_id: user_id.value
+    }
+  })
+
+  const data = res.data
+  hasSubscribed.value = data.isSubscribed
+})
 //有props在onMounted中访问不到的bug，通过watch来解决
 watch(user_id, async (oldVal, newVal) => {
   const res = await axios.get('/api/user/subscribe', {
