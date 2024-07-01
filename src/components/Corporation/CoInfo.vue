@@ -234,7 +234,7 @@ onMounted(async () => {
   info.value.icon = enterpriseInfo.value.icon
   info.value.is_admin = userProfile.value.is_admin
 
-  if (transferLogs.value.data?.length > 0) {
+  if (transferLogs.value && transferLogs.value.data?.length > 0) {
     transferLog.value = transferLogs.value.data[0]
     sender.value = await getUserSimpleProfile(transferLog.value.sender)
     console.log(sender.value)

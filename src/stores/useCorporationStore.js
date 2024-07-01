@@ -6,7 +6,7 @@ const token =
 
 // console.log(token)
 
-const baseUrl = 'http://100.122.113.8:8000'
+const baseUrl = 'http://10.251.255.229'
 
 const staticUser = {
   user_id: 5,
@@ -877,6 +877,15 @@ const getUserTransferLogs = async () => {
   }
 }
 
+const getEnterprisePosts = async (enterprise_id) => {
+  try {
+    const res = await axios_instance.get('/api/tweet/get_enterprise?enterprise_id=' + enterprise_id)
+    return res.data
+  } catch (error) {
+    return null
+  }
+}
+
 function enterpriseRecruitObject2Array(data) {
   for (let i = 0; i < data.length; i++) {
     data[i].job_advantage = Object.values(data[i].job_advantage)
@@ -895,5 +904,6 @@ export {
   getEnterpriseUserInfoProfile,
   getEnterpriseRecruit,
   getUserTransferLogs,
-  getUserSimpleProfile
+  getUserSimpleProfile,
+  getEnterprisePosts
 }
