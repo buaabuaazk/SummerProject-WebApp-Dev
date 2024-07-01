@@ -14,7 +14,7 @@ export const useMessageStore = defineStore('message', () => {
   const contactNow = ref(false);
 
   // 联系人Id
-  const toContactId = ref();
+  const toContactId = ref(1);
 
   // 打开聊天框
   function openMessageBox() {
