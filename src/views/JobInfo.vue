@@ -77,7 +77,7 @@
               </Button>
             </div>
             <div @click="subscribeEnterprise()">
-              <n-button v-if="!hasSubscribed" type="primary">关注企业</n-button>
+              <n-button v-if="!hasSubscribed" type="primary" class="text-black">关注企业</n-button>
               <n-button v-else type="tertiary">取消关注</n-button>
             </div>
           </CardContent>
