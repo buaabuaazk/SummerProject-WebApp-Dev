@@ -15,7 +15,7 @@
         autoDetectCode
       ></MdEditor>
     </div>
-    <n-button @click="createPost()">发布</n-button>
+    <n-button @click="createPost()" class="my-2">发布动态</n-button>
   </div>
 </template>
 <script setup>

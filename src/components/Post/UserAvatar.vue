@@ -16,7 +16,8 @@
         </template>
         <template v-if="!isCurrentUser">
           <div class="flex flex-col justify-center">
-            <n-button @click="handleSubscribe()">关注</n-button>
+            <n-button @click="handleSubscribe()" v-if="!hasSubscribed">关注</n-button>
+            <n-button @click="handleSubscribe()" v-else>取关</n-button>
             <n-button @click="handleChat()">私信</n-button>
           </div>
         </template>
@@ -29,7 +30,7 @@
 import { useMessageStore } from '@/stores/useMessageStore'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
 import { debug } from '@/config'
-import { ref, computed, h, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import axios from '@/utils/request'
 import { useRouter } from 'vue-router'
 import { useNotification } from 'naive-ui'
@@ -49,6 +50,7 @@ const props = defineProps({
     default: 'https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png'
   }
 })
+const emit = defineEmits(['closeModal'])
 const isCurrentUser = computed(() => {
   return parseInt(currentUser.user_id) === parseInt(props.user_id)
 })
@@ -56,14 +58,15 @@ const isCurrentUser = computed(() => {
 const hasSubscribed = ref(false)
 const user_id = ref(props.user_id)
 onMounted(async () => {
-  const res = await axios.get('/api/user/subscribe', {
-    params: {
-      user_id: user_id.value
-    }
-  })
-
-  const data = res.data
-  hasSubscribed.value = data.isSubscribed
+  if (user_id.value) {
+    const res = await axios.get('/api/user/subscribe', {
+      params: {
+        user_id: user_id.value
+      }
+    })
+    const data = res.data
+    hasSubscribed.value = data.isSubscribed
+  }
 })
 //有props在onMounted中访问不到的bug，通过watch来解决
 watch(user_id, async (oldVal, newVal) => {
@@ -74,6 +77,7 @@ watch(user_id, async (oldVal, newVal) => {
   })
 
   const data = res.data
+  debug.log('111', data)
   hasSubscribed.value = data.isSubscribed
 })
 
@@ -81,11 +85,12 @@ const handleChat = async () => {
   const receiver = props.user_id
   const sender = currentUser.id
   //TODO:触发私信聊天框
+  emit('closeModal')
   messageStore.sendMessage(receiver)
 }
 const handleSubscribe = async () => {
   const receiver = props.user_id
-  await axios.put('/api/user/subscribe', {
+  const res = await axios.put('/api/user/subscribe', {
     user_id: receiver
   })
   if (hasSubscribed.value === false) {
