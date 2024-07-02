@@ -80,7 +80,7 @@ const router = createRouter({
       name: 'CorporationInfoId',
       component: () => import('@/views/CorporationInfo.vue'),
       meta: {
-        requireAuth: true,
+        requireAuth: false,
         title: '企业公开信息展示'
       },
       children: [
@@ -256,7 +256,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   let token = localStorage.getItem('token')
   token = JSON.parse(token)?.token
-  console.log(token)
   if (to.meta.requireAuth && !token) {
     next({ name: 'Login' })
   } else if (to.meta.requireEnterprise) {
