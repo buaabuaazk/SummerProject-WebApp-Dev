@@ -45,10 +45,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import axios from '@/utils/request'
 import { NaiveChat } from 'naive-chat'
-import { onBeforeUnmount } from 'vue'
+import { onBeforeUnmount, nextTick, watch } from 'vue'
 import useTokenStore from '@/stores/useTokenStore'
 import { useMessageStore } from '@/stores/useMessageStore'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
@@ -128,117 +128,115 @@ const contacts = ref([]) //联系人信息{id, avatar, nickname, lastmessage}
 
 const messages = ref([])
 
-const testMessages = {
-  id: 'id7',
-  content: '测试消息',
-  type: 'text',
-  toContactId: 5,
-  status: 'success',
-  sendTime: Date.now(),
-  fileName: undefined,
-  fromUser: {
-    id: 1,
-    nickname: 'Forgiving soldier',
-    avatar: 'http://rz1wa9fyb.hb-bkt.clouddn.com/liang.jpeg'
-  }
-}
-
 const hasRead = ref([])
 let mynext = null
 const pullMessage = async ({ next, contactId }) => {
   // if (!hasRead.value[contactId]) {
-  await fetchOneMessageHistory(contactId)
+  try {
+    const response = await axios.get(`/api/message/with/${contactId}`)
+    messages.value = []
+    messages.value = messages.value.concat(response.data)
+    console.log('next1', next)
+    if (!mynext) {
+      next(messages.value, true)
+    } else {
+      mynext(messages.value, true)
+    }
+  } catch (err) {
+    console.log(err)
+  }
   mynext = next
-  asyncFn(() => {
-    next(messages.value, false)
-  })
+  // asyncFn(() => {
+
+  // })
   // hasRead.value[contactId] = true
   // }
 }
 
-const asyncFn = (fn) => {
-  setTimeout(() => {
-    fn()
-  }, 1000)
-}
-
 //发送消息
+let mynext2 = null
 const sendMessage = async ({ message, next }) => {
-  // console.log(message)
-  // console.log({
-  //   front_id: message.id,
-  //   sender: userInfo.value.id,
-  //   toContactId: message.toContactId,
-  //   content: message.content,
-  //   type: message.type,
-  //   status: message.status,
-  //   fileName: undefined
-  // })
   const response = await axios.post('/api/message/create', {
     front_id: message.id,
-    sender: message.fromUser.id,
+    sender: currentUser.user_id,
     toContactId: message.toContactId,
     content: message.content,
     type: message.type,
     status: message.status,
     fileName: undefined
   })
-  asyncFn(() => {
+  console.log('next2', next)
+  if (!mynext2) {
+    // asyncFn(() => {
     next({
       id: message.id,
       toContactId: message.toContactId,
       status: 'success'
     })
-  })
+    mynext2 = next
+  } else {
+    mynext2({
+      id: message.id,
+      toContactId: message.toContactId,
+      status: 'success'
+    })
+  }
+  // })
 }
 
-//获取最新消息
-const fetchLatestMessage = async () => {
+//获取联系人
+const fetchContacts = async () => {
   try {
-    const response = await axios.get('/api/message/latest-message', {
-      headers: {
-        Authorization: token
+    const response = await axios.get('/api/message/latest-message')
+    contacts.value = []
+    await nextTick()
+    console.log('181', contacts.value)
+    const temp = []
+    for (let i = 0; i < response.data.latest_messages.length; ++i) {
+      if (Number(response.data.latest_messages[i].id) !== Number(currentUser.user_id)) {
+        // console.log('184', response.data.latest_messages[i].id, currentUser.user_id)
+        temp.push(response.data.latest_messages[i])
       }
-    })
-    contacts.value.push(...response.data.latest_messages)
-    console.log(contacts.value)
-    naiveChatRef.value?.appendMessage(response.data.latest_messages)
-    mynext([response.data.latest_message], true)
+    }
+    contacts.value = temp
+    // contacts.value.push(...response.data.latest_messages)
+    naiveChatRef.value?.initContacts(contacts.value)
+    // await pullMessage({ mynext, contactId: contacts.value[0].id })
+    // await sendMessage({
+    //   message: {
+    //     id: Math.random().toString(36).slice(-6),
+    //     sender: currentUser.user_id,
+    //     toContactId: currentUser.user_id,
+    //     content: '123',
+    //     type: 'text',
+    //     status: 'success',
+    //     fileName: undefined
+    //   },
+    //   next: mynext2
+    // })
+    // mynext([response.data.latest_message], true)
   } catch (err) {
     err.value = err.message
   }
 }
 
-//获取与某人的聊天记录
-const fetchOneMessageHistory = async (toContactId) => {
-  try {
-    const response = await axios.get(`/api/message/with/${toContactId}`)
-    messages.value = []
-    messages.value = messages.value.concat(response.data)
-  } catch (err) {
-    console.log(err)
-  }
-}
-
 //获取最新消息
-const fetchNewMessage = async (toContactId) => {
+const fetchNewMessage = async () => {
   try {
-    if (toContactId !== undefined) {
-      const number = String(toContactId)
-      const response = await axios.get('/api/message/latest/' + `${userInfo.value.id}`)
-      if (isNewMessage.value !== response.data.id) {
+    const response = await axios.get('/api/message/latest/' + `${userInfo.value.id}`)
+    if (isNewMessage.value !== response.data.id) {
+      if (Number(response.data.fromUser.id) !== Number(currentUser.user_id)) {
         //是否是新联系人
         let flag = false
         for (const item of contacts.value) {
-          console.log(contacts.value)
-          console.log(item.id, Number(messageStore.toContactId))
+          console.log('233', contacts.value, item.sender, messageStore.toContactId)
           if (Number(item.id) === Number(messageStore.toContactId)) {
             flag = true
             break
           }
         }
         if (flag) {
-          console.log('cant do this')
+          console.log('已经是联系人')
           isNewMessage.value = response.data.id
           console.log(response.data)
           const message = {
@@ -251,104 +249,97 @@ const fetchNewMessage = async (toContactId) => {
             status: 'success'
           }
           naiveChatRef.value?.appendMessage(message)
-          mynext([message], true)
+          console.log('111', mynext)
+          // mynext2(message, true)
+          naiveChatRef.value?.initContacts(contacts.value)
+          await pullMessage({ mynext, contactId: response.data.fromUser.id })
+          await fetchContacts()
         } else {
-          const response = await axios.get('/api/user/info', {
+          //新联系人
+          const response2 = await axios.get('/api/user/info', {
             params: {
-              user_id: messageStore.toContactId
+              user_id: response.data.fromUser.id
             }
           })
-          const newContact = {
-            id: response.data.user_id,
-            nickname: response.data.username,
-            avatar: response.data.icon,
-            lastMessage: '',
-            lastTime: Date.now()
+          console.log('263', 'test')
+          if (Number(response2.data.user_id) !== Number(currentUser.user_id)) {
+            const newContact = {
+              id: response2.data.user_id,
+              nickname: response2.data.username,
+              avatar: response2.data.icon,
+              lastMessage: '',
+              lastTime: Date.now()
+            }
+            contacts.value.unshift(newContact)
+            naiveChatRef.value?.initContacts(contacts.value)
+
+            isNewMessage.value = response.data.id
+            const message = {
+              id: response.data.front_id,
+              content: response.data.content,
+              type: response.data.type,
+              toContactId: response.data.toContactId,
+              fromUser: response.data.fromUser,
+              sendTime: response.data.sendTime,
+              status: 'success'
+            }
+            await fetchContacts()
+            // naiveChatRef.value?.appendMessage(message)
+            // await pullMessage({ mynext, contactId: response.data.fromUser.id })
           }
-          contacts.value.unshift(newContact)
-          isNewMessage.value = response.data.id
-          //naiveChatRef.value?.appendMessage(response.data)
-          const message = {
-            id: response.data.front_id,
-            content: response.data.content,
-            type: response.data.type,
-            toContactId: response.data.toContactId,
-            fromUser: response.data.fromUser,
-            sendTime: response.data.sendTime,
-            status: 'success'
-          }
-          naiveChatRef.value?.appendMessage(message)
-          mynext([message], true)
         }
       }
-    } else {
-      console.log('toContactId is undefined')
     }
   } catch (err) {
     console.log(err)
   }
 }
 
-const fetchNewMessageTrigger = async () => {
-  if (naiveChatRef.value?.getCurrentContact()?.id !== undefined) {
-    await fetchNewMessage(naiveChatRef.value?.getCurrentContact()?.id)
-  }
-}
-
 const openContact = async () => {
   let flag = false
-  for (const item of contacts.value) {
-    if (Number(item.id) === Number(messageStore.toContactId)) {
+  console.log(contacts.value)
+  const length = contacts.value.length
+  for (let i = 0; i < length; ++i) {
+    console.log(i, length)
+    if (Number(contacts.value[i].id) === Number(messageStore.toContactId)) {
       flag = true
-      break
+      // break
     }
-  }
-  if (flag) {
-    console.log('cant do this')
-  } else {
-    const response = await axios.get('/api/user/info', {
-      params: {
-        user_id: messageStore.toContactId
+    if (flag) {
+      console.log('已经是联系人')
+      const contactId = messageStore.toContactId
+      pullMessage({ mynext, contactId })
+    } else {
+      const response = await axios.get('/api/user/info', {
+        params: {
+          user_id: messageStore.toContactId
+        }
+      })
+      console.log(287, response.data)
+      const newContact = {
+        id: response.data.user_id,
+        nickname: response.data.username,
+        avatar: response.data.icon,
+        lastMessage: '打个招呼吧',
+        lastTime: Date.now()
       }
-    })
-    const newContact = {
-      id: response.data.user_id,
-      nickname: response.data.username,
-      avatar: response.data.icon,
-      lastMessage: '打个招呼吧',
-      lastTime: Date.now()
+      contacts.value.unshift(newContact)
+      // naiveChatRef.value?.initContacts(contacts.value)
     }
-    contacts.value.unshift(newContact)
-    naiveChatRef.value?.initContacts(contacts.value)
-    //naiveChatRef.value?.appendMessage(testMessages)
   }
 }
 
-const handleAppendMesage = () => {
-  const msg = {
-    id: 500,
-    content: '最近忙什么呢?',
-    type: 'text',
-    toContactId: 5,
-    fromUser: {
-      id: 1,
-      nickname: 'Forgiving soldier',
-      avatar: 'http://rz1wa9fyb.hb-bkt.clouddn.com/liang.jpeg'
-    },
-    sendTime: Date.now(),
-    status: 'success',
-    fileName: undefined
-  }
-  naiveChatRef.value?.appendMessage(msg)
-  mynext([msg], true)
-}
 let interval
 onMounted(async () => {
   document.addEventListener('mouseup', stopDrag)
-  await fetchLatestMessage()
-  naiveChatRef.value?.initContacts(contacts.value)
-  openContact()
-  interval = setInterval(fetchNewMessageTrigger, 2000)
+  contacts.value = []
+  await fetchContacts()
+  interval = setInterval(() => {
+    fetchNewMessage()
+    // naiveChatRef.value?.initContacts(contacts.value)
+  }, 2000)
+  // naiveChatRef.value?.initContacts(contacts.value)
+  // await openContact()
 })
 
 onUnmounted(() => {
@@ -358,44 +349,9 @@ onUnmounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener('mouseup', stopDrag)
 })
-
-// watch(
-//   () => messageStore.sendMessageTriggered,
-//   async () => {
-//     const flag = ref(false)
-//     console.log('problem')
-//     for (const item of contacts.value) {
-//       console.log(item.id)
-//       console.log(messageStore.toContactId)
-//       console.log(typeof item.id, item.id) // 输出类型和值
-//       console.log(typeof messageStore.toContactId, messageStore.toContactId)
-//       if (Number(item.id) === Number(messageStore.toContactId)) {
-//         flag.value = true
-//         console.log('equal')
-//         break
-//       }
-//     }
-//     if (flag.value === false) {
-//       console.log(flag.value)
-//       const response = await axios.get('/api/user/info', {
-//         params: {
-//           user_id: messageStore.toContactId
-//         }
-//       })
-//       const newContact = {
-//         id: response.data.user_id,
-//         nickname: response.data.username,
-//         avatar: response.data.icon,
-//         lastMessage: '打个招呼吧',
-//         lastTime: Date.now()
-//       }
-//       console.log(response.data.username)
-//       contacts.value.unshift(newContact)
-//       console.log(contacts.value)
-//       naiveChatRef.value?.initContacts(contacts.value)
-//     }
-//   }
-// )
+watch(contacts, (oldval, newval) => {
+  console.log('contacts', oldval, newval)
+})
 </script>
 
 <style scoped>
