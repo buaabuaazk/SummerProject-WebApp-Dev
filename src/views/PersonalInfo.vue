@@ -583,6 +583,7 @@ onMounted(async() => {
  
   //console.log('CoRecruit_ID', route.params.id)
 })
+const activeName = ref('first')
 const goTo = (where) => {
   router.push(where)
 }
