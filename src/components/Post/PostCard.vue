@@ -96,7 +96,7 @@
             转发
           </n-button>
         </div>
-        <t-comment :avatar="currentUser.icon">
+        <t-comment :avatar="currentUser?.icon ? currentUser.icon : userDefaultAvatar">
           <template #content>
             <div class="flex flex-col items-end">
               <t-textarea v-model="replyData" placeholder="请输入内容" />
@@ -159,6 +159,7 @@ const props = defineProps({
     default: ''
   }
 })
+const userDefaultAvatar = '@/assets/userDefaultAvatar.png'
 
 const currentUserStore = useCurrentUserStore()
 const currentUser = currentUserStore.currentUser
