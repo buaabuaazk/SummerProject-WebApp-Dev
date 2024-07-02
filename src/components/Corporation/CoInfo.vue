@@ -213,18 +213,18 @@ const info = ref({
 })
 
 async function fetchData() {
-  userProfile.value = await getUserProfile()
-  console.log(userProfile.value)
+  // console.log(userProfile.value)
   if (route.params.id) {
     enterpriseInfo.value = await getEnterpriseInfo(route.params.id)
   } else {
+    userProfile.value = await getUserProfile()
     enterpriseInfo.value = await getEnterpriseInfo(userProfile.value.enterprise)
+    enterpriseUserInfoProfile.value = await getEnterpriseUserInfoProfile()
+    transferLogs.value = await getUserTransferLogs()
   }
-  console.log(enterpriseInfo.value)
-  enterpriseUserInfoProfile.value = await getEnterpriseUserInfoProfile()
-  console.log(enterpriseUserInfoProfile.value)
-  transferLogs.value = await getUserTransferLogs()
-  console.log(transferLogs.value)
+  // console.log(enterpriseInfo.value)
+  // console.log(enterpriseUserInfoProfile.value)
+  // console.log(transferLogs.value)
 }
 
 onMounted(async () => {
@@ -233,7 +233,7 @@ onMounted(async () => {
   info.value.name = enterpriseInfo.value.name
   info.value.introduction = enterpriseInfo.value.introduction
   info.value.icon = enterpriseInfo.value.icon
-  info.value.is_admin = userProfile.value.is_admin
+  info.value.is_admin = userProfile.value?.is_admin
 
   if (transferLogs.value && transferLogs.value.data?.length > 0) {
     transferLog.value = transferLogs.value.data[0]

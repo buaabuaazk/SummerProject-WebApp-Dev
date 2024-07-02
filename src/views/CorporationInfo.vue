@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CoSideBar :enterprise_id="route.params.id" />
+    <CoSideBar />
     <div class="mr-16">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
