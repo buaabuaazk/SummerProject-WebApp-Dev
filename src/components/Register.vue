@@ -16,28 +16,105 @@
             <Label for="name">User name</Label>
             <Input id="name" placeholder="Max" required v-model="data.name" />
           </div>
-          <div class="grid gap-2">
-            <Label for="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-              v-model="data.email"
-            />
+          <div class="grid gap-1">
+            <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
+              >Email</label
+            >
+            <div class="relative mt-2 rounded-md shadow-sm">
+              <input
+                type="email"
+                name="email"
+                id="email"
+                :class="[
+                  checkEmail(data.email)[1]
+                    ? 'text-green-900 ring-green-300 placeholder:text-green-300 focus:ring-green-500'
+                    : 'text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500',
+                  'px-2 block w-full rounded-md border-0 py-1.5 pr-10  ring-1 ring-inset  focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6'
+                ]"
+                placeholder="you@example.com"
+                aria-invalid="true"
+                aria-describedby="email-error"
+                required
+                @blur="checkEmail(data.email)"
+                v-model="data.email"
+              />
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                <ExclamationCircleIcon
+                  class="h-5 w-5 text-red-500"
+                  aria-hidden="true"
+                  v-if="!checkEmail(data.email)[1]"
+                />
+                <CheckCircleIcon v-else class="h-5 w-5 text-green-500" />
+              </div>
+            </div>
+            <p
+              :class="[checkEmail(data.email)[1] ? 'text-green-600' : 'text-red-600', 'text-xs']"
+              id="email-error"
+            >
+              {{ checkEmail(data.email)[0] }}
+            </p>
           </div>
-          <div class="grid gap-2">
-            <Label for="password">Password</Label>
-            <Input id="password" type="password" v-model="data.password" />
+
+          <div class="grid gap-1">
+            <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
+              >Email</label
+            >
+            <div class="relative mt-2 rounded-md shadow-sm">
+              <input
+                type="password"
+                name="password"
+                id="password"
+                :class="[
+                  checkPassword(data.password)[1]
+                    ? 'text-green-900 ring-green-300 placeholder:text-green-300 focus:ring-green-500'
+                    : 'text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500',
+                  'px-2 block w-full rounded-md border-0 py-1.5 pr-10  ring-1 ring-inset  focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6'
+                ]"
+                placeholder="12345678"
+                aria-invalid="true"
+                aria-describedby="email-error"
+                required
+                @blur="checkPassword(data.password)"
+                v-model="data.password"
+              />
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                <ExclamationCircleIcon
+                  class="h-5 w-5 text-red-500"
+                  aria-hidden="true"
+                  v-if="!checkPassword(data.password)[1]"
+                />
+                <CheckCircleIcon v-else class="h-5 w-5 text-green-500" />
+              </div>
+            </div>
+            <p
+              :class="[
+                checkPassword(data.password)[1] ? 'text-green-600' : 'text-red-600',
+                'text-xs'
+              ]"
+              id="email-error"
+            >
+              {{ checkPassword(data.password)[0] }}
+            </p>
           </div>
-          <div class="grid gap-2">
+          <div class="grid gap-1">
             <Label for="password2">Confirm Password</Label>
             <Input
               id="password2"
               type="password"
               v-model="data.password2"
-              @keyup="checkPassword(data.password, data.password2)"
+              @blur="checkPassword2(data.password, data.password2)"
             />
+            <p
+              :class="[
+                checkPassword2(data.password, data.password2)[1]
+                  ? 'text-green-600'
+                  : 'text-red-600',
+                'text-xs'
+              ]"
+              id="email-error"
+            >
+              {{ checkPassword2(data.password, data.password2)[0] }}
+            </p>
           </div>
           <div class="grid grid-cols-3 gap-4">
             <div class="col-span-2 grid gap-2">
@@ -137,6 +214,8 @@ import login from '@/utils/login'
 import axios from '@/utils/request'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { CaretSortIcon, CheckIcon } from '@radix-icons/vue'
+import { ExclamationCircleIcon } from '@heroicons/vue/20/solid'
+import { CheckCircleIcon } from '@heroicons/vue/24/outline'
 
 import { cn } from '@/lib/utils'
 import {
@@ -169,6 +248,47 @@ const data = ref({
   vcode: ''
 })
 
+function checkEmail(email) {
+  const emailPattern = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+  let right = false
+  let errorMessage = ''
+
+  if (!emailPattern.test(email)) {
+    errorMessage = '邮箱格式不正确。'
+  } else {
+    if (!email.endsWith('@buaa.edu.cn')) {
+      errorMessage = '邮箱格式正确，但是本系统只支持北航邮箱注册(以@buaa.edu.cn结尾)'
+    } else {
+      errorMessage = '邮箱有效。'
+      right = true
+    }
+  }
+
+  return [errorMessage, right]
+}
+
+function checkPassword(password) {
+  const minLength = 8
+  const maxLength = 50
+  let right = false
+  const specialCharPattern = /[^a-zA-Z0-9]/
+
+  let errorMessage = ''
+
+  if (password.length < minLength) {
+    errorMessage = `密码太短，至少需要 ${minLength} 个字符。`
+  } else if (password.length > maxLength) {
+    errorMessage = `密码太长，最多只能有 ${maxLength} 个字符。`
+  } else if (specialCharPattern.test(password)) {
+    errorMessage = '密码不能包含特殊字符。'
+  } else {
+    errorMessage = '密码有效。'
+    right = true
+  }
+
+  return [errorMessage, right]
+}
+
 onMounted(async () => {
   let res = await axios.get('/api/tag')
   const data = res.data
@@ -187,9 +307,14 @@ const filteredInterestList = computed(() =>
   interestList.filter((i) => !interests.value.includes(i.name))
 )
 
-const checkPassword = (password, password2) => {
-  if (password !== password2) {
+const checkPassword2 = (password, password2) => {
+  if (!password2) {
+    return ['请再次输入密码', false]
+  } else if (password !== password2) {
     debug.log('🚀 ~ file: Register.vue:57 ~ checkPassword ~ password: password != password2')
+    return ['两次密码不一致', false]
+  } else {
+    return ['两次密码一致', true]
   }
 }
 const getVcode = async (email) => {

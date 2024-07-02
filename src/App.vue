@@ -4,6 +4,7 @@
     <n-notification-provider :max="3" placement="bottom-right">
       <div class="min-h-screen flex flex-col">
         <Header class="sticky top-0 z-50"></Header>
+        <!-- <Header class="sticky top-0 z-50"></Header> -->
         <div class="flex-1">
           <router-view v-slot="{ Component }">
             <transition name="slide" mode="out-in">
@@ -34,6 +35,7 @@
 
 <script setup>
 import Header from '@/components/Header.vue'
+import Header2 from '@/components/Header2.vue'
 // import Footer from '@/components/Footer.vue'
 // import { Toaster } from '@/components/ui/toast'
 import MessageBar from '@/components/MessageBar.vue'
