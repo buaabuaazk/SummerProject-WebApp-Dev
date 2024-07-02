@@ -96,7 +96,7 @@
             转发
           </n-button>
         </div>
-        <t-comment :avatar="currentUser.icon">
+        <t-comment :avatar="currentUser?.icon ? currentUser.icon : userDefaultAvatar">
           <template #content>
             <div class="flex flex-col items-end">
               <t-textarea v-model="replyData" placeholder="请输入内容" />
@@ -132,6 +132,7 @@
 import axios from '@/utils/request'
 import { debug } from '@/config'
 import UserAvatar from './UserAvatar.vue'
+import useTokenStore from '@/stores/useTokenStore'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
 import { NotifyPlugin } from 'tdesign-vue-next'
 import { useRouter } from 'vue-router'
@@ -158,6 +159,7 @@ const props = defineProps({
     default: ''
   }
 })
+const userDefaultAvatar = '@/assets/userDefaultAvatar.png'
 
 const currentUserStore = useCurrentUserStore()
 const currentUser = currentUserStore.currentUser
@@ -247,71 +249,114 @@ onBeforeMount(async () => {
   data.value.updated_at = data.value.updated_at.substring(0, 10)
   text.value = renderContent(data.value.content)
 })
+
+const hasLogined = ref(false)
 onMounted(async () => {
-  const res = await axios.get('/api/tweet/check_liked', {
-    params: {
-      post_id: props.post_id
-    }
-  })
-  hasLiked.value = res.data.liked
-  debug.log(res.data)
+  const tokenStore = useTokenStore()
+  const token = tokenStore.getToken
+  if (token) {
+    hasLogined.value = true
+    const res = await axios.get('/api/tweet/check_liked', {
+      params: {
+        post_id: props.post_id
+      }
+    })
+    hasLiked.value = res.data.liked
+    debug.log(res.data)
+  }
   isLoaded.value = true
 })
 
 const submitReply = async () => {
-  if (!replyData.value) {
-    NotifyPlugin.error({
-      title: '回复内容',
-      content: '回复内容不能为空',
-      duration: 3000
-    })
+  if (hasLogined.value) {
+    if (!replyData.value) {
+      NotifyPlugin.error({
+        title: '回复内容',
+        content: '回复内容不能为空',
+        duration: 3000
+      })
+    } else {
+      let res = await axios.post('/api/tweet/comment', {
+        post_id: props.post_id,
+        user_id: currentUser.id,
+        content: replyData.value
+      })
+      const data = res.data
+      debug.log(data)
+      commentsData.value.unshift(data.comment)
+      replyData.value = ''
+      notification.success({
+        title: '回复成功',
+        duration: 3000
+      })
+    }
   } else {
-    let res = await axios.post('/api/tweet/comment', {
-      post_id: props.post_id,
-      user_id: currentUser.id,
-      content: replyData.value
-    })
-    const data = res.data
-    debug.log(data)
-    commentsData.value.unshift(data.comment)
-    replyData.value = ''
-    notification.success({
-      title: '回复成功',
+    notification.error({
+      title: '回复失败',
+      content: '请先登录',
       duration: 3000
     })
+    router.push('/sos/login')
   }
 }
 
 const changleLiked = async () => {
-  let res = await axios.post('/api/tweet/together_like', {
-    post_id: props.post_id
-  })
-  console.log(res.data)
-  hasLiked.value = !hasLiked.value
-  if (hasLiked.value) {
-    data.value.likes += 1
+  if (hasLogined.value) {
+    let res = await axios.post('/api/tweet/together_like', {
+      post_id: props.post_id
+    })
+    console.log(res.data)
+    hasLiked.value = !hasLiked.value
+    if (hasLiked.value) {
+      data.value.likes += 1
+    } else {
+      data.value.likes -= 1
+    }
   } else {
-    data.value.likes -= 1
+    notification.error({
+      title: '点赞失败',
+      content: '请先登录',
+      duration: 3000
+    })
+    router.push('/sos/login')
   }
 }
 
 const likeComment = async (index) => {
-  const comment = commentsData.value[index]
-  const comment_id = comment.id
-  let res = await axios.post('/api/tweet/like_comment', {
-    comment_id
-  })
-  const data = res.data
-  commentsData.value[index].likes = data.likes
+  if (hasLogined.value) {
+    const comment = commentsData.value[index]
+    const comment_id = comment.id
+    let res = await axios.post('/api/tweet/like_comment', {
+      comment_id
+    })
+    const data = res.data
+    commentsData.value[index].likes = data.likes
+  } else {
+    notification.error({
+      title: '点赞失败',
+      content: '请先登录',
+      duration: 3000
+    })
+    router.push('/sos/login')
+  }
 }
 
 const transferPost = () => {
-  router.push({
-    path: '/createPost',
-    query: {
-      transfer_id: props.post_id
-    }
-  })
+  if (hasLogined.value) {
+    router.push({
+      path: '/createPost',
+      query: {
+        transfer_id: props.post_id
+      }
+    })
+  } else {
+    notification.error({
+      title: '转发失败',
+      content: '请先登录',
+      duration: 3000
+    })
+    router.push('/sos/login')
+  }
 }
 
 const showModal = async () => {

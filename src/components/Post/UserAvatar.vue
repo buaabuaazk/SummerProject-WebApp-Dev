@@ -29,6 +29,7 @@
 <script setup>
 import { useMessageStore } from '@/stores/useMessageStore'
 import useCurrentUserStore from '@/stores/useCurrentUserStore'
+import useTokenStore from '@/stores/useTokenStore'
 import { debug } from '@/config'
 import { ref, computed, onMounted, watch } from 'vue'
 import axios from '@/utils/request'
@@ -52,59 +53,85 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeModal'])
 const isCurrentUser = computed(() => {
-  return parseInt(currentUser.user_id) === parseInt(props.user_id)
+  if (currentUser) {
+    return parseInt(currentUser.user_id) === parseInt(props.user_id)
+  } else {
+    return false
+  }
 })
 
 const hasSubscribed = ref(false)
 const user_id = ref(props.user_id)
+const hasLogined = ref(false)
 onMounted(async () => {
   if (user_id.value) {
-    const res = await axios.get('/api/user/subscribe', {
-      params: {
-        user_id: user_id.value
-      }
-    })
-    const data = res.data
-    hasSubscribed.value = data.isSubscribed
+    const tokenStore = useTokenStore()
+    if (tokenStore.token) {
+      hasLogined.value = true
+      const res = await axios.get('/api/user/subscribe', {
+        params: {
+          user_id: user_id.value
+        }
+      })
+      const data = res.data
+      hasSubscribed.value = data.isSubscribed
+    }
   }
 })
 //有props在onMounted中访问不到的bug，通过watch来解决
 watch(user_id, async (oldVal, newVal) => {
-  const res = await axios.get('/api/user/subscribe', {
-    params: {
-      user_id: newVal
-    }
-  })
+  if (hasLogined.value) {
+    const res = await axios.get('/api/user/subscribe', {
+      params: {
+        user_id: newVal
+      }
+    })
 
-  const data = res.data
-  debug.log('111', data)
-  hasSubscribed.value = data.isSubscribed
+    const data = res.data
+    hasSubscribed.value = data.isSubscribed
+  }
 })
 
 const handleChat = async () => {
-  const receiver = props.user_id
-  const sender = currentUser.id
-  //TODO:触发私信聊天框
-  emit('closeModal')
-  messageStore.sendMessage(receiver)
+  if (hasLogined.value) {
+    const receiver = props.user_id
+    const sender = currentUser.id
+    //TODO:触发私信聊天框
+    emit('closeModal')
+    messageStore.sendMessage(receiver)
+  } else {
+    notification.error({
+      title: '未登录',
+      content: '请先登录'
+    })
+    router.push('/sos/login')
+  }
 }
 const handleSubscribe = async () => {
-  const receiver = props.user_id
-  const res = await axios.put('/api/user/subscribe', {
-    user_id: receiver
-  })
-  if (hasSubscribed.value === false) {
-    notification.success({
-      title: '关注成功',
-      content: '您已成功关注该用户'
+  if (hasLogined.value) {
+    const receiver = props.user_id
+    const res = await axios.put('/api/user/subscribe', {
+      user_id: receiver
     })
-    hasSubscribed.value = true
+    if (hasSubscribed.value === false) {
+      notification.success({
+        title: '关注成功',
+        content: '您已成功关注该用户'
+      })
+      hasSubscribed.value = true
+    } else {
+      notification.success({
+        title: '取消关注',
+        content: '您已取消关注该用户'
+      })
+      hasSubscribed.value = false
+    }
   } else {
-    notification.success({
-      title: '取消关注',
-      content: '您已取消关注该用户'
+    notification.error({
+      title: '未登录',
+      content: '请先登录'
     })
-    hasSubscribed.value = false
+    router.push('/sos/login')
   }
 }
 const goToUserInfo = () => {

@@ -76,10 +76,16 @@
                       </button>
                       <button
                         type="button"
-                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-lg ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                        v-if="userProfile && !info.is_admin"
+                        @click="userExit"
                       >
-                        <PhoneIcon class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-                        Call
+                        <!-- 用户已登录且非企业管理员 -->
+                        <ArrowRightStartOnRectangleIcon
+                          class="-ml-0.5 h-5 w-5 text-red-600"
+                          aria-hidden="true"
+                        />
+                        <span class="font-bold text-red-600"> 退出企业 </span>
                       </button>
                     </div>
                   </div>
@@ -169,6 +175,8 @@
 <script setup>
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/vue/20/solid'
 
+import { ArrowRightStartOnRectangleIcon } from '@heroicons/vue/24/outline'
+
 import { UserPlusIcon, UserMinusIcon } from '@heroicons/vue/24/outline'
 
 import { onMounted, ref, watch } from 'vue'
@@ -185,6 +193,7 @@ import {
   getUserSimpleProfile
 } from '@/stores/useCorporationStore'
 
+const router = useRouter()
 const route = useRoute()
 
 let userProfile = ref(null)
@@ -213,18 +222,26 @@ const info = ref({
 })
 
 async function fetchData() {
-  userProfile.value = await getUserProfile()
-  console.log(userProfile.value)
+  // console.log(userProfile.value)
   if (route.params.id) {
     enterpriseInfo.value = await getEnterpriseInfo(route.params.id)
   } else {
+    userProfile.value = await getUserProfile()
     enterpriseInfo.value = await getEnterpriseInfo(userProfile.value.enterprise)
+    enterpriseUserInfoProfile.value = await getEnterpriseUserInfoProfile()
+    transferLogs.value = await getUserTransferLogs()
   }
-  console.log(enterpriseInfo.value)
-  enterpriseUserInfoProfile.value = await getEnterpriseUserInfoProfile()
-  console.log(enterpriseUserInfoProfile.value)
-  transferLogs.value = await getUserTransferLogs()
-  console.log(transferLogs.value)
+  // console.log(enterpriseInfo.value)
+  // console.log(enterpriseUserInfoProfile.value)
+  // console.log(transferLogs.value)
+}
+
+async function userExit() {
+  const res = await axios.delete('/api/profile/')
+  console.log(res)
+  if (res.code == 200) {
+    router.push('')
+  }
 }
 
 onMounted(async () => {
@@ -233,7 +250,7 @@ onMounted(async () => {
   info.value.name = enterpriseInfo.value.name
   info.value.introduction = enterpriseInfo.value.introduction
   info.value.icon = enterpriseInfo.value.icon
-  info.value.is_admin = userProfile.value.is_admin
+  info.value.is_admin = userProfile.value?.is_admin
 
   if (transferLogs.value && transferLogs.value.data?.length > 0) {
     transferLog.value = transferLogs.value.data[0]

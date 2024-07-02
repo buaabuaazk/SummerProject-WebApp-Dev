@@ -56,10 +56,6 @@ import {
 import { onMounted } from 'vue'
 import { getUserProfile } from '@/stores/useCorporationStore'
 
-const props = defineProps({
-  enterprise_id: String || Number
-})
-
 const route = useRoute()
 
 function childName(path) {
@@ -77,14 +73,20 @@ const currentUser = ref(null)
 let is_admin = ref(false)
 
 async function fetchData() {
-  currentUser.value = await getUserProfile()
-  console.log(currentUser.value)
+  if (!route.params.id) {
+    currentUser.value = await getUserProfile()
+    console.log(currentUser.value)
+  }
 }
 
 onMounted(async () => {
   await fetchData()
-  is_admin.value = currentUser.value.is_admin
-  if (props.enterprise_id && props.enterprise_id != currentUser.value.enterprise) {
+  is_admin.value = currentUser.value?.is_admin
+  if (
+    route.params.id &&
+    currentUser.value?.is_admin &&
+    route.params.id != currentUser.value.enterprise
+  ) {
     console.log('企业ID不匹配')
     is_admin.value = false
   }

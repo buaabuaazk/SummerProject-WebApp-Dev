@@ -10,7 +10,7 @@
           <img
             class="h-8 w-auto"
             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="My Company"
+            alt=""
           />
         </a>
       </div>
@@ -29,7 +29,12 @@
           <PopoverButton
             class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
           >
-            Product
+            <a
+              id="link4"
+              href="/CorporationInfo"
+              class="mouse-not-on text-sm font-semibold leading-6 text-gray-900"
+              >我的企业</a
+            >
             <ChevronDownIcon class="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
           </PopoverButton>
 
@@ -91,9 +96,21 @@
           </transition>
         </Popover>
 
-        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Features</a>
-        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Marketplace</a>
-        <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Company</a>
+        <a id="link1" href="/" class="mouse-not-on text-sm font-semibold leading-6 text-gray-900"
+          >招聘信息</a
+        >
+        <a
+          id="link2"
+          href="/CreatePost"
+          class="mouse-not-on text-sm font-semibold leading-6 text-gray-900"
+          >发布动态</a
+        >
+        <a
+          id="link3"
+          href="/PersonalInfo"
+          class="mouse-not-on text-sm font-semibold leading-6 text-gray-900"
+          >我的关注</a
+        >
       </PopoverGroup>
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
