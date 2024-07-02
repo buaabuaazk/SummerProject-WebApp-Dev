@@ -204,11 +204,11 @@ let confirm = ref(false)
 const pri = () => {}
 
 const info = ref({
-  name: 'Google',
-  location: 'US State',
-  email: '1270414897@gmail.com',
-  contact: '13467843418',
-  jobPosts: ['1', '2', '3'],
+  name: '',
+  location: '',
+  email: '',
+  contact: '',
+  jobPosts: null,
   is_admin: false
 })
 
