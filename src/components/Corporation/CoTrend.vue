@@ -41,12 +41,13 @@ let userProfile = ref(null)
 let enterprisePosts = ref([])
 
 async function fetchData() {
-  userProfile.value = await getUserProfile()
   if (route.params.id) {
     enterprisePosts.value = await getEnterprisePosts(route.params.id)
   } else {
+    userProfile.value = await getUserProfile()
     enterprisePosts.value = await getEnterprisePosts(userProfile.value.enterprise)
   }
+  console.log('enterprisePosts', enterprisePosts.value)
 }
 
 onMounted(async () => {
