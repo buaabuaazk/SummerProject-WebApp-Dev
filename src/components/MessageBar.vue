@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch, } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import axios from '@/utils/request'
 import { NaiveChat } from 'naive-chat'
 import { onBeforeUnmount } from 'vue'
@@ -144,17 +144,16 @@ const testMessages = {
 }
 
 const hasRead = ref([])
-
+let mynext = null
 const pullMessage = async ({ next, contactId }) => {
-  if(contactId){
-    if (!hasRead.value[contactId]) {
-      await fetchOneMessageHistory(contactId)
-      asyncFn(() => {
-        next(messages.value, true)
-      })
-      hasRead.value[contactId] = true
-    }
-  }
+  // if (!hasRead.value[contactId]) {
+  await fetchOneMessageHistory(contactId)
+  mynext = next
+  asyncFn(() => {
+    next(messages.value, false)
+  })
+  // hasRead.value[contactId] = true
+  // }
 }
 
 const asyncFn = (fn) => {
@@ -165,15 +164,16 @@ const asyncFn = (fn) => {
 
 //发送消息
 const sendMessage = async ({ message, next }) => {
-  console.log({
-    front_id: message.id,
-    sender: userInfo.value.id,
-    toContactId: message.toContactId,
-    content: message.content,
-    type: message.type,
-    status: message.status,
-    fileName: undefined
-  })
+  // console.log(message)
+  // console.log({
+  //   front_id: message.id,
+  //   sender: userInfo.value.id,
+  //   toContactId: message.toContactId,
+  //   content: message.content,
+  //   type: message.type,
+  //   status: message.status,
+  //   fileName: undefined
+  // })
   const response = await axios.post('/api/message/create', {
     front_id: message.id,
     sender: message.fromUser.id,
@@ -183,13 +183,13 @@ const sendMessage = async ({ message, next }) => {
     status: message.status,
     fileName: undefined
   })
-   asyncFn(() => {
-  next({
-    id: message.id,
-    toContactId: message.toContactId,
-    status: 'success'
+  asyncFn(() => {
+    next({
+      id: message.id,
+      toContactId: message.toContactId,
+      status: 'success'
+    })
   })
-   })
 }
 
 //获取最新消息
@@ -200,8 +200,10 @@ const fetchLatestMessage = async () => {
         Authorization: token
       }
     })
-    contacts.value.push(response.data.latest_messages)
+    contacts.value.push(...response.data.latest_messages)
+    console.log(contacts.value)
     naiveChatRef.value?.appendMessage(response.data.latest_messages)
+    mynext([response.data.latest_message], true)
   } catch (err) {
     err.value = err.message
   }
@@ -223,12 +225,61 @@ const fetchNewMessage = async (toContactId) => {
   try {
     if (toContactId !== undefined) {
       const number = String(toContactId)
-      console.log(userInfo.value.id)
-      const response = await axios.get('/api/message/latest/1')
-      console.log(response)
-      if (isNewMessage.value !== response.data.id && userInfo.value.id !== response.data.sender) {
-        isNewMessage.value = response.data.id
-        naiveChatRef.value?.appendMessage(response.data)
+      const response = await axios.get('/api/message/latest/' + `${userInfo.value.id}`)
+      if (isNewMessage.value !== response.data.id) {
+        //是否是新联系人
+        let flag = false
+        for (const item of contacts.value) {
+          console.log(contacts.value)
+          console.log(item.id, Number(messageStore.toContactId))
+          if (Number(item.id) === Number(messageStore.toContactId)) {
+            flag = true
+            break
+          }
+        }
+        if (flag) {
+          console.log('cant do this')
+          isNewMessage.value = response.data.id
+          console.log(response.data)
+          const message = {
+            id: response.data.front_id,
+            content: response.data.content,
+            type: response.data.type,
+            toContactId: response.data.toContactId,
+            fromUser: response.data.fromUser,
+            sendTime: response.data.sendTime,
+            status: 'success'
+          }
+          naiveChatRef.value?.appendMessage(message)
+          mynext([message], true)
+        } else {
+          const response = await axios.get('/api/user/info', {
+            params: {
+              user_id: messageStore.toContactId
+            }
+          })
+          const newContact = {
+            id: response.data.user_id,
+            nickname: response.data.username,
+            avatar: response.data.icon,
+            lastMessage: '',
+            lastTime: Date.now()
+          }
+          contacts.value.unshift(newContact)
+          isNewMessage.value = response.data.id
+          //naiveChatRef.value?.appendMessage(response.data)
+          const message = {
+            id: response.data.front_id,
+            content: response.data.content,
+            type: response.data.type,
+            toContactId: response.data.toContactId,
+            fromUser: response.data.fromUser,
+            sendTime: response.data.sendTime,
+            status: 'success'
+          }
+          naiveChatRef.value?.appendMessage(message)
+          mynext([message], true)
+        }
       }
     } else {
       console.log('toContactId is undefined')
@@ -246,9 +297,7 @@ const fetchNewMessageTrigger = async () => {
 
 const openContact = async () => {
   let flag = false
-  console.log(contacts.value)
   for (const item of contacts.value) {
-    console.log(item.id, Number(messageStore.toContactId))
     if (Number(item.id) === Number(messageStore.toContactId)) {
       flag = true
       break
@@ -257,7 +306,6 @@ const openContact = async () => {
   if (flag) {
     console.log('cant do this')
   } else {
-    console.log(flag)
     const response = await axios.get('/api/user/info', {
       params: {
         user_id: messageStore.toContactId
@@ -276,7 +324,7 @@ const openContact = async () => {
   }
 }
 
-const handleAppendMessage = () => {
+const handleAppendMesage = () => {
   const msg = {
     id: 500,
     content: '最近忙什么呢?',
@@ -292,19 +340,19 @@ const handleAppendMessage = () => {
     fileName: undefined
   }
   naiveChatRef.value?.appendMessage(msg)
+  mynext([msg], true)
 }
 let interval
 onMounted(async () => {
   document.addEventListener('mouseup', stopDrag)
   await fetchLatestMessage()
-  console.log(userInfo.value)
   naiveChatRef.value?.initContacts(contacts.value)
   openContact()
-  interval = setInterval(fetchNewMessageTrigger, 2000)  
+  interval = setInterval(fetchNewMessageTrigger, 2000)
 })
 
 onUnmounted(() => {
-    clearInterval(interval)
+  clearInterval(interval)
 })
 
 onBeforeUnmount(() => {
