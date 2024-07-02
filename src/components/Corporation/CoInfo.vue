@@ -76,13 +76,16 @@
                       </button>
                       <button
                         type="button"
-                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-lg ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                        v-if="userProfile && !info.is_admin"
+                        @click="userExit"
                       >
+                        <!-- 用户已登录且非企业管理员 -->
                         <ArrowRightStartOnRectangleIcon
                           class="-ml-0.5 h-5 w-5 text-red-600"
                           aria-hidden="true"
                         />
-                        退出企业
+                        <span class="font-bold text-red-600"> 退出企业 </span>
                       </button>
                     </div>
                   </div>
@@ -190,6 +193,7 @@ import {
   getUserSimpleProfile
 } from '@/stores/useCorporationStore'
 
+const router = useRouter()
 const route = useRoute()
 
 let userProfile = ref(null)
@@ -230,6 +234,14 @@ async function fetchData() {
   // console.log(enterpriseInfo.value)
   // console.log(enterpriseUserInfoProfile.value)
   // console.log(transferLogs.value)
+}
+
+async function userExit() {
+  const res = await axios.delete('/api/profile/')
+  console.log(res)
+  if (res.code == 200) {
+    router.push('')
+  }
 }
 
 onMounted(async () => {
