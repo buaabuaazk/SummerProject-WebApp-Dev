@@ -27,6 +27,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { baseURL, debug } from '@/config'
 import { MdEditor } from 'md-editor-v3'
 import { NotifyPlugin } from 'tdesign-vue-next'
+import { useNotification } from 'naive-ui'
 import 'md-editor-v3/lib/style.css'
 const router = useRouter()
 const route = useRoute()
@@ -41,7 +42,7 @@ const title = ref('')
 onMounted(async () => {
   debug.log(route.query)
 })
-
+const notification = useNotification()
 const createPost = async () => {
   let content = text.value
   if (route.query.transfer_id) {
@@ -79,7 +80,7 @@ const createPost = async () => {
   })
 
   debug.log(res.data)
-  NotifyPlugin.success({
+  notification.success({
     title: '发布成功',
     duration: 3000
   })
