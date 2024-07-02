@@ -721,7 +721,7 @@
                 </p>
                 <buton
                   class="mt-1 text-sm text-red-600 bg-orange-300 rounded-lg shadow-lg p-2 hover:scale-110 ease-linear transition-all"
-                  @click="router.push('/ApplymentAction/' + recruit.recruit_id)"
+                  @click="router.push('/ApplymentAction/' + enterpriseInfo.enterprise_id)"
                 >
                   <i class="font-bold underline"> 招聘审核 </i>
                 </buton>
