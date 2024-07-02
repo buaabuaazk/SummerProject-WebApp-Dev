@@ -131,19 +131,22 @@ const recruitment_id = ref(props.id)
 const goToEnterprise = () => {
   router.push(`/CorporationInfo/${data.value.enterprise}`)
 }
-
+const hasLogined = ref(false)
 onMounted(async () => {
   if (props.id) {
     const res = await axios.get(`/api/recruit/jobinfo/${props.id}`)
     data.value = res.data
     data.value.created_at = data.value.created_at.substring(0, 10)
     debug.log('🚀 ~ file: JobInfo.vue:139 ~ getInfo ~ data:', data.value)
-    const response = await axios.get('/api/enterprise/subscribe', {
-      params: {
-        enterprise_id: data.value.enterprise
-      }
-    })
-    hasSubscribed.value = response.data.isSubscribed
+    if (tokenStore.token) {
+      hasLogined.value = true
+      const response = await axios.get('/api/enterprise/subscribe', {
+        params: {
+          enterprise_id: data.value.enterprise
+        }
+      })
+      hasSubscribed.value = response.data.isSubscribed
+    }
   }
 })
 
@@ -152,13 +155,15 @@ watch(recruitment_id, async (oldval, newval) => {
   data.value = res.data
   data.value.created_at = data.value.created_at.substring(0, 10)
   debug.log('🚀 ~ file: JobInfo.vue:146 ~ getInfo ~ data:', data.value)
-  const response = await axios.get('/api/enterprise/subscribe', {
-    params: {
-      enterprise_id: newval
-    }
-  })
-  debug.log('111', response.data)
-  hasSubscribed.value = response.data.isSubscribed
+  if (hasLogined.value) {
+    const response = await axios.get('/api/enterprise/subscribe', {
+      params: {
+        enterprise_id: newval
+      }
+    })
+    debug.log('111', response.data)
+    hasSubscribed.value = response.data.isSubscribed
+  }
 })
 
 const submitResume = async (job_id) => {
@@ -179,23 +184,31 @@ const submitResume = async (job_id) => {
 
 const hasSubscribed = ref(false)
 const subscribeEnterprise = async () => {
-  const res = await axios.put('/api/enterprise/subscribe', {
-    enterprise_id: data.value.enterprise
-  })
-  const response = res.data
+  if (hasLogined.value) {
+    const res = await axios.put('/api/enterprise/subscribe', {
+      enterprise_id: data.value.enterprise
+    })
+    const response = res.data
 
-  debug.log('🚀 ~ file: JobInfo.vue:160 ~ subscribeEnterprise ~ data:', response)
-  hasSubscribed.value = !hasSubscribed.value
-  if (hasSubscribed.value) {
-    notification.success({
-      title: '关注成功',
-      content: '您已成功关注该企业'
-    })
+    debug.log('🚀 ~ file: JobInfo.vue:160 ~ subscribeEnterprise ~ data:', response)
+    hasSubscribed.value = !hasSubscribed.value
+    if (hasSubscribed.value) {
+      notification.success({
+        title: '关注成功',
+        content: '您已成功关注该企业'
+      })
+    } else {
+      notification.success({
+        title: '取消关注',
+        content: '您已取消关注该企业'
+      })
+    }
   } else {
-    notification.success({
-      title: '取消关注',
-      content: '您已取消关注该企业'
+    notification.error({
+      title: '未登录',
+      content: '请先登录'
     })
+    router.push('/sos/login')
   }
 }
 </script>
