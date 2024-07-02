@@ -757,28 +757,26 @@ const boldTextBetweenStars = (str) => {
   return str.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
 }
 const optimizeResume = () => {
-  console.log('optimizeResume called')
-  axios
-    .post('/api/tweet/optimize_resume')
-    .then((response) => {
-      //
-      //format.value=response.data.suggestions;
-      console.log('返回的建议是' + response.data.suggestions)
-      //format.value=replaceNewlinesWithBreaks(response.data.suggestions)
-      rawResumeText.value = replaceNewlinesWithBreaks(response.data.suggestions)
-      rawResumeText.value = boldTextBetweenStars(response.data.suggestions)
-      console.log(rawResumeText.value)
-      console.log(format.value)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  console.log('显示简历优化信息 called')
-  showModal()
-  //这个是处理后的字符串（简历优化建议）
-  //format.value = rawResumeText.value.replace(/\n/g, '<br>');
-  //console.log(format.value)
-}
+  console.log('optimizeResume called');
+  showModal();
+  setTimeout(() => {
+    axios
+      .post('/api/tweet/optimize_resume')
+      .then((response) => {
+        console.log('返回的建议是' + response.data.suggestions);
+        rawResumeText.value = replaceNewlinesWithBreaks(response.data.suggestions);
+        rawResumeText.value = boldTextBetweenStars(response.data.suggestions);
+        console.log(rawResumeText.value);
+        console.log(format.value);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, 3000); // 延迟 3 秒（3000 毫秒）
+  
+  console.log('显示简历优化信息 called');
+  
+};
 const getBlog = (str) => {
   if (str) {
     return str
