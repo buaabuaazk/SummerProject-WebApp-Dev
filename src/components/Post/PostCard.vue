@@ -8,12 +8,10 @@
   <div>
     <template v-if="isLoaded">
       <n-card
-        class="min-w-fit cursor-pointer truncate"
+        class="max-w-full cursor-pointer truncate"
         size="small"
         header-style="padding: 0.5rem; margin-bottom: 0;"
-        embedded
-        hoverable
-        @click.stop="showModal()"
+        @click="showModal()"
       >
         <template #header>
           <div class="flex items-center justify-start my-0">
@@ -27,31 +25,33 @@
         <div class="text-xl font-bold my-1" v-html="data.title"></div>
         <MdPreview v-model="text" />
         <template #action>
-          <n-button @click="showModal()">
-            <template #icon>
-              <n-icon>
-                <MessageOutlined />
-              </n-icon>
-            </template>
-            评论
-          </n-button>
-          <n-button @click="changleLiked">
-            <template #icon>
-              <n-icon>
-                <ThumbUpFilled v-if="hasLiked" />
-                <ThumbUpOffAltFilled v-else />
-              </n-icon>
-            </template>
-            <span>{{ data.likes }}</span>
-          </n-button>
-          <n-button @click="transferPost()">
-            <template #icon>
-              <n-icon>
-                <ArrowForward16Regular />
-              </n-icon>
-            </template>
-            转发
-          </n-button>
+          <div class="flex justify-around">
+            <n-button @click="showModal()">
+              <template #icon>
+                <n-icon>
+                  <MessageOutlined />
+                </n-icon>
+              </template>
+              评论
+            </n-button>
+            <n-button @click="changleLiked">
+              <template #icon>
+                <n-icon>
+                  <ThumbUpFilled v-if="hasLiked" />
+                  <ThumbUpOffAltFilled v-else />
+                </n-icon>
+              </template>
+              <span>{{ data.likes }}</span>
+            </n-button>
+            <n-button @click="transferPost()">
+              <template #icon>
+                <n-icon>
+                  <ArrowForward16Regular />
+                </n-icon>
+              </template>
+              转发
+            </n-button>
+          </div>
         </template>
       </n-card>
     </template>
@@ -61,33 +61,41 @@
       :bordered="true"
       size="large"
       preset="card"
+      title="动态详情"
     >
       <div>
         <div class="flex items-center">
-          <UserAvatar :user_id="data.user_id" :avatar="data.avatar"></UserAvatar>
+          <UserAvatar
+            :user_id="data.user_id"
+            :avatar="data.avatar"
+            @close-modal="visible = false"
+          ></UserAvatar>
           <div class="flex flex-col justify-center items-center">
             <div class="px-2">{{ data.username }}</div>
             <div class="text-xs">发布于 {{ data.updated_at }}</div>
           </div>
         </div>
         <MdPreview v-model="data.content"></MdPreview>
-        <n-button @click="changleLiked">
-          <template #icon>
-            <n-icon>
-              <ThumbUpFilled v-if="hasLiked" />
-              <ThumbUpOffAltFilled v-else />
-            </n-icon>
-          </template>
-          <span>{{ data.likes }}</span>
-        </n-button>
-        <n-button @click="transferPost()">
-          <template #icon>
-            <n-icon>
-              <ArrowForward16Regular />
-            </n-icon>
-          </template>
-          转发
-        </n-button>
+        <div class="flex justify-between my-4">
+          <n-button @click="changleLiked">
+            <template #icon>
+              <n-icon>
+                <ThumbUpFilled v-if="hasLiked" />
+                <ThumbUpOffAltFilled v-else />
+              </n-icon>
+            </template>
+            <span>{{ data.likes }}</span>
+          </n-button>
+
+          <n-button @click="transferPost()">
+            <template #icon>
+              <n-icon>
+                <ArrowForward16Regular />
+              </n-icon>
+            </template>
+            转发
+          </n-button>
+        </div>
         <t-comment :avatar="currentUser.icon">
           <template #content>
             <div class="flex flex-col items-end">
