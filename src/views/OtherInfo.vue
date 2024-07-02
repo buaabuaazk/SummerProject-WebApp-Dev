@@ -108,7 +108,7 @@
                     :span="8"
                     style="margin-bottom: 16px"
                   >
-                    <a-card :bordered="false">
+                    <a-card :bordered="false" style="height: 160px">
                       <template #title>
                         <div style="display: flex; align-items: center">
                           <img
@@ -116,7 +116,7 @@
                             alt="Image"
                             style="width: 30px; height: 30px; margin-right: 10px"
                           />
-                          <h3 style="margin: 0">{{ profile.name }}</h3>
+                          <a :href="`/corporationInfo/${profile.enterprise_id}`" style="margin: 0">{{ profile.name }}</a>
                         </div>
                       </template>
                       <p>{{ profile.introduction }}</p>
