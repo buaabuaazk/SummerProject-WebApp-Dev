@@ -53,7 +53,11 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeModal'])
 const isCurrentUser = computed(() => {
-  return parseInt(currentUser.user_id) === parseInt(props.user_id)
+  if (currentUser) {
+    return parseInt(currentUser.user_id) === parseInt(props.user_id)
+  } else {
+    return false
+  }
 })
 
 const hasSubscribed = ref(false)
