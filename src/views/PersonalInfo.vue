@@ -105,7 +105,7 @@
                   :span="8"
                   style="margin-bottom: 16px"
                 >
-                  <a-card :bordered="false">
+                  <a-card :bordered="false" style="height: 160px">
                     <template #title>
                       <div style="display: flex; align-items: center">
                         <img
@@ -575,11 +575,12 @@ onMounted(async() => {
         .catch((error) => {
           console.error('获取用户履历失败', error);
         });
+        fetchData()
     })
     .catch((error) => {
       console.error('获取用户信息失败', error)
     })
-  await fetchData()
+ 
   //console.log('CoRecruit_ID', route.params.id)
 })
 const goTo = (where) => {
@@ -664,10 +665,11 @@ const submit = () => {
   console.log(formData.get('tag_id'))
   test()
   //if (profile.value.tag) {formData.append('tag',profile.value.tag)}
-  
   axios
-    .patch('/api/user/detail', {
-
+    .patch('/api/user/detail', formData,{
+      headers: {
+          Authorization: tokenStore.getToken
+        }
     }, )
     .then((response) => {
       console.log('修改用户信息成功')
