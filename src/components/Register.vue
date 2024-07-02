@@ -5,7 +5,7 @@
 -->
 <template>
   <div>
-    <Card class="mx-auto max-w-md">
+    <Card class="mx-auto max-w-md rounded-xl px-6 py-2">
       <CardHeader>
         <CardTitle class="text-xl"> Sign Up </CardTitle>
         <CardDescription> Enter your information to create an account </CardDescription>
