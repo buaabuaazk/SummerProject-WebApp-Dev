@@ -23,11 +23,6 @@
       <el-button type="primary" @click="toShowEnterPrise" style="margin-left: 1rem">企业</el-button>
       <el-button type="primary" @click="toShowUserInfo" style="margin-left: 1rem">用户</el-button>
     </div>
-    <div style="height: 2rem">
-      <div class="flowing-text">
-        <span v-for="(char, index) in visibleText" :key="index">{{ char }}</span>
-      </div>
-    </div>
     <div class="search-results">
       <div v-if="showJobInfo" style="display: flex">
         <div class="job-list" v-if="jobInfo && jobInfo.length > 0">
@@ -80,6 +75,12 @@
               </div>
             </div>
           </a-card>
+          <div v-if="pageNum > page">
+            <el-button @click="fetchNewData()" style="margin-left: 30rem">查看更多</el-button>
+          </div>
+          <div v-else>
+            <p style="margin-left: 30rem;">没有更多相关岗位欸~_~,看看别的吧^_^</p>
+          </div>
         </div>
         <div v-else>
           <p style="margin-left: 30rem">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
@@ -87,10 +88,15 @@
       </div>
       <div v-if="showTweetInfo">
         <div v-if="tweetInfo && tweetInfo.length > 0">
-          <a-card title="公司" style="width: 40rem; margin-left: 20rem">
-            <template #extra><a href="#">more</a></template>
-            <p>公司简介</p>
-          </a-card>
+          <div v-for="item in tweetInfo" :key="item.id" style="margin-left: 5rem;">
+            <PostCard :highlight="true" :searchContent="input" :post_id="item.id" style="max-width:100%"></PostCard>
+          </div>
+          <div v-if="pageNum > page">
+            <el-button @click="fetchNewData()" style="margin-left: 30rem">查看更多</el-button>
+          </div>
+          <div v-else>
+            <p style="margin-left: 30rem;">没有更多相关动态欸~_~,看看别的吧^_^</p>
+          </div>
         </div>
         <div v-else>
           <p style="margin-left: 30rem">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
@@ -115,6 +121,12 @@
             <template #extra><a :href="`/CorporationInfo/${item.enterprise_id}`">more</a></template>
             <p v-html="item.introduction"></p>
           </a-card>
+          <div v-if="pageNum > page">
+            <el-button @click="fetchNewData()" style="margin-left: 30rem">查看更多</el-button>
+          </div>
+          <div v-else>
+            <p style="margin-left: 30rem;">没有更多相关企业欸~_~,看看别的吧^_^</p>
+          </div>
         </div>
         <div v-else>
           <p style="margin-left: 30rem">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
@@ -127,20 +139,24 @@
             :key="item.id"
             style="width: 40rem; margin-left: 20rem; border-color: #6caeec"
           >
-            <div style="display: flex; height: 1rem; align-items: center">
-              <img :src="item.icon" style="height: 3rem" />
+            <div style="display: flex; height: 3rem; align-items: center;">
+              <img :src="item.icon" style="height: 3rem; max-width: 3rem; border-radius: 50%; margin-right: 1rem;margin-left: 0;"/>
               <div>
                 <p :innerHTML="item.username"></p>
                 <p>{{ item.email }}</p>
               </div>
-              <div style="margin-left: 17rem; display: flex">
-                <el-button type="primary" style="display:">+关注</el-button>
-                <el-button @click="messageStore.sendMessage(item.user_id)" type="primary"
-                  >私信</el-button
-                >
+              <div style="margin-left: auto; display: flex;">
+                <el-button type="primary" style="display: ;">关注</el-button>
+                <el-button @click="messageStore.sendMessage(item.user_id)" type="primary">私信</el-button>
               </div>
             </div>
           </a-card>
+          <div v-if="pageNum > page">
+            <el-button @click="fetchNewData()" style="margin-left: 30rem">查看更多</el-button>
+          </div>
+          <div v-else>
+            <p style="margin-left: 30rem;">没有更多相关用户欸~_~,看看别的吧^_^</p>
+          </div>
         </div>
         <div v-else>
           <p style="margin-left: 30rem">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
@@ -157,6 +173,7 @@ import { useRouter } from 'vue-router'
 import { useMessageStore } from '@/stores/useMessageStore'
 import { useSearchStore } from '@/stores/useSearchStore'
 import { useRoute } from 'vue-router'
+import Postcard from '@/components/Post/PostCard.vue'
 
 const messageStore = useMessageStore()
 
@@ -167,6 +184,7 @@ const enterpriseInfo = ref([])
 const jobInfo = ref([])
 const userInfo = ref([])
 const tweetInfo = ref([])
+const pageNum = ref()
 
 const showEnterPrise = ref(false)
 const showJobInfo = ref(true)
@@ -181,30 +199,35 @@ const search = async () => {
         page: page.value
       }
     })
-    console.log(response.data)
-    enterpriseInfo.value = response.data.enterprise_info
-    jobInfo.value = response.data.job_info
-    userInfo.value = response.data.user_info
-    tweetInfo.value = response.data.tweet_info
-    if (jobInfo.value) {
-      for (const item of jobInfo.value) {
-        item.job_name = item.job_name.replace(/<em>/g, '<em style="color:red;">')
-        item.enterprise_name = item.enterprise_name.replace(/<em>/g, '<em style="color:red;">')
-        item.enterprise_field = item.enterprise_field.replace(/<em>/g, '<em style="color:red;">')
+    if(page.value === 1) {
+      enterpriseInfo.value = response.data.enterprise_info
+      jobInfo.value = response.data.job_info
+      userInfo.value = response.data.user_info
+      tweetInfo.value = response.data.tweet_info
+      pageNum.value = response.data.num
+    } else {
+      enterpriseInfo.value.push(...response.data.enterprise_info)
+      jobInfo.value.push(...response.data.job_info)
+      userInfo.value.push(...response.data.user_info)
+      tweetInfo.value.push(...response.data.tweet_info)
+    }
+    if(jobInfo.value) {
+      for(const item of jobInfo.value) {
+        item.job_name = item.job_name.replace(/<em>/g, '<em style="color:red;">');
+        item.enterprise_name = item.enterprise_name.replace(/<em>/g, '<em style="color:red;">');
+        item.enterprise_field = item.enterprise_field.replace(/<em>/g, '<em style="color:red;">');
       }
     }
-    for (const item of enterpriseInfo.value) {
-      item.name = item.name.replace(/<em>/g, '<em style="color:red;">')
-      item.field = item.field.replace(/<em>/g, '<em style="color: red;">')
-      item.introduction = item.introduction.replace(/<em>/g, '<em style="color:red;">')
+    if(enterpriseInfo.value) {
+      for (const item of enterpriseInfo.value) {
+      item.name = item.name.replace(/<em>/g, '<em style="color:red;">');
+      item.field = item.field.replace(/<em>/g, '<em style="color: red;">');
+      item.introduction = item.introduction.replace(/<em>/g, '<em style="color:red;">');
+    }
     }
   } catch (err) {
     console.log(err)
   }
-}
-
-const increasePage = () => {
-  page.value = page.value + 1
 }
 
 const toShowEnterPrise = () => {
@@ -235,31 +258,18 @@ const toShowTweetInfo = () => {
   showTweetInfo.value = true
 }
 
-const text = '今天的工作是为了明天更好的工作doge'
-const visibleText = ref('')
-const intervalTime = 200 // 每个字符显示的时间间隔，单位毫秒
-const disappearTime = 2000 // 字符串全部显示后消失的时间，单位毫秒
-
-const startFlowingText = () => {
-  let currentIndex = 0
-  visibleText.value = ''
-
-  const intervalId = setInterval(() => {
-    if (currentIndex < text.length) {
-      visibleText.value += text[currentIndex]
-      currentIndex++
-    } else {
-      clearInterval(intervalId)
-      setTimeout(() => {
-        visibleText.value = ''
-        startFlowingText() // 重新开始显示
-      }, disappearTime)
-    }
-  }, intervalTime)
-}
-
 const goTo = (where) => {
   router.push(where)
+}
+
+// 获取下一页数据
+const fetchNewData = async () => {
+  try {
+    page.value = page.value + 1
+    await search(input.value, page.value)
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 onMounted(async () => {
@@ -287,26 +297,6 @@ onMounted(async () => {
 }
 .search-results {
   display: flex;
-}
-
-.flowing-text {
-  font-size: 24px;
-  white-space: nowrap;
-  overflow: hidden;
-  margin-left: 30rem;
-}
-
-.flowing-text span {
-  opacity: 0;
-  animation: fadeIn 0.5s forwards;
-  justify-content: center;
-  align-items: center;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
 }
 
 .job-list {
