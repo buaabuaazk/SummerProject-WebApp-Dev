@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="search-results">
-      <div v-if="showJobInfo" style="display: flex;">
+      <div v-if="showJobInfo" style="display: flex">
         <div class="job-list" v-if="jobInfo && jobInfo.length > 0">
           <a-card
             v-for="item in jobInfo"
@@ -82,7 +82,7 @@
           </a-card>
         </div>
         <div v-else>
-          <p style="margin-left: 30rem;">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
+          <p style="margin-left: 30rem">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
         </div>
       </div>
       <div v-if="showTweetInfo">
@@ -93,7 +93,7 @@
           </a-card>
         </div>
         <div v-else>
-          <p style="margin-left: 30rem;">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
+          <p style="margin-left: 30rem">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
         </div>
       </div>
       <div v-if="showEnterPrise">
@@ -103,46 +103,48 @@
             :key="item.id"
             style="width: 40rem; margin-left: 20rem"
           >
-          <template #title >
-            <div style="display: flex;" @click="goTo(`/CorporationInfo/${item.enterprise_id}`)">
-              <img :src="item.icon" style="height: 4rem;object-fit: fill;"/> 
-              <div style="align-content: center;">
-                <p v-html="item.name"></p>
-                <p v-html="item.field"></p>
+            <template #title>
+              <div style="display: flex" @click="goTo(`/CorporationInfo/${item.enterprise_id}`)">
+                <img :src="item.icon" style="height: 4rem; object-fit: fill" />
+                <div style="align-content: center">
+                  <p v-html="item.name"></p>
+                  <p v-html="item.field"></p>
+                </div>
               </div>
-            </div>
-          </template>
-          <template #extra><a :href="`/CorporationInfo/${item.enterprise_id}`">more</a></template>
+            </template>
+            <template #extra><a :href="`/CorporationInfo/${item.enterprise_id}`">more</a></template>
             <p v-html="item.introduction"></p>
           </a-card>
         </div>
         <div v-else>
-          <p style="margin-left: 30rem;">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
+          <p style="margin-left: 30rem">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
         </div>
       </div>
-      <div v-if="showUserInfo" >
+      <div v-if="showUserInfo">
         <div v-if="userInfo && userInfo.length > 0">
-          <a-card 
+          <a-card
             v-for="item in userInfo"
             :key="item.id"
-            style="width: 40rem; margin-left: 20rem; border-color: #6caeec;"
+            style="width: 40rem; margin-left: 20rem; border-color: #6caeec"
           >
-            <div style="display: flex; height: 1rem; align-items: center;">
-              <img :src="item.icon" style="height: 3rem;"/>
+            <div style="display: flex; height: 1rem; align-items: center">
+              <img :src="item.icon" style="height: 3rem" />
               <div>
                 <p :innerHTML="item.username"></p>
-                <p > {{ item.email }}</p>
+                <p>{{ item.email }}</p>
               </div>
-              <div style="margin-left: 17rem; display: flex;">
-                <el-button type="primary" style="display: ;">+关注</el-button>
-                <el-button @click="messageStore.sendMessage(item.user_id)" type="primary">私信</el-button>
+              <div style="margin-left: 17rem; display: flex">
+                <el-button type="primary" style="display:">+关注</el-button>
+                <el-button @click="messageStore.sendMessage(item.user_id)" type="primary"
+                  >私信</el-button
+                >
               </div>
             </div>
           </a-card>
         </div>
         <div v-else>
-          <p style="margin-left: 30rem;">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
-      </div>
+          <p style="margin-left: 30rem">暂时没有相关信息欸~_~,搜搜别的吧^_^</p>
+        </div>
       </div>
     </div>
   </div>
@@ -154,6 +156,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMessageStore } from '@/stores/useMessageStore'
 import { useSearchStore } from '@/stores/useSearchStore'
+import { useRoute } from 'vue-router'
 
 const messageStore = useMessageStore()
 
@@ -183,17 +186,17 @@ const search = async () => {
     jobInfo.value = response.data.job_info
     userInfo.value = response.data.user_info
     tweetInfo.value = response.data.tweet_info
-    if(jobInfo.value) {
-      for(const item of jobInfo.value) {
-        item.job_name = item.job_name.replace(/<em>/g, '<em style="color:red;">');
-        item.enterprise_name = item.enterprise_name.replace(/<em>/g, '<em style="color:red;">');
-        item.enterprise_field = item.enterprise_field.replace(/<em>/g, '<em style="color:red;">');
+    if (jobInfo.value) {
+      for (const item of jobInfo.value) {
+        item.job_name = item.job_name.replace(/<em>/g, '<em style="color:red;">')
+        item.enterprise_name = item.enterprise_name.replace(/<em>/g, '<em style="color:red;">')
+        item.enterprise_field = item.enterprise_field.replace(/<em>/g, '<em style="color:red;">')
       }
     }
     for (const item of enterpriseInfo.value) {
-      item.name = item.name.replace(/<em>/g, '<em style="color:red;">');
-      item.field = item.field.replace(/<em>/g, '<em style="color: red;">');
-      item.introduction = item.introduction.replace(/<em>/g, '<em style="color:red;">');
+      item.name = item.name.replace(/<em>/g, '<em style="color:red;">')
+      item.field = item.field.replace(/<em>/g, '<em style="color: red;">')
+      item.introduction = item.introduction.replace(/<em>/g, '<em style="color:red;">')
     }
   } catch (err) {
     console.log(err)
@@ -259,15 +262,17 @@ const goTo = (where) => {
   router.push(where)
 }
 
-onMounted(() => {
+onMounted(async () => {
   //startFlowingText();
-  console.log('wrong')
-  const searchStore = useSearchStore();
-  input.value = searchStore.getContent
-  if( input.value !== '') {
-    search();
+  // console.log('wrong')
+  // const searchStore = useSearchStore()
+  // input.value = searchStore.getContent
+  const route = useRoute()
+  input.value = route.query.searchContent
+  if (input.value !== '') {
+    await search()
   }
-});
+})
 </script>
 
 <style scoped>
@@ -283,7 +288,6 @@ onMounted(() => {
 .search-results {
   display: flex;
 }
-
 
 .flowing-text {
   font-size: 24px;

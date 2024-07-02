@@ -35,6 +35,8 @@
                 class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="Search"
                 type="search"
+                @keyup.enter="gotoSearch"
+                v-model="searchContent"
               />
             </div>
           </div>
@@ -311,10 +313,10 @@ function getAvatar() {
     console.log(tokenStore.getToken)
     axios
       .get('/api/user/detail', {
-      headers: {
-        Authorization: tokenStore.getToken
-      }
-    })
+        headers: {
+          Authorization: tokenStore.getToken
+        }
+      })
       .then((response) => {
         console.log('获取用户信息成功')
         console.log(response)
@@ -334,6 +336,15 @@ function getAvatar() {
 function cancelAccount() {
   //待实现，请求后端删除账号数据，清空当前登录的token和userid等
   router.push('/sos/login')
+}
+const searchContent = ref('')
+const gotoSearch = () => {
+  router.push({
+    path: 'search',
+    query: {
+      searchContent: searchContent.value
+    }
+  })
 }
 </script>
 
