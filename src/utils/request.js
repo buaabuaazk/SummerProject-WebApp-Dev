@@ -21,7 +21,7 @@ const getToken = () => {
 
 const instance = axios.create({
   baseURL: import.meta.env.MODE === 'development' ? baseURL : 'http://10.251.255.229',
-  timeout: 3000,
+  timeout: 30000,
   headers: { Authorization: getToken() }
 })
 

@@ -176,7 +176,7 @@ const router = createRouter({
       name: 'Recruitment',
       component: () => import('@/views/Recruitment.vue'),
       meta: {
-        requireAuth: false,
+        requireAuth: true,
         title: '招聘信息发布' //表单页
       }
     },
@@ -254,7 +254,10 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (to.meta.requireAuth && !localStorage.getItem('token')) {
+  let token = localStorage.getItem('token')
+  token = JSON.parse(token)?.token
+  console.log(token)
+  if (to.meta.requireAuth && !token) {
     next({ name: 'Login' })
   } else if (to.meta.requireEnterprise) {
     const userProfile = await getUserProfile()
