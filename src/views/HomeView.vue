@@ -19,10 +19,28 @@
     </div>
   </div>
 
+  <div class="job-classify">
+      <a-card style="text-align: center; margin-left: 0;">
+        <template #title>
+          <div style="height: 2rem">
+            <div class="flowing-text">
+              <span v-for="(char, index) in visibleText" :key="index">{{ char }}</span>
+            </div>
+          </div>
+        </template>
+        <a-card-grid
+          v-for="(city, index) in cities"
+          :key="index"
+          class="hot-location"
+          @click="searchJob(city)"
+          >{{ city }}</a-card-grid
+        >
+      </a-card>
+  </div>
   <!-- 热门城市筛选与广告 -->
-  <div class="mid-bar">
+  <div v-if="false" class="mid-bar">
     <div class="job-classify">
-      <a-card title="热门城市" style="text-align: center">
+      <a-card style="text-align: center">
         <a-card-grid
           v-for="(city, index) in cities"
           :key="index"
@@ -234,7 +252,6 @@ const changeType = () => {
     } else {
       type.value = 1
     }
-    console.log(type.value)
     page.value = 1
     fetchData(type.value, page.value)
   } catch (err) {
@@ -272,8 +289,32 @@ const handleSearchButtonClick = () => {
   router.push('/search')
 }
 
+const text = 'WorkNow 让你 Work Now！'
+const visibleText = ref('')
+const intervalTime = 200 // 毫秒
+const disappearTime = 2000 // 毫秒
+
+const startFlowingText = () => {
+  let currentIndex = 0
+  visibleText.value = ''
+
+  const intervalId = setInterval(() => {
+    if (currentIndex < text.length) {
+      visibleText.value += text[currentIndex]
+      currentIndex++
+    } else {
+      clearInterval(intervalId)
+      setTimeout(() => {
+        visibleText.value = ''
+        startFlowingText() // 重新开始显示
+      }, disappearTime)
+    }
+  }, intervalTime)
+}
+
 onMounted(() => {
   fetchData(type.value, page.value)
+  startFlowingText()
 })
 </script>
 
@@ -297,12 +338,12 @@ onMounted(() => {
 }
 
 .job-classify {
-  margin-right: 1rem;
-  width: 25rem;
+  margin-left: 5rem;
+  width: 80rem;
 }
 
 .hot-location {
-  width: 20%;
+  width: 6%;
   text-align: center;
 }
 
@@ -338,5 +379,26 @@ onMounted(() => {
 .job-list {
   display: flex;
   flex-wrap: wrap;
+}
+
+.flowing-text {
+  font-size: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-left: 0rem;
+  text-align: center;
+}
+
+.flowing-text span {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
 </style>
