@@ -16,9 +16,9 @@
           <div class="hidden lg:ml-6 lg:flex lg:space-x-8">
             <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
             <a id="link1" href="/" class="mouse-not-on">招聘信息</a>
-            <a id="link2" href="/PostView" class="mouse-not-on">社区动态</a>
-            <a id="link3" href="/unknown" class="mouse-not-on">我的关注</a>
-            <a id="link4" href="/CorporationInfo" class="mouse-not-on">企业</a>
+            <a id="link2" href="/CreatePost" class="mouse-not-on">发布动态</a>
+            <a id="link3" href="/PersonalInfo" class="mouse-not-on">我的关注</a>
+            <a id="link4" href="/CorporationInfo" class="mouse-not-on">我的企业</a>
           </div>
         </div>
 
@@ -35,6 +35,8 @@
                 class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="Search"
                 type="search"
+                @keyup.enter="gotoSearch"
+                v-model="searchContent"
               />
             </div>
           </div>
@@ -164,13 +166,13 @@
         >
         <DisclosureButton
           as="a"
-          href="/PostView"
+          href="/CreatePost"
           class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
-          >社区动态</DisclosureButton
+          >发布动态</DisclosureButton
         >
         <DisclosureButton
           as="a"
-          href="/unknown"
+          href="/personalInfo"
           class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
           >我的关注</DisclosureButton
         >
@@ -178,7 +180,7 @@
           as="a"
           href="/CorporationInfo"
           class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
-          >企业</DisclosureButton
+          >我的企业</DisclosureButton
         >
       </div>
       <div class="border-t border-gray-200 pb-3 pt-4">
@@ -311,10 +313,10 @@ function getAvatar() {
     console.log(tokenStore.getToken)
     axios
       .get('/api/user/detail', {
-      headers: {
-        Authorization: tokenStore.getToken
-      }
-    })
+        headers: {
+          Authorization: tokenStore.getToken
+        }
+      })
       .then((response) => {
         console.log('获取用户信息成功')
         console.log(response)
@@ -334,6 +336,15 @@ function getAvatar() {
 function cancelAccount() {
   //待实现，请求后端删除账号数据，清空当前登录的token和userid等
   router.push('/sos/login')
+}
+const searchContent = ref('')
+const gotoSearch = () => {
+  router.push({
+    path: 'search',
+    query: {
+      searchContent: searchContent.value
+    }
+  })
 }
 </script>
 
