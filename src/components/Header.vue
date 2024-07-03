@@ -3,36 +3,25 @@
  * @Author: Q9K
  * @Description: 网页横栏
 -->
-<!--
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
--->
 <template>
   <Disclosure as="nav" class="bg-white shadow fixed w-full top-0 z-10" v-slot="{ open }">
     <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
       <div class="flex h-16 justify-between">
         <div class="flex px-2 lg:px-0">
           <div class="flex flex-shrink-0 items-center">
-            <img class="h-20 w-auto" src="@/assets/logo.png" alt="Your Company" />
+            <a href="./">
+              <img class="h-20 w-auto" src="@/assets/logo.png" alt="Your Company" />
+            </a>
           </div>
           <div class="hidden lg:ml-6 lg:flex lg:space-x-8">
             <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
             <a id="link1" href="/" class="mouse-not-on">招聘信息</a>
-            <a id="link2" href="/PostView" class="mouse-not-on">社区动态</a>
-            <a id="link3" href="/unknown" class="mouse-not-on">我的关注</a>
+            <a id="link2" href="/CreatePost" class="mouse-not-on">发布动态</a>
+            <a id="link3" href="/PersonalInfo" class="mouse-not-on">我的关注</a>
             <a id="link4" href="/CorporationInfo" class="mouse-not-on">我的企业</a>
           </div>
         </div>
+
         <div class="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
           <div class="w-full max-w-lg lg:max-w-xs">
             <label for="search" class="sr-only">Search</label>
@@ -46,11 +35,14 @@
                 class="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="Search"
                 type="search"
+                @keyup.enter="gotoSearch"
+                v-model="searchContent"
               />
             </div>
           </div>
         </div>
-        <div class="flex items-center lg:hidden">
+
+        <div class="block lg:hidden mt-3">
           <!-- Mobile menu button -->
           <DisclosureButton
             class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
@@ -98,31 +90,64 @@
               <MenuItems
                 class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               >
-                <MenuItem v-slot="{ active }">
-                  <a
-                    href="/PersonalInfo"
-                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >个人中心</a
-                  >
-                </MenuItem>
+                <template v-if="isLogined()">
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="/PersonalInfo"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >个人中心</a
+                    >
+                  </MenuItem>
 
-                <MenuItem v-slot="{ active }">
-                  <a
-                    href="/sos/login"
-                    @click="logout"
-                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >退出登录</a
-                  >
-                </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="/sos/login"
+                      @click="logout"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >退出登录</a
+                    >
+                  </MenuItem>
 
-                <MenuItem v-slot="{ active }">
-                  <a
-                    href="#"
-                    @click="cancelAccount"
-                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >注销账号</a
-                  >
-                </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="#"
+                      @click="cancelAccount"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >注销账号</a
+                    >
+                  </MenuItem>
+                </template>
+                <template v-else>
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="/sos/login"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >登录</a
+                    >
+                  </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      href="/sos/register"
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700'
+                      ]"
+                      >注册</a
+                    >
+                  </MenuItem>
+                </template>
               </MenuItems>
             </transition>
           </Menu>
@@ -141,13 +166,13 @@
         >
         <DisclosureButton
           as="a"
-          href="/PostView"
+          href="/CreatePost"
           class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
-          >社区动态</DisclosureButton
+          >发布动态</DisclosureButton
         >
         <DisclosureButton
           as="a"
-          href="/unknown"
+          href="/personalInfo"
           class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
           >我的关注</DisclosureButton
         >
@@ -169,8 +194,8 @@
             />
           </div>
           <div class="ml-3">
-            <div class="text-base font-medium text-gray-800">Tom Cook</div>
-            <div class="text-sm font-medium text-gray-500">tom@example.com</div>
+            <div class="text-base font-medium text-gray-800">{{ username }}</div>
+            <div class="text-sm font-medium text-gray-500">{{ email }}</div>
           </div>
           <button
             type="button"
@@ -211,7 +236,9 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
 import router from '@/router'
+import axios from '@/utils/request'
 import {
   Disclosure,
   DisclosureButton,
@@ -223,19 +250,25 @@ import {
 } from '@headlessui/vue'
 import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import avatar1 from '@/assets/avatar1.png';
+import avatar1 from '@/assets/avatar1.png'
+import avatar_default from '@/assets/userDefaultAvatar.png'
 // 在这里使用 onMounted 钩子函数代替 mounted()
 import { onMounted } from 'vue'
 import useTokenStore from '@/stores/useTokenStore'
 const tokenStore = useTokenStore()
+const avatar = ref()
+const email = ref()
+const username = ref()
+const isLogined = () => {
+  if (tokenStore.getToken) {
+    return true
+  } else {
+    return false
+  }
+}
 onMounted(() => {
   // 获取当前URL的查询字符串
   const path = window.location.pathname
-  // 解析查询字符串为URLSearchParams对象
-  //const urlParams = new URLSearchParams(queryString);
-  // 获取指定的查询参数值
-  //const styleParam = urlParams.get('style');
-  // 获取链接元素
   const link = document.getElementById('link2')
   console.log('start')
   console.log(path)
@@ -252,36 +285,66 @@ onMounted(() => {
     }
   })
 })
-function ifLogin(){
-  if(tokenStore.getToken==null){
-    //console.log('a1aa')
+function ifLogin() {
+  console.log('call iflogin')
+  console.log(tokenStore.getToken)
+  if (tokenStore.getToken == null || tokenStore.getToken == '') {
+    router.push('./sos/login')
+    console.log('a1aa')
     logout()
     router.push('./sos/login')
   }
 }
-function logout(){
+function logout() {
   router.push('/sos/login')
   //待实现，清空当前登录的token和userid等
-  console.log(tokenStore.getToken)
-  localStorage.setItem('token',null)
-  console.log(tokenStore.getToken)
+  // console.log(tokenStore.getToken)
+  //localStorage.setItem('token', null)
+  tokenStore.setToken(null)
+  // localStorage.removeItem('token')
   router.push('/sos/login')
-  
 }
-function getAvatar(){
-  console.log('11111ew'+tokenStore.getToken)
-  if(tokenStore.getToken == null || tokenStore.getToken == ''){
+function getAvatar() {
+  // console.log('11111ew' + tokenStore.getToken)
+  if (!tokenStore.getToken) {
     //console.log('a1aa')
-    return null
-  }
-  else{
+    return avatar_default
+  } else {
     console.log(tokenStore.getToken)
-    return avatar1
+    axios
+      .get('/api/user/detail', {
+        headers: {
+          Authorization: tokenStore.getToken
+        }
+      })
+      .then((response) => {
+        console.log('获取用户信息成功')
+        console.log(response)
+        console.log(response.data)
+        avatar.value = response.data.icon
+        email.value = response.data.email
+        username.value = response.data.username
+        console.log(avatar.value)
+        //console.log(profile.value.detailedInformation.user_id)
+      })
+      .catch((error) => {
+        console.error('获取用户信息失败', error)
+      })
+    return avatar.value
   }
 }
 function cancelAccount() {
   //待实现，请求后端删除账号数据，清空当前登录的token和userid等
   router.push('/sos/login')
+}
+const searchContent = ref('')
+const gotoSearch = () => {
+  router.push({
+    path: 'search',
+    query: {
+      searchContent: searchContent.value
+    }
+  })
 }
 </script>
 

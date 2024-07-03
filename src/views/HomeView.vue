@@ -13,16 +13,34 @@
         placeholder="新发现"
         enter-button
         size="large"
-        @search="onSearch"
+        @search="handleSearchButtonClick"
         style="width: 30rem; margin-left: 30rem"
       />
     </div>
   </div>
 
+  <div class="job-classify">
+      <a-card style="text-align: center; margin-left: 0;">
+        <template #title>
+          <div style="height: 2rem">
+            <div class="flowing-text">
+              <span v-for="(char, index) in visibleText" :key="index">{{ char }}</span>
+            </div>
+          </div>
+        </template>
+        <a-card-grid
+          v-for="(city, index) in cities"
+          :key="index"
+          class="hot-location"
+          @click="searchJob(city)"
+          >{{ city }}</a-card-grid
+        >
+      </a-card>
+  </div>
   <!-- 热门城市筛选与广告 -->
-  <div class="mid-bar">
+  <div v-if="false" class="mid-bar">
     <div class="job-classify">
-      <a-card title="热门城市" style="text-align: center">
+      <a-card style="text-align: center">
         <a-card-grid
           v-for="(city, index) in cities"
           :key="index"
@@ -70,8 +88,8 @@
   <!-- 岗位列表 -->
   <div class="job-list-container">
     <div class="job-nav">
-      <a-button type="primary" @clock="changeType" style="margin-right: 0.5rem">热门岗位</a-button>
-      <a-button type="primary" @clock="changeType">最新招聘</a-button>
+      <el-button type="primary" @click="changeType" style="margin-right: 0.5rem">热门岗位</el-button>
+      <el-button type="primary" @click="changeType">最新招聘</el-button>
       <a-button type="link" class="link-button">
         <span style="margin-right: 0">更多职业</span>
         <RightOutlined style="margin-left: 0; padding: 0; font-size: 1rem"></RightOutlined>
@@ -83,7 +101,7 @@
         v-for="item in data"
         :key="item.id"
         :title="item.job_name"
-        @click="this.$router.push(`/jobInfo/${item.recruit_id}`)"
+        @click="goTo(`/jobInfo/${item.recruit_id}`)"
         style="width: 23rem; margin-right: 1.5rem"
       >
         <template #extra
@@ -129,25 +147,25 @@
     </div>
     <a-button @click="fetchNewData()" style="margin-left: 30rem">查看更多</a-button>
   </div>
-
-  <!-- 聊天消息 -->
-  <div v-if="false" class="chat">
-    <MessageBar />
-  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import axios from '@/utils/request'
 import { onMounted } from 'vue'
-
 import {
   RightOutlined,
   EnvironmentOutlined,
   DashboardOutlined,
   IdcardOutlined
 } from '@ant-design/icons-vue'
-import MessageBar from '@/components/MessageBar.vue'
+import { useSearchStore } from '@/stores/useSearchStore'
+import {useRouter} from 'vue-router'
+const router = useRouter()
+
+const goTo = (where) => {
+  router.push(where)
+}
 
 const inputCotent = ref('') //搜索输入
 const data = ref(null) //招聘数据
@@ -220,7 +238,6 @@ const fetchData = async (way) => {
       data.value = response.data
     } else {
       data.value = data.value.concat(response.data)
-      console.log(response.data.length)
     }
   } catch (err) {
     error.value = err.message
@@ -228,7 +245,7 @@ const fetchData = async (way) => {
 }
 
 // 更改搜索岗位类型
-const changeType = async () => {
+const changeType = () => {
   try {
     if (type.value === 1) {
       type.value = 2
@@ -266,22 +283,38 @@ const searchJob = async (cityName) => {
   }
 }
 
-// 高级搜索
-const onSearch = async () => {
-  try {
-    const response = await axios.get('/api/recruit/highsearch', {
-      params: {
-        query: this.searchContent
-      }
-    })
-    data.value = response.data
-  } catch (err) {
-    error.value = err.message
-  }
+const handleSearchButtonClick = () => {
+  const searchStore = useSearchStore()
+  searchStore.setContent(inputCotent.value)
+  router.push('/search')
+}
+
+const text = 'WorkNow 让你 Work Now！'
+const visibleText = ref('')
+const intervalTime = 200 // 毫秒
+const disappearTime = 2000 // 毫秒
+
+const startFlowingText = () => {
+  let currentIndex = 0
+  visibleText.value = ''
+
+  const intervalId = setInterval(() => {
+    if (currentIndex < text.length) {
+      visibleText.value += text[currentIndex]
+      currentIndex++
+    } else {
+      clearInterval(intervalId)
+      setTimeout(() => {
+        visibleText.value = ''
+        startFlowingText() // 重新开始显示
+      }, disappearTime)
+    }
+  }, intervalTime)
 }
 
 onMounted(() => {
   fetchData(type.value, page.value)
+  startFlowingText()
 })
 </script>
 
@@ -305,12 +338,12 @@ onMounted(() => {
 }
 
 .job-classify {
-  margin-right: 1rem;
-  width: 25rem;
+  margin-left: 5rem;
+  width: 80rem;
 }
 
 .hot-location {
-  width: 20%;
+  width: 6%;
   text-align: center;
 }
 
@@ -346,5 +379,26 @@ onMounted(() => {
 .job-list {
   display: flex;
   flex-wrap: wrap;
+}
+
+.flowing-text {
+  font-size: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-left: 0rem;
+  text-align: center;
+}
+
+.flowing-text span {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
 </style>

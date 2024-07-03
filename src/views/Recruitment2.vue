@@ -2,7 +2,7 @@
  * @Author: aliyun0459792885-nakAm 1308199540@qq.com
  * @Date: 2024-06-24 14:29:21
  * @LastEditors: aliyun0459792885-nakAm 1308199540@qq.com
- * @LastEditTime: 2024-06-27 11:16:07
+ * @LastEditTime: 2024-06-30 14:48:53
  * @FilePath: /frontend/src/views/Recruitment.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -65,7 +65,7 @@ import axios from '../utils/request';
 onMounted(async () => {
       console.log('页面加载完成！');
       console.log(tableData)
-      let res=await axios.get('http://100.92.39.61:8000/api/recruit/11')
+      let res=await axios.get('/api/recruit/16')
       console.log(res.data[1].job_request)
       /*for(let i=0;i<res.data.length;i++)
       {
@@ -87,7 +87,7 @@ const user_type = ref("manager")
 
 const dialogTableVisible = ref(false)
 const dialogFormVisible = ref(false)
-const formLabelWidth = '160px'
+const formLabelWidth = '160rem'
 
 const form = ref({
   "enterprise":1,
@@ -129,7 +129,7 @@ const SubmitForm = ()=>{
   dialogFormVisible.value=false
   //发送表单api
   
-  axios.post('http://100.98.24.78:8000/api/recruit/recruit_create',{
+  axios.post('/api/recruit/recruit_create',{
   'enterprise':4,
   'introduction':'zty',
   'name':'lzy',

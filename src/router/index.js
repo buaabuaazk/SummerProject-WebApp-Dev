@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import axios from 'axios'
 import useTokenStore from '@/stores/useTokenStore'
+import { getUserInfo, getUserProfile, getEnterpriseInfo } from '@/stores/useCorporationStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,7 +24,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/ApplymentAction',
+      path: '/ApplymentAction/:id',
       name: 'ApplymentAction',
       component: () => import('@/views/ApplymentAction.vue'),
       meta: {
@@ -33,8 +34,40 @@ const router = createRouter({
     },
     {
       path: '/CorporationInfo/',
-      name: 'CorporationInfo2',
+      name: 'CorporationInfo',
       component: () => import('@/views/CorporationInfo.vue'),
+      children: [
+        {
+          path: 'Test',
+          name: 'CoTest',
+          component: () => import('@/components/Corporation/CoTest.vue')
+        },
+        {
+          path: '',
+          name: 'CoInfo',
+          component: () => import('@/components/Corporation/CoInfo.vue')
+        },
+        {
+          path: 'Recruit',
+          name: 'CoRecruit',
+          component: () => import('@/components/Corporation/CoRecruit.vue')
+        },
+        {
+          path: 'Trend',
+          name: 'CoTrend',
+          component: () => import('@/components/Corporation/CoTrend.vue')
+        },
+        {
+          path: 'User',
+          name: 'CoUser',
+          component: () => import('@/components/Corporation/CoUser.vue')
+        },
+        {
+          path: 'Settings',
+          name: 'CoSettings',
+          component: () => import('@/components/Corporation/CoSettings.vue')
+        }
+      ],
       meta: {
         requireAuth: true,
         requireEnterprise: true,
@@ -44,12 +77,44 @@ const router = createRouter({
     },
     {
       path: '/CorporationInfo/:id',
-      name: 'CorporationInfo',
+      name: 'CorporationInfoId',
       component: () => import('@/views/CorporationInfo.vue'),
       meta: {
-        requireAuth: true,
+        requireAuth: false,
         title: '企业公开信息展示'
       },
+      children: [
+        {
+          path: 'Test',
+          name: 'IdCoTest',
+          component: () => import('@/components/Corporation/CoTest.vue')
+        },
+        {
+          path: '',
+          name: 'IdCoInfo',
+          component: () => import('@/components/Corporation/CoInfo.vue')
+        },
+        {
+          path: 'Recruit',
+          name: 'IdCoRecruit',
+          component: () => import('@/components/Corporation/CoRecruit.vue')
+        },
+        {
+          path: 'Trend',
+          name: 'IdCoTrend',
+          component: () => import('@/components/Corporation/CoTrend.vue')
+        },
+        {
+          path: 'User',
+          name: 'IdCoUser',
+          component: () => import('@/components/Corporation/CoUser.vue')
+        },
+        {
+          path: 'Settings',
+          name: 'IdCoSettings',
+          component: () => import('@/components/Corporation/CoSettings.vue')
+        }
+      ],
       props: true
     },
     {
@@ -107,20 +172,11 @@ const router = createRouter({
       }
     },
     {
-      path: '/PostView',
-      name: 'PostView',
-      component: () => import('@/views/PostView.vue'),
+      path: '/Recruitment/:id',
+      name: 'Recruitment',
+      component: () => import('@/views/Recruitment.vue'),
       meta: {
         requireAuth: true,
-        title: '动态展示'
-      }
-    },
-    {
-      path: '/Recruitment',
-      name: 'Recruitment',
-      component: () => import('@/views/Recruitment2.vue'),
-      meta: {
-        requireAuth: false,
         title: '招聘信息发布' //表单页
       }
     },
@@ -161,18 +217,29 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/job-detail/:id',
-      name: 'JobDetail',
-      component: () => import('@/components/Corporation/JobDetail.vue'),
-      meta: {
-        requireAuth: false,
-        title: '职位详情2'
-      }
-    },
-    {
       path: '/Corporation404',
       name: 'noCorporation',
       component: () => import('@/components/Corporation/CorNotIn.vue')
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: () => import('@/views/SearchView.vue')
+    },
+    {
+      path: '/test',
+      name: 'Test',
+      component: () => import('@/views/Test.vue')
+    },
+    {
+      path: '/personalInfo/:id',
+      name: 'personalInfo',
+      component: () => import('@/views/OtherInfo.vue'),
+      meta: {
+        requireAuth: false,
+        title: '其他人个人主页'
+      },
+      props: true
     },
     //404页面，需要放在最后
     {
@@ -187,39 +254,18 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (to.meta.requireAuth && !localStorage.getItem('token')) {
+  let token = localStorage.getItem('token')
+  token = JSON.parse(token)?.token
+  if (to.meta.requireAuth && !token) {
     next({ name: 'Login' })
   } else if (to.meta.requireEnterprise) {
-    const tokenStore = useTokenStore()
-    console.log(tokenStore.getToken)
-    let user_id = await axios
-      .get('http://8.130.25.189:8000/api/user/detail', {
-        headers: {
-          Authorization: tokenStore.getToken
-        }
-      })
-      .then((res) => {
-        console.log(res)
-        return res.data.user_id
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-
-    console.log(user_id)
-
-    await axios
-      .get('http://8.130.25.189:8000/api/profile?user_id=' + user_id)
-      .then((res) => {
-        console.log(res)
-        if (res.data.enterprise == null) next({ name: 'noCorporation' })
-        else {
-          next()
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    const userProfile = await getUserProfile()
+    console.log(userProfile)
+    if (userProfile?.enterprise == null) {
+      next({ name: 'noCorporation' })
+    } else {
+      next()
+    }
   } else {
     next()
   }

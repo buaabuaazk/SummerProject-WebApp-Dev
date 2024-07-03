@@ -30,11 +30,11 @@
             </div>
             <Input id="password" type="password" required v-model="password" />
           </div>
-          <Button type="submit" class="w-full" @click="myLogin()"> Login </Button>
+          <Button class="w-full" @click="myLogin()" @keyup.enter="myLogin()"> Login </Button>
         </div>
         <div class="mt-4 text-center text-sm">
           Don't have an account?
-          <a @click="goToRegister()" class="underline">Sign up</a>
+          <a @click="goToRegister()" @keyup.enter="myLogin()" class="underline">Sign up</a>
         </div>
       </CardContent>
     </Card>

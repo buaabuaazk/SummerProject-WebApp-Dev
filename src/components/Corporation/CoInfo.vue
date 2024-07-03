@@ -1,250 +1,293 @@
 <template>
-  <div>
-    <TransitionRoot as="template" :show="sidebarOpen">
-      <Dialog class="fixed inset-y-[10rem] z-50 lg:hidden" @close="sidebarOpen = false">
-        <!-- 背景遮罩 -->
-        <!-- <TransitionChild
-            as="template"
-            enter="transition-opacity ease-linear duration-300"
-            enter-from="opacity-0"
-            enter-to="opacity-100"
-            leave="transition-opacity ease-linear duration-300"
-            leave-from="opacity-100"
-            leave-to="opacity-0"
-          >
-            <div class="fixed inset-0 bg-gray-900/80" />
-          </TransitionChild> -->
+  <div class="flex h-full">
+    <ConfirmAlert
+      :show="showConfirm"
+      :closeModal="
+        () => {
+          showConfirm = false
+          confirm = false
+        }
+      "
+      :confirmModal="
+        () => {
+          showConfirm = false
+          confirm = true
+          showSuccess = true
+        }
+      "
+      class="z-50"
+    >
+      <template v-slot:title>‼️‼️‼️管理员权限转移‼️‼️‼️</template>
+      <template v-slot:content
+        >管理员<i class="underline font-bold decoration-sky-500 decoration-4">{{
+          sender.username
+        }}</i
+        >正在向您转移管理员权限，
+        如果您接收管理员权限，您将成为新的管理员。可以管理企业信息、员工信息、发布招聘信息等。如果您拒绝管理员权限，您将保持普通员工身份，可以退出企业、投递简历、加入其他企业等
+      </template>
+    </ConfirmAlert>
+    <SuccessAlert
+      :show="showSuccess"
+      :closeModal="
+        () => {
+          showSuccess = false
+        }
+      "
+      class="z-50"
+    >
+      <template v-slot:title>您已成为企业管理员!!!</template>
+      <template v-slot:content>请查看企业管理页面确认您的相关权限</template>
+    </SuccessAlert>
+    <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <div class="relative z-0 flex flex-1 overflow-hidden">
+        <main class="relative z-0 flex-1 overflow-y-auto focus:outline-none xl:order-last">
+          <!-- Breadcrumb -->
 
-        <!-- 侧边栏内容 -->
-        <div class="flex">
-          <TransitionChild
-            as="template"
-            enter="transition ease-in-out duration-300 transform"
-            enter-from="-translate-x-full"
-            enter-to="translate-x-0"
-            leave="transition ease-in-out duration-300 transform"
-            leave-from="translate-x-0"
-            leave-to="-translate-x-full"
-          >
-            <DialogPanel class="relative flex max-w-xs flex-1 rounded-lg bg-slate-100 shadow-xl">
-              <!-- Sidebar component, swap this element with another sidebar if you like -->
-              <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
-                <nav class="flex flex-1 flex-col">
-                  <ul role="list" class="flex flex-1 flex-col gap-y-7">
-                    <li>
-                      <ul role="list" class="-mx-2 space-y-1">
-                        <li v-for="item in navigation" :key="item.name">
-                          <a
-                            :href="item.href"
-                            :class="[
-                              item.current
-                                ? 'bg-gray-50 text-indigo-600'
-                                : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
-                              'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6'
-                            ]"
-                          >
-                            <component
-                              :is="item.icon"
-                              :class="[
-                                item.current
-                                  ? 'text-indigo-600'
-                                  : 'text-gray-400 group-hover:text-indigo-600',
-                                'h-6 w-6 shrink-0'
-                              ]"
-                              aria-hidden="true"
-                            />
-                            {{ item.name }}
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li>
-                      <div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
-                      <ul role="list" class="-mx-2 mt-2 space-y-1">
-                        <li v-for="team in teams" :key="team.name">
-                          <a
-                            :href="team.href"
-                            :class="[
-                              team.current
-                                ? 'bg-gray-50 text-indigo-600'
-                                : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
-                              'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6'
-                            ]"
-                          >
-                            <span
-                              :class="[
-                                team.current
-                                  ? 'border-indigo-600 text-indigo-600'
-                                  : 'border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600',
-                                'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium'
-                              ]"
-                              >{{ team.initial }}</span
-                            >
-                            <span class="truncate">{{ team.name }}</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </nav>
+          <article>
+            <!-- Profile header -->
+            <div>
+              <div>
+                <img class="h-32 w-full object-cover lg:h-48" :src="profile.coverImageUrl" alt="" />
               </div>
-            </DialogPanel>
-          </TransitionChild>
-        </div>
-      </Dialog>
-    </TransitionRoot>
-
-    <!-- Static sidebar for desktop -->
-    <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-      <!-- Sidebar component, swap this element with another sidebar if you like -->
-      <div
-        class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6"
-      >
-        <div class="flex h-16 shrink-0 items-center">
-          <img
-            class="h-8 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          />
-        </div>
-        <nav class="flex flex-1 flex-col">
-          <ul role="list" class="flex flex-1 flex-col gap-y-7">
-            <li>
-              <ul role="list" class="-mx-2 space-y-1">
-                <li v-for="item in navigation" :key="item.name">
-                  <a
-                    :href="item.href"
-                    :class="[
-                      item.current
-                        ? 'bg-gray-50 text-indigo-600'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
-                      'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6'
-                    ]"
-                  >
-                    <component
-                      :is="item.icon"
-                      :class="[
-                        item.current
-                          ? 'text-indigo-600'
-                          : 'text-gray-400 group-hover:text-indigo-600',
-                        'h-6 w-6 shrink-0'
-                      ]"
-                      aria-hidden="true"
+              <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+                <div class="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
+                  <div class="flex">
+                    <img
+                      class="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
+                      :src="info.icon"
+                      alt=""
                     />
-                    {{ item.name }}
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
-              <ul role="list" class="-mx-2 mt-2 space-y-1">
-                <li v-for="team in teams" :key="team.name">
-                  <a
-                    :href="team.href"
-                    :class="[
-                      team.current
-                        ? 'bg-gray-50 text-indigo-600'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
-                      'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6'
-                    ]"
+                  </div>
+                  <div
+                    class="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1"
                   >
-                    <span
-                      :class="[
-                        team.current
-                          ? 'border-indigo-600 text-indigo-600'
-                          : 'border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600',
-                        'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium'
-                      ]"
-                      >{{ team.initial }}</span
+                    <div class="mt-6 min-w-0 flex-1 sm:hidden 2xl:block">
+                      <h1 class="truncate text-2xl font-bold text-gray-900">{{ info.name }}</h1>
+                    </div>
+                    <div
+                      class="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0"
                     >
-                    <span class="truncate">{{ team.name }}</span>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="-mx-6 mt-auto">
-              <a
-                href="#"
-                class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
-              >
-                <img
-                  class="h-8 w-8 rounded-full bg-gray-50"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt=""
-                />
-                <span class="sr-only">Your profile</span>
-                <span aria-hidden="true">Tom Cook</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
+                      <button
+                        type="button"
+                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                      >
+                        <EnvelopeIcon class="-ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+                        Message
+                      </button>
+                      <button
+                        type="button"
+                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-lg ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                        v-if="userProfile && !info.is_admin"
+                        @click="userExit"
+                      >
+                        <!-- 用户已登录且非企业管理员 -->
+                        <ArrowRightStartOnRectangleIcon
+                          class="-ml-0.5 h-5 w-5 text-red-600"
+                          aria-hidden="true"
+                        />
+                        <span class="font-bold text-red-600"> 退出企业 </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-6 hidden min-w-0 flex-1 sm:block 2xl:hidden">
+                  <h1 class="truncate text-2xl font-bold text-gray-900">{{ info.name }}</h1>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description list -->
+            <div class="mx-auto mt-6 max-w-5xl px-4 sm:px-6 lg:px-8 mb-4">
+              <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                <div
+                  v-for="field in Object.keys(profile.fields)"
+                  :key="field"
+                  class="sm:col-span-1"
+                >
+                  <dt class="text-sm font-medium text-gray-500">{{ field }}</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ profile.fields[field] }}</dd>
+                </div>
+                <div class="sm:col-span-2">
+                  <dt class="text-sm font-medium text-gray-500">About</dt>
+                  <dd
+                    class="mt-1 max-w-prose space-y-5 text-sm text-gray-900"
+                    v-html="info.introduction"
+                  />
+                </div>
+              </dl>
+            </div>
+
+            <div
+              class="relative mt-6 mx-10"
+              v-if="!route.params.id || route.params.id == userProfile?.enterprise"
+            >
+              <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-gray-300" />
+              </div>
+              <div class="relative flex justify-center">
+                <span class="bg-white px-3 text-base font-semibold leading-6 text-gray-900"
+                  >企业核心成员</span
+                >
+              </div>
+            </div>
+
+            <!-- Team member list -->
+            <div
+              class="mx-auto mt-4 max-w-5xl px-4 pb-12 sm:px-6 lg:px-8"
+              v-if="!route.params.id || route.params.id == userProfile?.enterprise"
+            >
+              <div class="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div
+                  v-for="user in enterpriseUserInfoProfile"
+                  :key="user.user_id"
+                  class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-pink-500 focus-within:ring-offset-2 hover:border-gray-400"
+                >
+                  <div class="flex-shrink-0">
+                    <img class="h-10 w-10 rounded-full" :src="user.content.icon" alt="" />
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <a href="#" class="focus:outline-none">
+                      <span class="absolute inset-0" aria-hidden="true" />
+                      <p class="text-sm font-medium text-gray-900">{{ user.content.username }}</p>
+                      <p class="truncate text-sm text-gray-500">{{ user.content.degree }}</p>
+                    </a>
+                  </div>
+                  <div v-if="user.is_admin" class="flex flex-col items-center">
+                    <UserPlusIcon class="h-6 w-6 text-red-500" />
+                    <i class="text-xs font-bold underline decoration-pink-500 decoration-2"
+                      >admin</i
+                    >
+                  </div>
+                  <div v-else class="flex flex-col items-center">
+                    <UserMinusIcon class="h-6 w-6 text-gray-500" />
+                    <i class="text-xs font-bold decoration-gray-500 underline">normal</i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </main>
       </div>
     </div>
-
-    <div
-      class="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-sm sm:px-6 lg:hidden"
-    >
-      <button
-        type="button"
-        class="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-        @click="sidebarOpen = true"
-      >
-        <span class="sr-only">Open sidebar</span>
-        <Bars3Icon class="h-6 w-6" aria-hidden="true" />
-      </button>
-      <div class="flex-1 text-sm font-semibold leading-6 text-gray-900">Dashboard</div>
-      <a href="#">
-        <span class="sr-only">Your profile</span>
-        <img
-          class="h-8 w-8 rounded-full bg-gray-50"
-          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-          alt=""
-        />
-      </a>
-    </div>
-
-    <main class="lg:pl-72">
-      <div class="xl:pr-96">
-        <div class="px-4 py-10 sm:px-6 lg:px-8 lg:py-6"></div>
-      </div>
-    </main>
-
-    <aside
-      class="fixed inset-y-0 right-0 hidden w-96 overflow-y-auto border-l border-gray-200 px-4 py-6 sm:px-6 lg:px-8 xl:block"
-    >
-      <!-- Secondary column (hidden on smaller screens) -->
-    </aside>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
+import { EnvelopeIcon, PhoneIcon } from '@heroicons/vue/20/solid'
+
+import { ArrowRightStartOnRectangleIcon } from '@heroicons/vue/24/outline'
+
+import { UserPlusIcon, UserMinusIcon } from '@heroicons/vue/24/outline'
+
+import { onMounted, ref, watch } from 'vue'
+
+import { useRouter, useRoute } from 'vue-router'
+
+import axios from '@/utils/request'
+
 import {
-  Bars3Icon,
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon
-} from '@heroicons/vue/24/outline'
+  getEnterpriseInfo,
+  getUserProfile,
+  getEnterpriseUserInfoProfile,
+  getUserTransferLogs,
+  getUserSimpleProfile
+} from '@/stores/useCorporationStore'
 
-const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Team', href: '#', icon: UsersIcon, current: false },
-  { name: 'Projects', href: '#', icon: FolderIcon, current: false },
-  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
-  { name: 'Reports', href: '#', icon: ChartPieIcon, current: false }
-]
-const teams = [
-  { id: 1, name: 'Heroicons', href: '#', initial: 'H', current: false },
-  { id: 2, name: 'Tailwind Labs', href: '#', initial: 'T', current: false },
-  { id: 3, name: 'Workcation', href: '#', initial: 'W', current: false }
-]
+const router = useRouter()
+const route = useRoute()
 
-const sidebarOpen = ref(false)
+let userProfile = ref(null)
+let enterpriseInfo = ref(null)
+let enterpriseUserInfoProfile = ref(null)
+
+let transferLogs = ref(null)
+
+let transferLog = ref(null)
+
+let sender = ref(null)
+
+let showConfirm = ref(false)
+let showSuccess = ref(false)
+let confirm = ref(false)
+
+const pri = () => {}
+
+const info = ref({
+  name: '',
+  location: '',
+  email: '',
+  contact: '',
+  jobPosts: null,
+  is_admin: false
+})
+
+async function fetchData() {
+  // console.log(userProfile.value)
+  if (route.params.id) {
+    enterpriseInfo.value = await getEnterpriseInfo(route.params.id)
+  } else {
+    userProfile.value = await getUserProfile()
+    enterpriseInfo.value = await getEnterpriseInfo(userProfile.value.enterprise)
+    enterpriseUserInfoProfile.value = await getEnterpriseUserInfoProfile()
+    transferLogs.value = await getUserTransferLogs()
+  }
+  // console.log(enterpriseInfo.value)
+  // console.log(enterpriseUserInfoProfile.value)
+  // console.log(transferLogs.value)
+}
+
+async function userExit() {
+  const res = await axios.delete('/api/profile/')
+  console.log(res)
+  if (res.code == 200) {
+    router.push('')
+  }
+}
+
+onMounted(async () => {
+  await fetchData()
+  info.value.id = enterpriseInfo.value.enterprise_id
+  info.value.name = enterpriseInfo.value.name
+  info.value.introduction = enterpriseInfo.value.introduction
+  info.value.icon = enterpriseInfo.value.icon
+  info.value.is_admin = userProfile.value?.is_admin
+
+  if (transferLogs.value && transferLogs.value.data?.length > 0) {
+    transferLog.value = transferLogs.value.data[0]
+    sender.value = await getUserSimpleProfile(transferLog.value.sender)
+    console.log(sender.value)
+    showConfirm.value = true
+  }
+})
+
+watch(confirm, async (value) => {
+  if (value) {
+    const res = await axios.post('/api/profile/answer_log', {
+      log_id: transferLog.value.log_id
+    })
+    console.log(res)
+  }
+})
+
+const profile = {
+  name: 'Ricardo Cooper',
+  imageUrl:
+    'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
+  coverImageUrl:
+    'https://images.unsplash.com/photo-1444628838545-ac4016a5418a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+  about: `
+        <p>Tincidunt quam neque in cursus viverra orci, dapibus nec tristique. Nullam ut sit dolor consectetur urna, dui cras nec sed. Cursus risus congue arcu aenean posuere aliquam.</p>
+        <p>Et vivamus lorem pulvinar nascetur non. Pulvinar a sed platea rhoncus ac mauris amet. Urna, sem pretium sit pretium urna, senectus vitae. Scelerisque fermentum, cursus felis dui suspendisse velit pharetra. Augue et duis cursus maecenas eget quam lectus. Accumsan vitae nascetur pharetra rhoncus praesent dictum risus suspendisse.</p>
+      `,
+  fields: {
+    Phone: '(555) 123-4567',
+    Email: 'ricardocooper@example.com',
+    Title: 'Senior Front-End Developer',
+    Team: 'Product Development',
+    Location: 'San Francisco',
+    Sits: 'Oasis, 4th floor',
+    Salary: '$145,000',
+    Birthday: 'June 8, 1990'
+  }
+}
 </script>

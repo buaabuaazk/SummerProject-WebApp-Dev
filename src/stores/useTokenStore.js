@@ -8,7 +8,7 @@ import { defineStore } from 'pinia'
 export default defineStore({
   id: 'token',
   state: () => ({
-    token: ''
+    token: null
   }),
   getters: {
     getToken() {
