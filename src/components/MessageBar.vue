@@ -16,7 +16,6 @@
     @mousedown="mouseDownHandler"
     ref="draggableContainer"
   >
-    <button @click="handleAppendMessage">添加消息</button>
     <NaiveChat
       ref="naiveChatRef"
       style="background-color: antiquewhite"
@@ -130,12 +129,17 @@ const messages = ref([])
 
 const hasRead = ref([])
 let mynext = null
+let storeID = 0
 const pullMessage = async ({ next, contactId }) => {
   // if (!hasRead.value[contactId]) {
   try {
     const response = await axios.get(`/api/message/with/${contactId}`)
-    messages.value = []
-    messages.value = messages.value.concat(response.data)
+    if (storeID !== contactId) {
+      messages.value = []
+    }
+    storeID = contactId
+    messages.value = response.data
+    // messages.value = messages.value.concat(response.data)
     console.log('next1', next)
     if (!mynext) {
       next(messages.value, true)
@@ -166,21 +170,21 @@ const sendMessage = async ({ message, next }) => {
     fileName: undefined
   })
   console.log('next2', next)
-  if (!mynext2) {
-    // asyncFn(() => {
-    next({
-      id: message.id,
-      toContactId: message.toContactId,
-      status: 'success'
-    })
-    mynext2 = next
-  } else {
-    mynext2({
-      id: message.id,
-      toContactId: message.toContactId,
-      status: 'success'
-    })
-  }
+  // if (!mynext2) {
+  // asyncFn(() => {
+  next({
+    id: message.id,
+    toContactId: message.toContactId,
+    status: 'success'
+  })
+  // mynext2 = next
+  // } else {
+  // mynext2({
+  //   id: message.id,
+  //   toContactId: message.toContactId,
+  //   status: 'success'
+  // })
+  // }
   // })
 }
 
@@ -229,7 +233,7 @@ const fetchNewMessage = async () => {
         //是否是新联系人
         let flag = false
         for (const item of contacts.value) {
-          console.log('233', contacts.value, item.sender, messageStore.toContactId)
+          console.log('233', contacts.value, item.id, messageStore.toContactId)
           if (Number(item.id) === Number(messageStore.toContactId)) {
             flag = true
             break
@@ -248,12 +252,14 @@ const fetchNewMessage = async () => {
             sendTime: response.data.sendTime,
             status: 'success'
           }
-          naiveChatRef.value?.appendMessage(message)
+          // naiveChatRef.value?.appendMessage(message)
           console.log('111', mynext)
           // mynext2(message, true)
-          naiveChatRef.value?.initContacts(contacts.value)
-          await pullMessage({ mynext, contactId: response.data.fromUser.id })
-          await fetchContacts()
+          // naiveChatRef.value?.initContacts(contacts.value)
+          await pullMessage({ next: mynext, contactId: 4 })
+          await pullMessage({ next: mynext, contactId: response.data.fromUser.id })
+          console.log('261', response.data.fromUser.id)
+          // await fetchContacts()
         } else {
           //新联系人
           const response2 = await axios.get('/api/user/info', {
@@ -283,7 +289,7 @@ const fetchNewMessage = async () => {
               sendTime: response.data.sendTime,
               status: 'success'
             }
-            await fetchContacts()
+            // await fetchContacts()
             // naiveChatRef.value?.appendMessage(message)
             // await pullMessage({ mynext, contactId: response.data.fromUser.id })
           }
